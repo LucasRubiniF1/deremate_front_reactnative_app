@@ -1,9 +1,10 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import {useDecisionEngine} from "../src/hooks/useDecisionEngine";
 
-export default function Home() {
+export default function DecisionScreen() {
+  useDecisionEngine()
+
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Welcome to Expo Router!</Text>
-    </View>
+    <View></View>
   );
 }
