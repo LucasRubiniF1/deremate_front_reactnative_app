@@ -1,43 +1,43 @@
 import OpenAPIClientAxios from 'openapi-client-axios';
+import {getToken} from "../utils/secureStore";
 
 const OPEN_API_URL = 'http://localhost:8080/v3/api-docs'; // EL PUERTO DEPENDE DEL ENV DE INTELLIJ REVISAR!!!
 
-let api_client = null;
-
+let apiClientInstance = null;
 
 const initializeApiClient = async () => {
   const api = new OpenAPIClientAxios({ definition: OPEN_API_URL });
+
   try {
     const client = await api.init();
 
     client.axios.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem('authToken');
+      async (config) => {
+        const token = await getToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      }
+      (error) => Promise.reject(error)
     );
 
-  }
-  catch (error) {
-    console.error('Fallo al crear el cliente (preocuparse aunque seguramente sea CORS)', error);
+    apiClientInstance = client;
+    return client;
+
+  } catch (error) {
+    console.error(
+      'Fallo al crear el cliente (puede ser por CORS o definición mal cargada)',
+      error
+    );
     apiClientInstance = null;
     throw error;
   }
-  apiClientInstance = client;
-  return apiClientInstance;
-}
-
-
+};
 
 export const getApiClient = async () => {
   if (!apiClientInstance) {
     return await initializeApiClient();
   }
-  return Promise.resolve(apiClientInstance);
+  return apiClientInstance;
 };
