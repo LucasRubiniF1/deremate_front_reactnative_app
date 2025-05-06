@@ -1,7 +1,7 @@
 {
   "name": "deremate_front_reactnative_app",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
