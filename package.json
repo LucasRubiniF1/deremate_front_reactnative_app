@@ -23,7 +23,13 @@
     "react-native-screens": "~4.10.0",
     "react-native-web": "^0.20.0",
     "zustand": "^5.0.4",
-    "expo-secure-store": "~14.2.3"
+    "expo-secure-store": "~14.2.3",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-prettier": "^5.4.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-native": "^5.0.0",
+    "prettier": "^3.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
