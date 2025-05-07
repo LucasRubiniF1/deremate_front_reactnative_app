@@ -26,21 +26,21 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "MatiasUrielGluck"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;MatiasUrielGluck&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/LucasRubiniF1/deremate_front_reactnative_app.git",
-    "accountId": "9a83ab9a-e91d-47a5-bafe-ef4ebd07a19f"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/LucasRubiniF1/deremate_front_reactnative_app.git&quot;,
+    &quot;accountId&quot;: &quot;9a83ab9a-e91d-47a5-bafe-ef4ebd07a19f&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2wjvjg9knD52O4XLBNFwM7sjKxZ" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -56,7 +56,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/matiasgluck/Repositories/deremate_front_reactnative_app/src/service",
+    "last_opened_file_path": "/Users/matiasgluck/Repositories/deremate_front_reactnative_app",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -78,11 +78,13 @@
       <map>
         <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
         <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
+        <entry key="com.intellij.reactbuddy.storybook" value="false" />
       </map>
     </option>
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src/service" />
       <recent name="$PROJECT_DIR$/app/(auth)" />
     </key>
@@ -106,6 +108,7 @@
       <option name="presentableId" value="Default" />
       <updated>1746567933746</updated>
       <workItem from="1746567934819" duration="8275000" />
+      <workItem from="1746578311542" duration="3486000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add router">
       <option name="closed" value="true" />
@@ -155,7 +158,47 @@
       <option name="project" value="LOCAL" />
       <updated>1746574177627</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: solve compilation error">
+      <option name="closed" value="true" />
+      <created>1746578589940</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1746578589940</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat: delete invalid import">
+      <option name="closed" value="true" />
+      <created>1746578604264</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1746578604264</updated>
+    </task>
+    <task id="LOCAL-00009" summary="feat: create env configuration for the backend connection">
+      <option name="closed" value="true" />
+      <created>1746579294282</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1746579294282</updated>
+    </task>
+    <task id="LOCAL-00010" summary="feat: add home screen navigation">
+      <option name="closed" value="true" />
+      <created>1746580249332</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1746580249332</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat: extract the bottom bar component into a separate one">
+      <option name="closed" value="true" />
+      <created>1746581385107</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1746581385107</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,6 +220,11 @@
     <MESSAGE value="feat: structure refactor" />
     <MESSAGE value="feat: add zustand" />
     <MESSAGE value="feat: add security to the token" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add security to the token" />
+    <MESSAGE value="feat: solve compilation error" />
+    <MESSAGE value="feat: delete invalid import" />
+    <MESSAGE value="feat: create env configuration for the backend connection" />
+    <MESSAGE value="feat: add home screen navigation" />
+    <MESSAGE value="feat: extract the bottom bar component into a separate one" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: extract the bottom bar component into a separate one" />
   </component>
 </project>
