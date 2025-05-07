@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {getToken} from "../utils/secureStore";
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export const UnauthorizedService = axios.create({
   baseURL: BASE_URL,
@@ -21,4 +21,3 @@ AuthorizedService.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
