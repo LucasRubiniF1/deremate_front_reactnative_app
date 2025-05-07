@@ -14,8 +14,7 @@ export default function useAccentColors() {
 
   return {
     primary: accent,
-    primaryLight: accent + '33',
-    primaryDark: accent,
+    transparent: 'rgba(255,255,255,0)',
     background: '#FFFFFF',
     text: '#000000',
     border: '#D9D9D9',

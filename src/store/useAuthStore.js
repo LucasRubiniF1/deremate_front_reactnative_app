@@ -21,7 +21,7 @@ const useAuthStore = create((set) => ({
 
       const infoResponse = await info();
       console.warn(infoResponse);
-      set({ user: infoResponse, isAuthenticated: true, loading: false });
+      set({ user: infoResponse, isAuthenticated: true, loading: false, error: false });
 
     } catch (error) {
       console.error('Login failed', error);

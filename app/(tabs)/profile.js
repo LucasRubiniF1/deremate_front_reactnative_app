@@ -10,8 +10,8 @@ export default function ProfileScreen() {
   const router = useRouter();
   const colors = useAccentColors();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push('(auth)/sign-in');
   }
 
@@ -20,7 +20,7 @@ export default function ProfileScreen() {
       <View style={styles.content}>
         <Avatar.Text size={64} label={user?.firstname?.charAt(0) + user?.lastname?.charAt(0) || '?'} style={[styles.avatar, { backgroundColor: colors.primary }]} />
         <Text variant="titleLarge" style={styles.name}>
-          { `${user?.firstname} ${user?.lastname}` || 'Nombre no disponible'}
+          { `${user?.firstname ?? 'Cerrando'} ${user?.lastname ?? 'sesión'}` || 'Nombre no disponible'}
         </Text>
         <Text variant="bodyMedium" style={styles.email}>
           {user?.email || 'Email no disponible'}
