@@ -5,25 +5,20 @@ import useAuthStore from '../store/useAuthStore';
 
 export const useDecisionEngine = () => {
   const router = useRouter();
-  const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
     const tryRestoreSession = async () => {
-      console.log(useAuthStore)
-      /*
       await useAuthStore.getState().restoreSession();
 
       const { isAuthenticated } = useAuthStore.getState();
 
-      if (!isAuthenticated && rootNavigationState?.key) {
+      if (!isAuthenticated) {
         router.replace('(auth)/sign-in');
       }
-      
-       */
     };
 
     tryRestoreSession();
-  }, [rootNavigationState]);
+  }, []);
 
   return {};
 };
