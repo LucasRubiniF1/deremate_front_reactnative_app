@@ -3,10 +3,12 @@ import { View, StyleSheet } from 'react-native';
 import { Text, Button, Avatar } from 'react-native-paper';
 import useAuthStore from '../../src/store/useAuthStore';
 import {useRouter} from "expo-router";
+import useAccentColors from "../../src/hooks/useAccentColors";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
+  const colors = useAccentColors();
 
   const handleLogout = () => {
     logout();
@@ -16,7 +18,7 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Avatar.Text size={64} label={user?.firstname?.charAt(0) + user?.lastname?.charAt(0) || '?'} style={styles.avatar} />
+        <Avatar.Text size={64} label={user?.firstname?.charAt(0) + user?.lastname?.charAt(0) || '?'} style={[styles.avatar, { backgroundColor: colors.primary }]} />
         <Text variant="titleLarge" style={styles.name}>
           { `${user?.firstname} ${user?.lastname}` || 'Nombre no disponible'}
         </Text>
@@ -28,7 +30,7 @@ export default function ProfileScreen() {
       <Button
         mode="contained"
         onPress={handleLogout}
-        style={styles.logoutButton}
+        style={[styles.logoutButton, { backgroundColor: colors.primary }]}
         labelStyle={{ color: 'white' }}
       >
         Cerrar sesión
@@ -49,7 +51,6 @@ const styles = StyleSheet.create({
     marginTop: 48,
   },
   avatar: {
-    backgroundColor: '#7C61CB',
     marginBottom: 16,
   },
   name: {
@@ -60,7 +61,6 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   logoutButton: {
-    backgroundColor: '#D6336C',
     borderRadius: 8,
     paddingVertical: 6,
   },
