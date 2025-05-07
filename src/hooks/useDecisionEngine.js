@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { useRootNavigationState } from 'expo-router';
 import useAuthStore from '../store/useAuthStore';
 
 export const useDecisionEngine = () => {
