@@ -13,6 +13,8 @@ export const useDecisionEngine = () => {
 
       if (!isAuthenticated) {
         router.replace('(auth)/sign-in');
+      } else {
+        router.replace('(tabs)/');
       }
     };
 
