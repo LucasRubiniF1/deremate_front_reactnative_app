@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { saveToken, getToken, deleteToken } from '../utils/secureStore';
+import {create} from 'zustand';
+import {deleteToken, getToken, saveToken} from '../utils/secureStore';
 import {login} from "../service/auth.service";
 import {info} from "../service/user.service";
 
@@ -20,7 +20,8 @@ const useAuthStore = create((set) => ({
       await saveToken(token);
 
       const infoResponse = await info();
-      set({ user: infoResponse.data, isAuthenticated: true, loading: false });
+      console.warn(infoResponse);
+      set({ user: infoResponse, isAuthenticated: true, loading: false });
 
     } catch (error) {
       console.error('Login failed', error);
@@ -38,8 +39,7 @@ const useAuthStore = create((set) => ({
     if (!token) return;
 
     try {
-      const response = await info();
-      const user = response.data;
+      const user = await info();
 
       set({ user, isAuthenticated: true });
     } catch (error) {

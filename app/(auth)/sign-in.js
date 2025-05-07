@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
   button: {
     marginVertical: 6,
     borderRadius: 8,
-    backgroundColor: '#7C61CB', // morado similar al de la imagen
+    backgroundColor: '#7C61CB',
   },
 });
