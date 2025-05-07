@@ -1,43 +1,24 @@
-import OpenAPIClientAxios from 'openapi-client-axios';
+import axios from 'axios';
 import {getToken} from "../utils/secureStore";
 
-const OPEN_API_URL = 'http://localhost:8080/v3/api-docs'; // EL PUERTO DEPENDE DEL ENV DE INTELLIJ REVISAR!!!
+const BASE_URL = 'http://localhost:8080/api';
 
-let apiClientInstance = null;
+export const UnauthorizedService = axios.create({
+  baseURL: BASE_URL,
+});
 
-const initializeApiClient = async () => {
-  const api = new OpenAPIClientAxios({ definition: OPEN_API_URL });
+export const AuthorizedService = axios.create({
+  baseURL: BASE_URL,
+});
 
-  try {
-    const client = await api.init();
+AuthorizedService.interceptors.request.use(
+  async (config) => {
+    const token = await getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-    client.axios.interceptors.request.use(
-      async (config) => {
-        const token = await getToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    apiClientInstance = client;
-    return client;
-
-  } catch (error) {
-    console.error(
-      'Fallo al crear el cliente (puede ser por CORS o definición mal cargada)',
-      error
-    );
-    apiClientInstance = null;
-    throw error;
-  }
-};
-
-export const getApiClient = async () => {
-  if (!apiClientInstance) {
-    return await initializeApiClient();
-  }
-  return apiClientInstance;
-};
