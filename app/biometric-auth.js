@@ -53,7 +53,7 @@ export default function BiometricAuthScreen() {
         setResult(RESULT_ENUM.SUCCESS);
 
         setTimeout(() => {
-          router.push("(tabs)/")
+          router.replace("(tabs)/")
         }, 1000)
       } else if (results.error === 'unknown') {
         setResult(RESULT_ENUM.DISABLED);
@@ -73,7 +73,7 @@ export default function BiometricAuthScreen() {
 
   const handleLogout = async () => {
     await logout();
-    router.push('(auth)/sign-in');
+    router.replace('(auth)/sign-in');
   }
 
   const lockAnimatedStyle = useAnimatedStyle(() => {
