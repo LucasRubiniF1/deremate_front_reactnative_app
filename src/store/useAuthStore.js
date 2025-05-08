@@ -20,7 +20,6 @@ const useAuthStore = create((set) => ({
       await saveToken(token);
 
       const infoResponse = await info();
-      console.warn(infoResponse);
       set({ user: infoResponse, isAuthenticated: true, loading: false, error: false });
 
     } catch (error) {
