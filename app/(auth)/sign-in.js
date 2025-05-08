@@ -17,7 +17,7 @@ export default function SignInScreen() {
   useEffect(() => {
     if (isAuthenticated) {
       setVisible(false);
-      router.replace('(tabs)/');
+      router.replace('biometric-auth');
     }
   }, [isAuthenticated]);
 
