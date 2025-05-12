@@ -50,29 +50,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/matiasgluck/Repositories/deremate_front_reactnative_app",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/matiasgluck/Repositories/deremate_front_reactnative_app&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "GitStage.ChangesTree.GroupingKeys": [
-      "directory",
-      "module",
-      "repository"
+  &quot;keyToStringList&quot;: {
+    &quot;GitStage.ChangesTree.GroupingKeys&quot;: [
+      &quot;directory&quot;,
+      &quot;module&quot;,
+      &quot;repository&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -109,6 +109,8 @@
       <updated>1746567933746</updated>
       <workItem from="1746567934819" duration="8275000" />
       <workItem from="1746578311542" duration="3486000" />
+      <workItem from="1746721530174" duration="11005000" />
+      <workItem from="1746817380221" duration="1000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add router">
       <option name="closed" value="true" />
@@ -198,7 +200,31 @@
       <option name="project" value="LOCAL" />
       <updated>1746581385107</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="feat: add biometrics, biometrics auth screen with icon animations and more styles">
+      <option name="closed" value="true" />
+      <created>1746726314536</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1746726314536</updated>
+    </task>
+    <task id="LOCAL-00013" summary="feat: add protection to the authorized only routes by managing the app state internally">
+      <option name="closed" value="true" />
+      <created>1746728885975</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1746728885975</updated>
+    </task>
+    <task id="LOCAL-00014" summary="feat: add interceptor to control authorization problems">
+      <option name="closed" value="true" />
+      <created>1746740960185</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1746740960185</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -225,6 +251,10 @@
     <MESSAGE value="feat: create env configuration for the backend connection" />
     <MESSAGE value="feat: add home screen navigation" />
     <MESSAGE value="feat: extract the bottom bar component into a separate one" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: extract the bottom bar component into a separate one" />
+    <MESSAGE value="feat: add biometrics, biometrics auth screen with icon animations and more styles" />
+    <MESSAGE value="feat: add protection to the authorized only routes by managing the app state internaly" />
+    <MESSAGE value="feat: add protection to the authorized only routes by managing the app state internally" />
+    <MESSAGE value="feat: add interceptor to control authorization problems" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add interceptor to control authorization problems" />
   </component>
 </project>

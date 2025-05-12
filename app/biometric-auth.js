@@ -34,6 +34,15 @@ export default function BiometricAuthScreen() {
       setFacialRecognitionAvailable(types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION));
       setFingerprintAvailable(types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT));
       setIrisAvailable(types.includes(LocalAuthentication.AuthenticationType.IRIS));
+
+      if (!facialRecognitionAvailable && !fingerprintAvailable && !irisAvailable) {
+        setResult(RESULT_ENUM.SUCCESS);
+
+        setTimeout(() => {
+          router.replace("(tabs)/")
+        }, 1000)
+        return
+      }
     }
 
     await authenticate()
