@@ -13,6 +13,7 @@ const RESULT_ENUM = {
   DISABLED: 'DISABLED',
   ERROR: 'ERROR',
   SUCCESS: 'SUCCESS',
+  NOT_ENROLLED: 'NOT_ENROLLED',
 }
 
 const AnimatedView = Reanimated.createAnimatedComponent(View);
@@ -31,22 +32,30 @@ export default function BiometricAuthScreen() {
   const checkSupportedAuthentication = async () => {
     const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
     if (types && types.length) {
-      setFacialRecognitionAvailable(types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION));
-      setFingerprintAvailable(types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT));
-      setIrisAvailable(types.includes(LocalAuthentication.AuthenticationType.IRIS));
+      let isFacialRecognitionAvailable = types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION);
+      let isFingerprintAvailable = types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT);
+      let isIrisAvailable = types.includes(LocalAuthentication.AuthenticationType.IRIS);
 
-      if (!facialRecognitionAvailable && !fingerprintAvailable && !irisAvailable) {
-        setResult(RESULT_ENUM.SUCCESS);
+      setFacialRecognitionAvailable(isFacialRecognitionAvailable);
+      setFingerprintAvailable(isFingerprintAvailable);
+      setIrisAvailable(isIrisAvailable);
 
-        setTimeout(() => {
-          router.replace("(tabs)/")
-        }, 1000)
-        return
+      if (!isFacialRecognitionAvailable && !isFingerprintAvailable && !isIrisAvailable) {
+        await startSuccessFlow();
+        return;
       }
     }
 
     await authenticate()
   };
+
+  const startSuccessFlow = async () => {
+    setResult(RESULT_ENUM.SUCCESS);
+
+    setTimeout(() => {
+      router.replace("(tabs)/")
+    }, 1000)
+  }
 
   const authenticate = async () => {
     if (loading) {
@@ -59,11 +68,7 @@ export default function BiometricAuthScreen() {
       const results = await LocalAuthentication.authenticateAsync();
 
       if (results.success) {
-        setResult(RESULT_ENUM.SUCCESS);
-
-        setTimeout(() => {
-          router.replace("(tabs)/")
-        }, 1000)
+        await startSuccessFlow();
       } else if (results.error === 'unknown') {
         setResult(RESULT_ENUM.DISABLED);
       } else if (
@@ -72,6 +77,9 @@ export default function BiometricAuthScreen() {
         results.error === 'app_cancel'
       ) {
         setResult(RESULT_ENUM.CANCELLED);
+      } else if (results.error === 'not_enrolled') {
+        await startSuccessFlow();
+        // setResult(RESULT_ENUM.NOT_ENROLLED); TODO: Acá estaría buenísimo implementar un sistema de pin propio, por ahora lo seteo en success pero no tiene mucho sentido que quede así
       }
     } catch (error) {
       setResult(RESULT_ENUM.ERROR);
