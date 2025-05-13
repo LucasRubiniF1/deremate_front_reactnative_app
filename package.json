@@ -21,6 +21,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-native": "^5.0.0",
     "expo": "~53.0.7",
+    "expo-camera": "^16.1.6",
     "expo-local-authentication": "~16.0.4",
     "expo-router": "~5.0.6",
     "expo-secure-store": "~14.2.3",
