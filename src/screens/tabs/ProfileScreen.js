@@ -4,6 +4,7 @@ import { Text, Button, Avatar } from 'react-native-paper';
 import useAccentColors from "../../hooks/useAccentColors";
 import useAuthStore from "../../store/useAuthStore";
 import {useRouter} from "../../hooks/useRouter";
+import AuthorizedRoute from "../../components/AuthorizedRoute";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuthStore();
@@ -16,26 +17,28 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Avatar.Text size={64} label={user?.firstname?.charAt(0) + user?.lastname?.charAt(0) || '?'} style={[styles.avatar, { backgroundColor: colors.primary }]} />
-        <Text variant="titleLarge" style={styles.name}>
-          { `${user?.firstname ?? 'Cerrando'} ${user?.lastname ?? 'sesión'}` || 'Nombre no disponible'}
-        </Text>
-        <Text variant="bodyMedium" style={styles.email}>
-          {user?.email || 'Email no disponible'}
-        </Text>
-      </View>
+    <AuthorizedRoute>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Avatar.Text size={64} label={user?.firstname?.charAt(0) + user?.lastname?.charAt(0) || '?'} style={[styles.avatar, { backgroundColor: colors.primary }]} />
+          <Text variant="titleLarge" style={styles.name}>
+            { `${user?.firstname ?? 'Cerrando'} ${user?.lastname ?? 'sesión'}` || 'Nombre no disponible'}
+          </Text>
+          <Text variant="bodyMedium" style={styles.email}>
+            {user?.email || 'Email no disponible'}
+          </Text>
+        </View>
 
-      <Button
-        mode="contained"
-        onPress={handleLogout}
-        style={[styles.logoutButton, { backgroundColor: colors.primary }]}
-        labelStyle={{ color: 'white' }}
-      >
-        Cerrar sesión
-      </Button>
-    </View>
+        <Button
+          mode="contained"
+          onPress={handleLogout}
+          style={[styles.logoutButton, { backgroundColor: colors.primary }]}
+          labelStyle={{ color: 'white' }}
+        >
+          Cerrar sesión
+        </Button>
+      </View>
+    </AuthorizedRoute>
   );
 }
 

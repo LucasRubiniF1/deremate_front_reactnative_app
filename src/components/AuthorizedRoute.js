@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { AppState } from 'react-native';
-import {useFocusEffect, useRouter} from 'expo-router';
 import useAuthStore from "../store/useAuthStore";
+import {useRouter} from "../hooks/useRouter";
+import {useFocusEffect} from "@react-navigation/native";
 
 export default function AuthorizedRoute({ children }) {
   const subscriptionRef = useRef(null);
@@ -16,7 +17,7 @@ export default function AuthorizedRoute({ children }) {
     ) {
       console.log('LOG: EVENT_ON_RESUME');
       if (!isAuthenticated) {
-        router.replace('(auth)/sign-in');
+        router.replace('Auth');
       }
     }
     appStateRef.current = nextAppState;
