@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {getToken} from "../utils/secureStore";
-import { router } from 'expo-router'
 import useAuthStore from "../store/useAuthStore";
+import {replace} from "../navigator/RootNavigation";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -34,7 +34,7 @@ AuthorizedService.interceptors.response.use(
     } else if ([401, 403].includes(error?.response?.status)) {
       // Force logout
       useAuthStore.getState().logout().then(r => {
-        router.push('(auth)/sign-in')
+        replace.push('(auth)/sign-in')
       });
     } else if ([400, 500].includes(error?.response?.status)) {
       if ([500].includes(error?.response?.status)) {

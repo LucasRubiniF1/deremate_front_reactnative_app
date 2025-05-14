@@ -1,12 +1,12 @@
+import Reanimated, {useAnimatedStyle, withSequence, withSpring, withTiming} from "react-native-reanimated";
+import {StyleSheet, View} from "react-native";
+import useAccentColors from "../hooks/useAccentColors";
+import useAuthStore from "../store/useAuthStore";
 import {useEffect, useState} from "react";
 import * as LocalAuthentication from "expo-local-authentication";
-import {StyleSheet, View} from "react-native";
 import {Icon, Text} from "react-native-paper";
-import {useRouter} from "expo-router";
-import useAccentColors from "../src/hooks/useAccentColors";
-import {SimpleButton} from "../src/components/SimpleButton";
-import useAuthStore from "../src/store/useAuthStore";
-import Reanimated, {useAnimatedStyle, withSequence, withSpring, withTiming} from "react-native-reanimated";
+import {SimpleButton} from "../components/SimpleButton";
+import {useRouter} from "../hooks/useRouter";
 
 const RESULT_ENUM = {
   CANCELLED: 'CANCELLED',
@@ -53,7 +53,7 @@ export default function BiometricAuthScreen() {
     setResult(RESULT_ENUM.SUCCESS);
 
     setTimeout(() => {
-      router.replace("(tabs)/")
+      router.replace("MainTabs")
     }, 1000)
   }
 
@@ -90,7 +90,7 @@ export default function BiometricAuthScreen() {
 
   const handleLogout = async () => {
     await logout();
-    router.replace('(auth)/sign-in');
+    router.replace('Auth', { screen: 'SignIn' });
   }
 
   const lockAnimatedStyle = useAnimatedStyle(() => {

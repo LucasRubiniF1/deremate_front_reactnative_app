@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { CameraView, Camera } from 'expo-camera';
-import { useRouter } from 'expo-router';
+import {useRouter} from "../../hooks/useRouter";
+import AuthorizedRoute from "../../components/AuthorizedRoute";
 
-export default function Scanner() {
+export default function ScannerScreen() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const cameraRef = useRef(null);
@@ -26,31 +27,32 @@ export default function Scanner() {
     }
 
     setScanned(true);
-    Alert.alert('Escaneado', `ID: ${deliveryId}`);
-    router.push(`/delivery/${deliveryId}`); // TODO: crear la ruta y obtener el param
+    router.push('DeliveryDetails', { deliveryId });
   };
 
   if (hasPermission === null) return <Text>Solicitando permiso para la cámara...</Text>;
   if (hasPermission === false) return <Text>No se concedió permiso a la cámara</Text>;
 
   return (
-    <View style={styles.container}>
-      <CameraView
-        ref={cameraRef}
-        style={StyleSheet.absoluteFillObject}
-        facing="back"
-        barcodeScannerSettings={{
-          barcodeTypes: ['qr'],
-        }}
-        onBarcodeScanned={handleBarcodeScanned}
-      />
+    <AuthorizedRoute>
+      <View style={styles.container}>
+        <CameraView
+          ref={cameraRef}
+          style={StyleSheet.absoluteFillObject}
+          facing="back"
+          barcodeScannerSettings={{
+            barcodeTypes: ['qr'],
+          }}
+          onBarcodeScanned={handleBarcodeScanned}
+        />
 
-      {scanned && (
-        <View style={styles.overlay}>
-          <Button title="Escanear de nuevo" onPress={() => setScanned(false)} />
-        </View>
-      )}
-    </View>
+        {scanned && (
+          <View style={styles.overlay}>
+            <Button title="Escanear de nuevo" onPress={() => setScanned(false)} />
+          </View>
+        )}
+      </View>
+    </AuthorizedRoute>
   );
 }
 

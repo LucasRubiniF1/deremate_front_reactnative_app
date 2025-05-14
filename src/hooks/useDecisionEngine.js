@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useRouter } from 'expo-router';
 import useAuthStore from '../store/useAuthStore';
+import {useRouter} from "./useRouter";
 
 export const useDecisionEngine = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
     const tryRestoreSession = async () => {
@@ -12,9 +12,9 @@ export const useDecisionEngine = () => {
       const { isAuthenticated } = useAuthStore.getState();
 
       if (!isAuthenticated) {
-        router.replace('(auth)/sign-in');
+        router.replace('Auth', { screen: 'SignIn' });
       } else {
-        router.replace('biometric-auth');
+        router.replace('BiometricAuth');
       }
     };
 
