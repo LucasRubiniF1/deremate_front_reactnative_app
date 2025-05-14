@@ -29,46 +29,44 @@ export default function SignInScreen() {
   }, [error]);
 
   return (
-    <PaperProvider>
-      <View style={styles.externalContainer}>
-        <View style={styles.container}>
-          <Text variant="titleLarge" style={styles.title}>Iniciar sesión</Text>
+    <View style={styles.externalContainer}>
+      <View style={styles.container}>
+        <Text variant="titleLarge" style={styles.title}>Iniciar sesión</Text>
 
-          <TextInput
-            label="Correo"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            mode="outlined"
-          />
+        <TextInput
+          label="Correo"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+          mode="outlined"
+        />
 
-          <TextInput
-            label="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.input}
-            mode="outlined"
-          />
+        <TextInput
+          label="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={styles.input}
+          mode="outlined"
+        />
 
-          <SimpleButton
-            label="Ingresar"
-            accent mode="contained"
-            onPress={() => login(email, password)} />
+        <SimpleButton
+          label="Ingresar"
+          accent mode="contained"
+          onPress={() => login(email, password)} />
 
-          <SimpleButton
-            label="Crear una cuenta"
-            accent mode="contained"
-            onPress={() => router.push('SignUp')} />
+        <SimpleButton
+          label="Crear una cuenta"
+          accent mode="contained"
+          onPress={() => router.push('SignUp')} />
 
-          <SimpleButton
-            label="Olvidé mi contraseña"
-            accent mode="contained"
-            onPress={() => router.push('ForgotPassword')} />
-        </View>
-        <SimpleSnackbar mode="danger" text="Email o contraseña inválidos" closeLabel="OK" setVisible={setVisible} visible={visible} />
+        <SimpleButton
+          label="Olvidé mi contraseña"
+          accent mode="contained"
+          onPress={() => router.push('ForgotPassword')} />
       </View>
-    </PaperProvider>
+      <SimpleSnackbar mode="danger" text="Email o contraseña inválidos" closeLabel="OK" setVisible={setVisible} visible={visible} />
+    </View>
   );
 }
 
