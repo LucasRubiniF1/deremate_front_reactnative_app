@@ -1,5 +1,4 @@
-import {useNavigation} from "expo-router";
-import {CommonActions} from "@react-navigation/native";
+import {CommonActions, useNavigation} from "@react-navigation/native";
 import {Log} from "../log/Log";
 
 export const useRouter = () => {
