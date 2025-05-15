@@ -1,4 +1,4 @@
-import {Snackbar} from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 
 const COLORS = {
   info: '#3354d6',
@@ -11,7 +11,7 @@ export const SimpleSnackbar = ({ mode = 'info', visible = false, setVisible, onP
   return (
     <Snackbar
       visible={visible}
-      style={{backgroundColor: COLORS[mode]}}
+      style={{ backgroundColor: COLORS[mode] }}
       onDismiss={() => setVisible(false)}
       action={{
         label: closeLabel,

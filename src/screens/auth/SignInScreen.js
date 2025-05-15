@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import useAuthStore from "../../store/useAuthStore";
-import {useRouter} from "../../hooks/useRouter";
-import {PaperProvider, Text} from "react-native-paper";
-import {TextInput} from "react-native-paper";
-import {StyleSheet, View} from "react-native";
-import {SimpleButton} from "../../components/SimpleButton";
-import {SimpleSnackbar} from "../../components/SimpleSnackbar";
+import { useRouter } from "../../hooks/useRouter";
+import { Text } from "react-native-paper";
+import { TextInput } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { SimpleButton } from "../../components/SimpleButton";
+import { SimpleSnackbar } from "../../components/SimpleSnackbar";
 
 export default function SignInScreen() {
   const { login, isAuthenticated, error } = useAuthStore();
