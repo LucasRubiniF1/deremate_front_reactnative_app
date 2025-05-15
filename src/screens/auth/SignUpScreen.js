@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import { SimpleButton } from "../../components/SimpleButton";
@@ -10,8 +10,10 @@ import {
   validatePasswordsMatch,
   validatePasswordStrength
 } from "../../utils/validators";
+import useAuthStore from "../../store/useAuthStore";
 
 export default function SignUpScreen() {
+  const { signUp, loading, error, isUserCreated } = useAuthStore();
   const router = useRouter();
 
   const [email, setEmail] = useState('');
@@ -20,27 +22,54 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [visible, setVisible] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMode, setSnackbarMode] = useState('');
 
   const handleSignUp = () => {
-  const validations = [
-    validateName(firstName),
-    validateName(lastName, false),
-    validateEmail(email),
-    validatePasswordStrength(password),
-    validatePasswordsMatch(password, confirmPassword),
-  ];
+    const validations = [
+      validateName(firstName),
+      validateName(lastName, false),
+      validateEmail(email),
+      validatePasswordStrength(password),
+      validatePasswordsMatch(password, confirmPassword),
+    ];
 
-  const errors = validations.filter(Boolean); 
+    const errors = validations.filter(Boolean);
 
-  if (errors.length) {
-    setErrorMsg(errors.join('\n'));
-    setVisible(true);
-    return;
-  }
+    if (errors.length) {
+      setSnackbarMode('danger')
+      setSnackbarMessage(errors.join('\n'));
+      setVisible(true);
+      return;
+    }
 
-  console.log({ email, firstName, password });
-};
+    signUp(email, password, firstName, lastName);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setSnackbarMode('danger')
+      setSnackbarMessage(error);
+      setVisible(true);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    console.log(isUserCreated)
+    
+    if (isUserCreated) {
+      setSnackbarMode('success');
+      setSnackbarMessage('Cuenta creada exitosamente. Redirigiendo...');
+      setVisible(true);
+
+      const timeout = setTimeout(() => {
+        useAuthStore.setState({ isUserCreated: null });
+        router.replace('SignIn');
+      }, 2000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isUserCreated]);
 
   return (
     <View style={styles.externalContainer}>
@@ -53,6 +82,7 @@ export default function SignUpScreen() {
           onChangeText={setEmail}
           style={styles.input}
           mode="outlined"
+          disabled={loading}
         />
 
         <TextInput
@@ -61,6 +91,7 @@ export default function SignUpScreen() {
           onChangeText={setFirstName}
           style={styles.input}
           mode="outlined"
+          disabled={loading}
         />
 
         <TextInput
@@ -69,6 +100,7 @@ export default function SignUpScreen() {
           onChangeText={setLastName}
           style={styles.input}
           mode="outlined"
+          disabled={loading}
         />
 
         <TextInput
@@ -78,6 +110,7 @@ export default function SignUpScreen() {
           secureTextEntry
           style={styles.input}
           mode="outlined"
+          disabled={loading}
         />
 
         <TextInput
@@ -87,21 +120,24 @@ export default function SignUpScreen() {
           secureTextEntry
           style={styles.input}
           mode="outlined"
+          disabled={loading}
         />
 
         <SimpleButton
           label="Registrarse"
           accent mode="contained"
           onPress={handleSignUp}
+          disabled={loading}
         />
 
         <SimpleButton
           label="Ya tengo cuenta"
           accent mode="contained"
           onPress={() => router.replace('SignIn')}
+          disabled={loading}
         />
       </View>
-      <SimpleSnackbar mode="danger" text={errorMsg} closeLabel="OK" setVisible={setVisible} visible={visible} />
+      <SimpleSnackbar mode={snackbarMode} text={snackbarMessage} closeLabel="OK" setVisible={setVisible} visible={visible} />
     </View>
   );
 }
