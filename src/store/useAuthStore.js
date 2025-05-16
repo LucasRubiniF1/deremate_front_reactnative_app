@@ -3,13 +3,13 @@ import { deleteToken, getToken, saveToken } from '../utils/secureStore';
 import { login, resendCode, signup, verify } from "../service/auth.service";
 import { info } from "../service/user.service";
 
-const useAuthStore = create((set) => ({
+const useAuthStore = create((set, get) => ({
   user: null,
   isAuthenticated: false,
   isUserCreated: false,
   loading: false,
   error: null,
-  isEmailVerified: { email: null, verified: false},
+  isEmailVerified: { email: null, password: null, verified: false},
   setEmailVerified: (data) => set({ isEmailVerified: data }),
 
   login: async (email, password) => {
@@ -55,8 +55,12 @@ const useAuthStore = create((set) => ({
     try {
       await verify({ token, email });
 
+      const { password } = get().isEmailVerified;
+
       set({ loading: false, error: false, isEmailVerified: { email, verified: true } });
-      
+
+      await get().login(email, password);
+
     } catch (error) {
       console.log(error);
       

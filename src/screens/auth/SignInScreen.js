@@ -26,6 +26,7 @@ export default function SignInScreen() {
     if (error === 'EMAIL_NOT_VERIFIED') {
       setEmailVerified({ 
         email,
+        password,
         verified: false
       });
       router.push('Verification');
