@@ -1,14 +1,16 @@
 import { create } from 'zustand';
 import { deleteToken, getToken, saveToken } from '../utils/secureStore';
-import { login, signup } from "../service/auth.service";
+import { login, resendCode, signup, verify } from "../service/auth.service";
 import { info } from "../service/user.service";
 
 const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
-  isUserCreated: null,
+  isUserCreated: false,
   loading: false,
   error: null,
+  isEmailVerified: { email: null, verified: false},
+  setEmailVerified: (data) => set({ isEmailVerified: data }),
 
   login: async (email, password) => {
     set({ loading: true, error: null });
@@ -25,7 +27,12 @@ const useAuthStore = create((set) => ({
 
     } catch (error) {
       console.error('Login failed', error);
-      set({ error: 'Login failed', loading: false });
+
+      if (error?.response?.status === 401) {
+        set({ error: 'EMAIL_NOT_VERIFIED', loading: false });
+      } else {
+        set({ error: 'Login failed', loading: false });
+      }
     }
   },
 
@@ -33,16 +40,42 @@ const useAuthStore = create((set) => ({
     set({ loading: true, error: null, isUserCreated: false });
 
     try {
-      const response = await signup({ email, password, firstName, lastName });
+      await signup({ email, password, firstName, lastName });
 
-      if (response.statusCode === 201) {
-        set({ loading: false, error: null, isUserCreated: true });
-      } else {
-        set({ loading: false, error: "Error inesperado al crear la cuenta.", isUserCreated: false });
-      }
-      
+      set({ loading: false, error: false, isUserCreated: true });
+
     } catch (error) {
       set({ error: 'Error al crear la cuenta', loading: false, isUserCreated: false });
+    }
+  },
+
+  verifyEmail: async (token, email) => {
+    set({ loading: true, error: null });
+
+    try {
+      await verify({ token, email });
+
+      set({ loading: false, error: false, isEmailVerified: { email, verified: true } });
+      
+    } catch (error) {
+      console.log(error);
+      
+      set({ error: 'INCORRECT_CODE', loading: false, isEmailVerified: { email, verified: false } });
+    }
+  },
+
+  resendCode: async (email) => {
+    set({ loading: true, error: null });
+
+    try {
+      await resendCode({ email });
+
+      set({ loading: false, error: false });
+      
+    } catch (error) {
+      console.log(error);
+      
+      set({ error: 'No fue posible reenviar el código', loading: false, isEmailVerified: { email, verified: false } });
     }
   },
 

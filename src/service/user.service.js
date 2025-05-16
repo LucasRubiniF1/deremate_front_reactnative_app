@@ -1,4 +1,4 @@
-import {AuthorizedService, UnauthorizedService} from "../api/apiClient";
+import { AuthorizedService } from "../api/apiClient";
 
 const URL = "/v1/user";
 
