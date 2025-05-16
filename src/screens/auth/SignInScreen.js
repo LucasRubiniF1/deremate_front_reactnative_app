@@ -8,7 +8,7 @@ import { SimpleButton } from "../../components/SimpleButton";
 import { SimpleSnackbar } from "../../components/SimpleSnackbar";
 
 export default function SignInScreen() {
-  const { login, isAuthenticated, error } = useAuthStore();
+  const { login, isAuthenticated, error, setEmailVerified } = useAuthStore();
   const router = useRouter();
 
   const [email, setEmail] = useState('');
@@ -23,10 +23,18 @@ export default function SignInScreen() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (error) {
+    if (error === 'EMAIL_NOT_VERIFIED') {
+      setEmailVerified({ 
+        email,
+        password,
+        verified: false
+      });
+      router.push('Verification');
+    } else if (error) {
       setVisible(true);
     }
   }, [error]);
+
 
   return (
     <View style={styles.externalContainer}>

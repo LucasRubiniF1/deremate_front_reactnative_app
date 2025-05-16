@@ -55,8 +55,6 @@ export default function SignUpScreen() {
   }, [error]);
 
   useEffect(() => {
-    console.log(isUserCreated)
-    
     if (isUserCreated) {
       setSnackbarMode('success');
       setSnackbarMessage('Cuenta creada exitosamente. Redirigiendo...');
