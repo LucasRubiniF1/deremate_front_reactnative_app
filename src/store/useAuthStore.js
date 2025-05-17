@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { deleteToken, getToken, saveToken } from '../utils/secureStore';
-import { login, resendCode, signup, verify } from "../service/auth.service";
+import { login, resendCode, signup, verify, forgotPassword, resetPassword } from "../service/auth.service";
 import { info } from "../service/user.service";
 
 const useAuthStore = create((set, get) => ({
@@ -80,6 +80,45 @@ const useAuthStore = create((set, get) => ({
       console.log(error);
       
       set({ error: 'No fue posible reenviar el código', loading: false, isEmailVerified: { email, verified: false } });
+    }
+  },
+
+  requestPasswordReset: async (email) => {
+    console.log('[AuthStore] Starting password reset request for email:', email);
+    set({ loading: true, error: null });
+
+    try {
+      console.log('[AuthStore] Calling forgotPassword service...');
+      const response = await forgotPassword(email);
+      console.log('[AuthStore] forgotPassword response:', response);
+      
+      set({ loading: false, error: false });
+      console.log('[AuthStore] Password reset request successful');
+      return true;
+    } catch (error) {
+      console.error('[AuthStore] Password reset request failed:', error);
+      console.error('[AuthStore] Error details:', {
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status
+      });
+      
+      const errorMessage = error?.response?.data?.message || 'Error al solicitar el cambio de contraseña';
+      set({ error: errorMessage, loading: false });
+      return false;
+    }
+  },
+
+  resetPassword: async (email, token, newPassword) => {
+    set({ loading: true, error: null });
+
+    try {
+      await resetPassword({ email, token, newPassword });
+      set({ loading: false, error: false });
+      return true;
+    } catch (error) {
+      set({ error: 'Error al restablecer la contraseña', loading: false });
+      return false;
     }
   },
 

@@ -27,3 +27,17 @@ export const resendCode = async ({ email }) => {
   
   return response.data;
 };
+
+export const forgotPassword = async (email) => {
+  const response = await UnauthorizedService.post(`${URL}/forgot-password`, { email });
+  return response.data;
+};
+
+export const resetPassword = async ({ email, token, newPassword }) => {
+  const response = await UnauthorizedService.post(`${URL}/reset-password`, {
+    email,
+    token,
+    newPassword
+  });
+  return response.data;
+};

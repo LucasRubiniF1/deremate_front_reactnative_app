@@ -1,21 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { TextInput } from "react-native-paper";
 import { SimpleButton } from "../../components/SimpleButton";
 import { SimpleSnackbar } from "../../components/SimpleSnackbar";
 import { useRouter } from "../../hooks/useRouter";
+import useAuthStore from "../../store/useAuthStore";
+
+// Test log to verify logging is working
+console.log('=== FORGOT PASSWORD SCREEN LOADED ===');
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [visible, setVisible] = useState(false);
   const router = useRouter();
+  const { requestPasswordReset, loading, error } = useAuthStore();
 
-  const handleSubmit = () => {
-    // TODO: Implement forgot password logic
-    console.log('Reset password for:', email);
-    // After successful submission, you might want to navigate to a confirmation screen
-    // router.push('Verification');
+  useEffect(() => {
+    console.log('[ForgotPasswordScreen] Component mounted');
+    return () => {
+      console.log('[ForgotPasswordScreen] Component unmounted');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('[ForgotPasswordScreen] Error state changed:', error);
+    if (error) {
+      console.log('[ForgotPasswordScreen] Showing error snackbar');
+      setVisible(true);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    console.log('[ForgotPasswordScreen] Loading state changed:', loading);
+  }, [loading]);
+
+  const handleSubmit = async () => {
+    console.log('[ForgotPasswordScreen] Submit button pressed with email:', email);
+    
+    if (!email) {
+      console.log('[ForgotPasswordScreen] Email is empty, showing error');
+      setVisible(true);
+      return;
+    }
+
+    console.log('[ForgotPasswordScreen] Calling requestPasswordReset...');
+    const success = await requestPasswordReset(email);
+    console.log('[ForgotPasswordScreen] requestPasswordReset result:', success);
+
+    if (success) {
+      console.log('[ForgotPasswordScreen] Navigating to Verification screen');
+      router.push('Verification', { email, isPasswordReset: true });
+    }
   };
 
   return (
@@ -29,12 +65,16 @@ export default function ForgotPasswordScreen() {
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text) => {
+            console.log('[ForgotPasswordScreen] Email input changed:', text);
+            setEmail(text);
+          }}
           style={styles.input}
           mode="outlined"
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          disabled={loading}
         />
 
         <SimpleButton
@@ -42,20 +82,29 @@ export default function ForgotPasswordScreen() {
           accent
           mode="contained"
           onPress={handleSubmit}
+          loading={loading}
+          disabled={loading}
         />
 
         <SimpleButton
           label="Volver al inicio de sesión"
           accent
           mode="contained"
-          onPress={() => router.replace('SignIn')}
+          onPress={() => {
+            console.log('[ForgotPasswordScreen] Navigating back to SignIn');
+            router.replace('SignIn');
+          }}
+          disabled={loading}
         />
       </View>
       <SimpleSnackbar 
         mode="danger" 
-        text="Error al enviar el correo de recuperación" 
+        text={error || 'Error al enviar el correo de recuperación'}
         closeLabel="OK" 
-        setVisible={setVisible} 
+        setVisible={(value) => {
+          console.log('[ForgotPasswordScreen] Snackbar visibility changed:', value);
+          setVisible(value);
+        }} 
         visible={visible} 
       />
     </View>
