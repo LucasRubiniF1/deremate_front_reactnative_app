@@ -4,6 +4,7 @@ import { useRouter } from '../../hooks/useRouter';
 import useAuthStore from '../../store/useAuthStore';
 import { SimpleButton } from '../../components/SimpleButton';
 import { IconButton } from 'react-native-paper';
+import { SimpleSnackbar } from '../../components/SimpleSnackbar';
 
 export default function VerificationScreen({ route }) {
   const { mode = 'email', email } = route?.params || {};
@@ -15,6 +16,7 @@ export default function VerificationScreen({ route }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   const inputsRef = useRef([]);
   const router = useRouter();
 
@@ -133,6 +135,15 @@ export default function VerificationScreen({ route }) {
     return '#ccc';
   };
 
+  const handleResendCode = async () => {
+    try {
+      await resendCode(isEmailVerified.email);
+      setResendSuccess(true);
+    } catch (error) {
+      console.error('[VerificationScreen] Resend code failed:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
@@ -193,6 +204,16 @@ export default function VerificationScreen({ route }) {
         style={styles.submitButton}
       />
 
+      {mode === 'email' && (
+        <SimpleButton
+          label="Reenviar código"
+          accent
+          mode="contained"
+          onPress={handleResendCode}
+          style={styles.resendButton}
+        />
+      )}
+
       {mode === 'password' && (
         <SimpleButton
           label="Volver al inicio de sesión"
@@ -202,6 +223,14 @@ export default function VerificationScreen({ route }) {
           style={styles.returnButton}
         />
       )}
+
+      <SimpleSnackbar
+        mode="info"
+        text="Código reenviado exitosamente"
+        closeLabel="OK"
+        setVisible={setResendSuccess}
+        visible={resendSuccess}
+      />
     </View>
   );
 }
@@ -253,6 +282,10 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   submitButton: {
+    width: '100%',
+    marginBottom: 12,
+  },
+  resendButton: {
     width: '100%',
     marginBottom: 12,
   },

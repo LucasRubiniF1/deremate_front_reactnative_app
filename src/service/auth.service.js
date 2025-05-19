@@ -12,39 +12,57 @@ export const signup = async (data) => {
   return response.data
 }
 
-export const verify = async ({ token, email }) => {
-  console.log('[Auth Service] Verifying email:', { email, token });
+export const verify = async (data) => {
+  console.log('[Auth Service] Starting email verification process:', {
+    endpoint: `${URL}/verify`,
+    requestData: data
+  });
   try {
     const response = await UnauthorizedService.post(
       `${URL}/verify`,
-      { token, email }
+      data
     );
-    console.log('[Auth Service] Verification response:', response.data);
+    console.log('[Auth Service] Email verification successful:', {
+      status: response.status,
+      data: response.data
+    });
     return response.data;
   } catch (error) {
-    console.error('[Auth Service] Verification error:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status
+    console.error('[Auth Service] Email verification failed:', {
+      error: {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      },
+      requestData: data
     });
     throw error;
   }
 };
 
-export const resendCode = async ({ email }) => {
-  console.log('[Auth Service] Resending verification code to:', email);
+export const resendCode = async (data) => {
+  console.log('[Auth Service] Starting verification code resend process:', {
+    endpoint: `${URL}/resend-verification`,
+    requestData: data
+  });
   try {
     const response = await UnauthorizedService.post(
       `${URL}/resend-verification`,
-      { email }
+      data
     );
-    console.log('[Auth Service] Resend code response:', response.data);
+    console.log('[Auth Service] Verification code resend successful:', {
+      status: response.status,
+      data: response.data
+    });
     return response.data;
   } catch (error) {
-    console.error('[Auth Service] Resend code error:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status
+    console.error('[Auth Service] Verification code resend failed:', {
+      error: {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      },
+      requestData: data
     });
     throw error;
   }
