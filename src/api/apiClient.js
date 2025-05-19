@@ -4,6 +4,7 @@ import useAuthStore from "../store/useAuthStore";
 import {replace} from "../navigator/RootNavigation";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+console.log('[API Client] Base URL:', BASE_URL);
 
 export const UnauthorizedService = axios.create({
   baseURL: BASE_URL,
@@ -12,6 +13,49 @@ export const UnauthorizedService = axios.create({
 export const AuthorizedService = axios.create({
   baseURL: BASE_URL,
 });
+
+// Add request interceptor for UnauthorizedService
+UnauthorizedService.interceptors.request.use(
+  (config) => {
+    console.log('[API Client] Making request to:', config.url);
+    console.log('[API Client] Request config:', {
+      method: config.method,
+      baseURL: config.baseURL,
+      url: config.url,
+      data: config.data,
+      headers: config.headers
+    });
+    return config;
+  },
+  (error) => {
+    console.error('[API Client] Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for UnauthorizedService
+UnauthorizedService.interceptors.response.use(
+  (response) => {
+    console.log('[API Client] Response received:', {
+      status: response.status,
+      data: response.data
+    });
+    return response;
+  },
+  (error) => {
+    console.error('[API Client] Response error:', {
+      message: error.message,
+      code: error.code,
+      config: {
+        url: error.config?.url,
+        method: error.config?.method,
+        baseURL: error.config?.baseURL,
+        data: error.config?.data
+      }
+    });
+    return Promise.reject(error);
+  }
+);
 
 AuthorizedService.interceptors.request.use(
   async (config) => {
@@ -30,7 +74,15 @@ AuthorizedService.interceptors.response.use(
   },
   (error) => {
     if (!error.response) {
-      // Connection error
+      console.error('[API Client] Network error:', {
+        message: error.message,
+        code: error.code,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          baseURL: error.config?.baseURL
+        }
+      });
     } else if ([401, 403].includes(error?.response?.status)) {
       // Force logout
       useAuthStore.getState().logout().then(r => {
