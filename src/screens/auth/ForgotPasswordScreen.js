@@ -13,46 +13,56 @@ console.log('=== FORGOT PASSWORD SCREEN LOADED ===');
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [visible, setVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
   const { resetPasswordRequest, loading, error } = useAuthStore();
 
+  // Email validation regex
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Cleanup function
+  const cleanupErrors = () => {
+    setVisible(false);
+    setErrorMessage('');
+  };
+
+  // Reset state when component mounts
   useEffect(() => {
-    console.log('[ForgotPasswordScreen] Component mounted');
-    return () => {
-      console.log('[ForgotPasswordScreen] Component unmounted');
-    };
+    cleanupErrors();
+    setEmail('');
   }, []);
 
   useEffect(() => {
-    console.log('[ForgotPasswordScreen] Error state changed:', error);
     if (error) {
-      console.log('[ForgotPasswordScreen] Showing error snackbar');
+      setErrorMessage(error);
       setVisible(true);
     }
   }, [error]);
 
-  useEffect(() => {
-    console.log('[ForgotPasswordScreen] Loading state changed:', loading);
-  }, [loading]);
+  const validateEmail = (email) => {
+    if (!email) {
+      setErrorMessage('Por favor ingresa tu correo electrónico');
+      setVisible(true);
+      return false;
+    }
+    if (!EMAIL_REGEX.test(email)) {
+      setErrorMessage('Por favor ingresa un correo electrónico válido');
+      setVisible(true);
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async () => {
-    console.log('[ForgotPasswordScreen] Submit button pressed with email:', email);
-    
-    if (!email) {
-      console.log('[ForgotPasswordScreen] Email is empty, showing error');
-      setVisible(true);
+    cleanupErrors();
+    if (!validateEmail(email)) {
       return;
     }
 
-    console.log('[ForgotPasswordScreen] Calling resetPasswordRequest...');
     const success = await resetPasswordRequest(email);
-    console.log('[ForgotPasswordScreen] resetPasswordRequest result:', success);
 
     if (success) {
-      console.log('[ForgotPasswordScreen] Navigating to Verification screen with params:', { mode: 'password', email });
       router.push('Verification', { mode: 'password', email });
-    } else {
-      console.log('[ForgotPasswordScreen] Reset password request failed, not navigating');
     }
   };
 
@@ -68,7 +78,7 @@ export default function ForgotPasswordScreen() {
           label="Correo"
           value={email}
           onChangeText={(text) => {
-            console.log('[ForgotPasswordScreen] Email input changed:', text);
+            cleanupErrors();
             setEmail(text);
           }}
           style={styles.input}
@@ -93,7 +103,7 @@ export default function ForgotPasswordScreen() {
           accent
           mode="contained"
           onPress={() => {
-            console.log('[ForgotPasswordScreen] Navigating back to SignIn');
+            cleanupErrors();
             router.replace('SignIn');
           }}
           disabled={loading}
@@ -101,12 +111,9 @@ export default function ForgotPasswordScreen() {
       </View>
       <SimpleSnackbar 
         mode="danger" 
-        text={error || 'Error al enviar el correo de recuperación'}
+        text={errorMessage}
         closeLabel="OK" 
-        setVisible={(value) => {
-          console.log('[ForgotPasswordScreen] Snackbar visibility changed:', value);
-          setVisible(value);
-        }} 
+        setVisible={setVisible}
         visible={visible} 
       />
     </View>

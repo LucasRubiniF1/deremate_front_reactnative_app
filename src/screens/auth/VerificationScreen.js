@@ -7,8 +7,8 @@ import { IconButton } from 'react-native-paper';
 import { SimpleSnackbar } from '../../components/SimpleSnackbar';
 
 export default function VerificationScreen({ route }) {
-  const { mode = 'email', email } = route?.params || {};
-  console.log('[VerificationScreen] Mounted with mode:', mode, 'email:', email);
+  const { mode = 'email', email: routeEmail } = route?.params || {};
+  console.log('[VerificationScreen] Mounted with mode:', mode, 'email:', routeEmail);
   const { verifyEmail, resendCode, error, isEmailVerified, resetPassword } = useAuthStore();
   const [code, setCode] = useState(['', '', '', '']);
   const [status, setStatus] = useState('default');
@@ -17,25 +17,63 @@ export default function VerificationScreen({ route }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const inputsRef = useRef([]);
   const router = useRouter();
 
-  // Reset state when component mounts
+  // Password validation regex
+  const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+
+  // Cleanup function
+  const cleanupErrors = () => {
+    setErrorVisible(false);
+    setErrorMessage('');
+    setStatus('default');
+  };
+
+  // Reset state when component mounts or mode changes
   useEffect(() => {
     console.log('[VerificationScreen] Resetting state for mode:', mode);
     setCode(['', '', '', '']);
-    setStatus('default');
+    cleanupErrors();
     setPassword('');
     setConfirmPassword('');
+    setResendSuccess(false);
   }, [mode]);
 
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error);
+      setErrorVisible(true);
+      setStatus('error');
+    }
+  }, [error]);
+
+  const getEmail = () => {
+    if (mode === 'email') {
+      return isEmailVerified.email;
+    }
+    return routeEmail;
+  };
+
+  const validatePassword = (pass) => {
+    if (!PASSWORD_REGEX.test(pass)) {
+      setErrorMessage('La contraseña debe tener al menos 6 caracteres, una mayúscula y un número');
+      setErrorVisible(true);
+      return false;
+    }
+    return true;
+  };
+
   const handleChange = (text, index) => {
+    // Only allow numbers
     if (!/^\d?$/.test(text)) return;
 
     const newCode = [...code];
     newCode[index] = text;
     setCode(newCode);
-    setStatus('default');
+    cleanupErrors();
 
     if (text && index < 3) {
       inputsRef.current[index + 1]?.focus();
@@ -43,25 +81,40 @@ export default function VerificationScreen({ route }) {
   };
 
   const handleSubmit = () => {
+    cleanupErrors();
     const fullCode = code.join('');
-    console.log('[VerificationScreen] Submitting with mode:', mode);
+    
+    // Validate code length
+    if (fullCode.length !== 4) {
+      setErrorMessage('Por favor ingresa el código completo');
+      setErrorVisible(true);
+      return;
+    }
+
     if (mode === 'email') {
       verifyCode(fullCode);
-    } else if (mode === 'password' && password && confirmPassword) {
+    } else if (mode === 'password') {
+      // Validate passwords match before submitting
+      if (password !== confirmPassword) {
+        setErrorMessage('Las contraseñas no coinciden');
+        setErrorVisible(true);
+        return;
+      }
+
+      // Validate password requirements
+      if (!validatePassword(password)) {
+        return;
+      }
+
       verifyPasswordReset(fullCode);
     }
   };
 
-  const verifyCode = async (fullCode) => verifyEmail(fullCode, isEmailVerified.email);
+  const verifyCode = async (fullCode) => verifyEmail(fullCode, getEmail());
 
   const verifyPasswordReset = async (fullCode) => {
-    if (password !== confirmPassword) {
-      setStatus('error');
-      Alert.alert('Error', 'Las contraseñas no coinciden');
-      return;
-    }
     console.log('[VerificationScreen] Attempting password reset with code:', fullCode);
-    const success = await resetPassword(email, fullCode, password);
+    const success = await resetPassword(getEmail(), fullCode, password);
     console.log('[VerificationScreen] Password reset result:', success);
     if (success) {
       console.log('[VerificationScreen] Password reset successful, showing success message');
@@ -81,67 +134,23 @@ export default function VerificationScreen({ route }) {
     }
   };
 
-  useEffect(() => {
-    console.log('[VerificationScreen] Error state changed:', error);
-    if (error === null) return;
-
-    if (mode === 'email') {
-      if (error === "INCORRECT_CODE") {
-        setStatus('error');
-        return;
-      }
-
-      if (isEmailVerified.verified) {
-        setStatus('success');
-        setTimeout(() => {
-          console.log('[VerificationScreen] Navigating to BiometricAuth after email verification');
-          router.replace('BiometricAuth');
-        }, 500);
-      }
-    } else if (mode === 'password') {
-      if (error === "INCORRECT_CODE") {
-        setStatus('error');
-        Alert.alert('Error', 'Código incorrecto');
-        return;
-      }
-
-      if (error === "Account is already verified") {
-        console.log('[VerificationScreen] Account already verified, continuing with password reset');
-        return;
-      }
-
-      if (error === "Password reset successful") {
-        console.log('[VerificationScreen] Password reset successful, showing success message');
-        Alert.alert(
-          'Éxito',
-          'Tu contraseña ha sido restablecida correctamente',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                console.log('[VerificationScreen] Navigating to SignIn after success message');
-                router.replace('SignIn');
-              }
-            }
-          ]
-        );
-      }
-    }
-  }, [error, isEmailVerified]);
-
-  const getBorderColor = () => {
-    if (status === 'success') return 'green';
-    if (status === 'error') return 'red';
-    return '#ccc';
-  };
-
   const handleResendCode = async () => {
+    cleanupErrors();
     try {
-      await resendCode(isEmailVerified.email);
+      await resendCode(getEmail());
       setResendSuccess(true);
     } catch (error) {
       console.error('[VerificationScreen] Resend code failed:', error);
+      setErrorMessage('Error al reenviar el código');
+      setErrorVisible(true);
     }
+  };
+
+  const getBorderColor = () => {
+    if (status === 'error' && error !== 'EMAIL_NOT_VERIFIED') return '#FF3B30'; // Red for error
+    if (status === 'success') return '#34C759'; // Green for success
+    if (isEmailVerified.verified) return '#34C759'; // Green for verified
+    return '#CCCCCC'; // Default gray
   };
 
   return (
@@ -230,6 +239,14 @@ export default function VerificationScreen({ route }) {
         closeLabel="OK"
         setVisible={setResendSuccess}
         visible={resendSuccess}
+      />
+
+      <SimpleSnackbar
+        mode="danger"
+        text={errorMessage}
+        closeLabel="OK"
+        setVisible={setErrorVisible}
+        visible={errorVisible}
       />
     </View>
   );
