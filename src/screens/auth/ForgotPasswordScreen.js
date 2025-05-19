@@ -14,7 +14,7 @@ export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [visible, setVisible] = useState(false);
   const router = useRouter();
-  const { requestPasswordReset, loading, error } = useAuthStore();
+  const { resetPasswordRequest, loading, error } = useAuthStore();
 
   useEffect(() => {
     console.log('[ForgotPasswordScreen] Component mounted');
@@ -44,13 +44,15 @@ export default function ForgotPasswordScreen() {
       return;
     }
 
-    console.log('[ForgotPasswordScreen] Calling requestPasswordReset...');
-    const success = await requestPasswordReset(email);
-    console.log('[ForgotPasswordScreen] requestPasswordReset result:', success);
+    console.log('[ForgotPasswordScreen] Calling resetPasswordRequest...');
+    const success = await resetPasswordRequest(email);
+    console.log('[ForgotPasswordScreen] resetPasswordRequest result:', success);
 
     if (success) {
-      console.log('[ForgotPasswordScreen] Navigating to Verification screen');
-      router.push('Verification', { email, isPasswordReset: true });
+      console.log('[ForgotPasswordScreen] Navigating to Verification screen with params:', { mode: 'password', email });
+      router.push('Verification', { mode: 'password', email });
+    } else {
+      console.log('[ForgotPasswordScreen] Reset password request failed, not navigating');
     }
   };
 

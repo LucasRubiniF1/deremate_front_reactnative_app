@@ -50,10 +50,12 @@ const useAuthStore = create((set, get) => ({
   },
 
   verifyEmail: async (token, email) => {
+    console.log('[AuthStore] Starting email verification:', { email, token });
     set({ loading: true, error: null });
 
     try {
       await verify({ token, email });
+      console.log('[AuthStore] Email verification successful');
 
       const { password } = get().isEmailVerified;
 
@@ -62,28 +64,52 @@ const useAuthStore = create((set, get) => ({
       await get().login(email, password);
 
     } catch (error) {
-      console.log(error);
+      console.error('[AuthStore] Email verification failed:', error);
       
-      set({ error: 'INCORRECT_CODE', loading: false, isEmailVerified: { email, verified: false } });
+      let errorMessage = 'INCORRECT_CODE';
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      set({ 
+        error: errorMessage, 
+        loading: false, 
+        isEmailVerified: { email, verified: false } 
+      });
     }
   },
 
   resendCode: async (email) => {
+    console.log('[AuthStore] Starting resend code for:', email);
     set({ loading: true, error: null });
 
     try {
       await resendCode({ email });
+      console.log('[AuthStore] Resend code successful');
 
       set({ loading: false, error: false });
       
     } catch (error) {
-      console.log(error);
+      console.error('[AuthStore] Resend code failed:', error);
       
-      set({ error: 'No fue posible reenviar el código', loading: false, isEmailVerified: { email, verified: false } });
+      let errorMessage = 'No fue posible reenviar el código';
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      set({ 
+        error: errorMessage, 
+        loading: false, 
+        isEmailVerified: { email, verified: false } 
+      });
     }
   },
 
-  requestPasswordReset: async (email) => {
+  resetPasswordRequest: async (email) => {
     console.log('[AuthStore] Starting password reset request for email:', email);
     set({ loading: true, error: null });
 
@@ -109,15 +135,28 @@ const useAuthStore = create((set, get) => ({
     }
   },
 
-  resetPassword: async (email, token, newPassword) => {
+  resetPassword: async (email, token, password) => {
+    console.log('[AuthStore] Starting password reset for email:', email);
     set({ loading: true, error: null });
 
     try {
-      await resetPassword({ email, token, newPassword });
+      console.log('[AuthStore] Calling resetPassword service...');
+      const response = await resetPassword({ email, token, password });
+      console.log('[AuthStore] resetPassword response:', response);
+      
       set({ loading: false, error: false });
+      console.log('[AuthStore] Password reset successful');
       return true;
     } catch (error) {
-      set({ error: 'Error al restablecer la contraseña', loading: false });
+      console.error('[AuthStore] Password reset failed:', error);
+      console.error('[AuthStore] Error details:', {
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status
+      });
+      
+      const errorMessage = error?.response?.data?.message || 'Error al restablecer la contraseña';
+      set({ error: errorMessage, loading: false });
       return false;
     }
   },
