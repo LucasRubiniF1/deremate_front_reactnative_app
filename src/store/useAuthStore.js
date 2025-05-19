@@ -29,7 +29,8 @@ const useAuthStore = create((set, get) => ({
       console.error('Login failed', error);
 
       if (error?.response?.status === 401) {
-        set({ error: 'EMAIL_NOT_VERIFIED', loading: false });
+        set({ error: null, loading: false });
+        return 'EMAIL_NOT_VERIFIED';
       } else {
         set({ error: 'Login failed', loading: false });
       }

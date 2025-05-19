@@ -13,28 +13,51 @@ export default function SignInScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // Cleanup function
+  const cleanupErrors = () => {
+    setVisible(false);
+    setErrorMessage('');
+  };
+
+  // Reset state when component mounts
+  useEffect(() => {
+    cleanupErrors();
+    setEmail('');
+    setPassword('');
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
-      setVisible(false);
+      cleanupErrors();
       router.replace('BiometricAuth');
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (error === 'EMAIL_NOT_VERIFIED') {
+    if (error === 'Account is already verified') {
+      // If account is already verified, proceed with login
+      login(email, password);
+    } else if (error) {
+      setErrorMessage(error);
+      setVisible(true);
+    }
+  }, [error]);
+
+  const handleLogin = async () => {
+    cleanupErrors();
+    const result = await login(email, password);
+    if (result === 'EMAIL_NOT_VERIFIED') {
       setEmailVerified({ 
         email,
         password,
         verified: false
       });
       router.push('Verification');
-    } else if (error) {
-      setVisible(true);
     }
-  }, [error]);
-
+  };
 
   return (
     <View style={styles.externalContainer}>
@@ -44,7 +67,10 @@ export default function SignInScreen() {
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text) => {
+            cleanupErrors();
+            setEmail(text);
+          }}
           style={styles.input}
           mode="outlined"
         />
@@ -52,7 +78,10 @@ export default function SignInScreen() {
         <TextInput
           label="Contraseña"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            cleanupErrors();
+            setPassword(text);
+          }}
           secureTextEntry
           style={styles.input}
           mode="outlined"
@@ -61,19 +90,31 @@ export default function SignInScreen() {
         <SimpleButton
           label="Ingresar"
           accent mode="contained"
-          onPress={() => login(email, password)} />
+          onPress={handleLogin} />
 
         <SimpleButton
           label="Crear una cuenta"
           accent mode="contained"
-          onPress={() => router.push('SignUp')} />
+          onPress={() => {
+            cleanupErrors();
+            router.push('SignUp');
+          }} />
 
         <SimpleButton
           label="Olvidé mi contraseña"
           accent mode="contained"
-          onPress={() => router.push('ForgotPassword')} />
+          onPress={() => {
+            cleanupErrors();
+            router.push('ForgotPassword');
+          }} />
       </View>
-      <SimpleSnackbar mode="danger" text="Email o contraseña inválidos" closeLabel="OK" setVisible={setVisible} visible={visible} />
+      <SimpleSnackbar 
+        mode="danger" 
+        text={errorMessage} 
+        closeLabel="OK" 
+        setVisible={setVisible} 
+        visible={visible} 
+      />
     </View>
   );
 }
