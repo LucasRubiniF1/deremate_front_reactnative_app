@@ -1,0 +1,55 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { AuthorizedService } from '../api/apiClient';
+
+const PackageDetailScreen = () => {
+    const route = useRoute();
+    const { id } = route.params;
+    const [delivery, setDelivery] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDelivery = async () => {
+            try {
+                const res = await AuthorizedService.get(`/delivery/${id}`);
+                setDelivery(res.data);
+            } catch (err) {
+                Alert.alert('Error', 'No se pudo cargar el detalle del paquete.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchDelivery();
+    }, [id]);
+
+    if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+    if (!delivery) return <Text style={styles.error}>No se encontró el paquete</Text>;
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>Detalle del Paquete #{delivery.id}</Text>
+            <Text>Estado: {delivery.status}</Text>
+            <Text>Ubicación: {delivery.packageLocation}</Text>
+            <Text>Creado: {new Date(delivery.createdDate).toLocaleString()}</Text>
+            {delivery.products?.length > 0 && (
+                <>
+                    <Text style={styles.subtitle}>Productos:</Text>
+                    {delivery.products.map((p, idx) => (
+                        <Text key={idx}>• {p.name} - ${p.price}</Text>
+                    ))}
+                </>
+            )}
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: { flex: 1, padding: 16 },
+    title: { fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
+    subtitle: { marginTop: 12, fontWeight: '600' },
+    error: { flex: 1, textAlign: 'center', color: 'red', marginTop: 20 }
+});
+
+export default PackageDetailScreen;
