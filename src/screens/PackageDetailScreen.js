@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert, Button } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { AuthorizedService } from '../api/apiClient';
 
 const PackageDetailScreen = () => {
     const route = useRoute();
+    const navigation = useNavigation();
     const { id } = route.params;
     const [delivery, setDelivery] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -33,6 +34,7 @@ const PackageDetailScreen = () => {
             <Text>Estado: {delivery.status}</Text>
             <Text>Ubicación: {delivery.packageLocation}</Text>
             <Text>Creado: {new Date(delivery.createdDate).toLocaleString()}</Text>
+
             {delivery.products?.length > 0 && (
                 <>
                     <Text style={styles.subtitle}>Productos:</Text>
@@ -41,6 +43,11 @@ const PackageDetailScreen = () => {
                     ))}
                 </>
             )}
+
+            {/* ✅ Botón "Volver" adicional */}
+            <View style={{ marginTop: 20 }}>
+                <Button title="Volver" onPress={() => navigation.goBack()} />
+            </View>
         </View>
     );
 };
