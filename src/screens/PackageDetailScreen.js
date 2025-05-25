@@ -44,7 +44,7 @@ const PackageDetailScreen = () => {
                 </>
             )}
 
-            {/* ✅ Botón "Volver" adicional */}
+            {/* ✅ Botón visible al final */}
             <View style={{ marginTop: 20 }}>
                 <Button title="Volver" onPress={() => navigation.goBack()} />
             </View>
