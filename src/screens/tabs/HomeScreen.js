@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { AuthorizedService } from '../../api/apiClient';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 
