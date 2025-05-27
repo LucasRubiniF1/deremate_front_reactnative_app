@@ -63,7 +63,7 @@ export default function SignUpScreen() {
       const timeout = setTimeout(() => {
         useAuthStore.setState({ isUserCreated: null });
         router.replace('SignIn');
-      }, 2000);
+      }, 1500);
 
       return () => clearTimeout(timeout);
     }
