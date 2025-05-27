@@ -11,15 +11,12 @@ export function validateName(name, isName = true) {
 }
 
 export function validatePasswordStrength(password) {
-  const hasMinLength = password.length >= 8;
-  const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const hasMinLength = password.length >= 6;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
 
-  if (!hasMinLength) {
-    return 'La contraseña debe tener al menos 8 caracteres.';
-  }
-
-  if (!hasSymbol) {
-    return 'La contraseña debe contener al menos un símbolo.';
+  if (!hasMinLength || !hasUppercase || !hasNumber) {
+    return 'La contraseña debe tener al menos 6 caracteres, una mayúscula y un número';
   }
 
   return null;
