@@ -95,11 +95,58 @@ export default function SettingsScreen() {
   );
 }
 
-
-
-
-
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  avatar: {
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  subheader: {
+    fontSize: 14,
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+  label: {
+    fontSize: 16,
+  },
+  divider: {
+    marginVertical: 12,
+    backgroundColor: "#333",
+  },
+  input: {
+    marginVertical: 10,
+  },
+  button: {
+    marginTop: 10,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  checkboxLabel: {
+    fontSize: 15,
+  },
+  footerText: {
+    marginTop: 20,
+    fontSize: 12,
+    textAlign: "center",
+  },
+});
 
 
 
