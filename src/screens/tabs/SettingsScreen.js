@@ -82,9 +82,6 @@ export default function SettingsScreen() {
             Cambiar contraseña
           </Button>
 
-          <Button mode="outlined" style={styles.button} textColor="red">
-            Cerrar sesión
-          </Button>
         </List.Section>
 
         <Divider style={styles.divider} />
