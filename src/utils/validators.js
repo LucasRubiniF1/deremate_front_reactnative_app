@@ -11,9 +11,68 @@ export function validateName(name, isName = true) {
 }
 
 export function validatePasswordStrength(password) {
-  return password.length >= 6 ? null : 'La contraseña debe tener al menos 6 caracteres.';
+  const hasMinLength = password.length >= 8;
+  const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+  if (!hasMinLength) {
+    return 'La contraseña debe tener al menos 8 caracteres.';
+  }
+
+  if (!hasSymbol) {
+    return 'La contraseña debe contener al menos un símbolo.';
+  }
+
+  return null;
 }
 
 export function validatePasswordsMatch(password, confirmPassword) {
   return password === confirmPassword ? null : 'Las contraseñas no coinciden.';
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
