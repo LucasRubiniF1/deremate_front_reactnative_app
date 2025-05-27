@@ -48,9 +48,16 @@ export default function SignInScreen() {
 
   const handleLogin = async () => {
     cleanupErrors();
+
+    if (!email.trim() || !password.trim()) {
+      setErrorMessage("Debes ingresar tu correo y contraseña.");
+      setVisible(true);
+      return;
+    }
+
     const result = await login(email, password);
     if (result === 'EMAIL_NOT_VERIFIED') {
-      setEmailVerified({ 
+      setEmailVerified({
         email,
         password,
         verified: false
@@ -108,12 +115,12 @@ export default function SignInScreen() {
             router.push('ForgotPassword');
           }} />
       </View>
-      <SimpleSnackbar 
-        mode="danger" 
-        text={errorMessage} 
-        closeLabel="OK" 
-        setVisible={setVisible} 
-        visible={visible} 
+      <SimpleSnackbar
+        mode="danger"
+        text={errorMessage}
+        closeLabel="OK"
+        setVisible={setVisible}
+        visible={visible}
       />
     </View>
   );
