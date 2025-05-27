@@ -141,22 +141,99 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-  externalContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
+  scroll: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
   },
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'white',
+    marginHorizontal: 24,
+    marginVertical: 64,
+    paddingVertical: 32,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 24,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
   },
   title: {
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 28,
+    color: "#333",
     fontWeight: 'bold',
   },
   input: {
     marginBottom: 16,
+    backgroundColor: '#fff',
+  },
+  button: {
+    marginTop: 16,
+    borderRadius: 8,
+  },
+  secondaryButton: {
+    marginTop: 8,
+    borderRadius: 8,
   },
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
