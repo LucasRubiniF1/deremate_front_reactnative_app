@@ -63,7 +63,7 @@ export default function SignUpScreen() {
       const timeout = setTimeout(() => {
         useAuthStore.setState({ isUserCreated: null });
         router.replace('SignIn');
-      }, 1500);
+      }, 2000);
 
       return () => clearTimeout(timeout);
     }
@@ -141,61 +141,25 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
+  externalContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
   container: {
-    marginHorizontal: 24,
-    marginVertical: 64,
-    paddingVertical: 32,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingHorizontal: 24,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: 'white',
   },
   title: {
     textAlign: 'center',
-    marginBottom: 28,
-    color: "#333",
+    marginBottom: 24,
     fontWeight: 'bold',
   },
   input: {
     marginBottom: 16,
-    backgroundColor: '#fff',
-  },
-  button: {
-    marginTop: 16,
-    borderRadius: 8,
-  },
-  secondaryButton: {
-    marginTop: 8,
-    borderRadius: 8,
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
