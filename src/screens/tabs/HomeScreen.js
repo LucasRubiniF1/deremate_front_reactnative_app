@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { AuthorizedService } from '../../api/apiClient';
-import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 
 const HomeScreen = () => {
@@ -14,7 +13,7 @@ const HomeScreen = () => {
 
   const fetchPackages = async () => {
     try {
-      const res = await AuthorizedService.get('/delivery/warehouse');
+      const res = await AuthorizedService.get('/v1/delivery/warehouse');
       setPackages(res.data);
       setFiltered(res.data);
     } catch (err) {
@@ -49,11 +48,6 @@ const HomeScreen = () => {
           <TextInput style={styles.input} placeholder="Filtrar por sector" value={sector} onChangeText={setSector} />
           <TextInput style={styles.input} placeholder="Filtrar por estante" value={shelf} onChangeText={setShelf} />
 
-          <FlatList
-            data={filtered}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <PackageCard pkg={item} />}
-          />
         </View>
       )}
     </AuthorizedRoute>
