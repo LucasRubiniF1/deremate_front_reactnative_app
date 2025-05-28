@@ -13,7 +13,7 @@ const PackageDetailScreen = () => {
     useEffect(() => {
         const fetchDelivery = async () => {
             try {
-                const res = await AuthorizedService.get(`/delivery/${id}`);
+                const res = await AuthorizedService.get(`/v1/delivery/${id}`);
                 setDelivery(res.data);
             } catch (err) {
                 Alert.alert('Error', 'No se pudo cargar el detalle del paquete.');

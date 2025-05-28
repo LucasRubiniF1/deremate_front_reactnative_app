@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import { AuthorizedService } from '../../api/apiClient';
+import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 
 const HomeScreen = () => {
@@ -48,6 +49,11 @@ const HomeScreen = () => {
           <TextInput style={styles.input} placeholder="Filtrar por sector" value={sector} onChangeText={setSector} />
           <TextInput style={styles.input} placeholder="Filtrar por estante" value={shelf} onChangeText={setShelf} />
 
+          <FlatList
+            data={filtered}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => <PackageCard pkg={item} />}
+          />
         </View>
       )}
     </AuthorizedRoute>
