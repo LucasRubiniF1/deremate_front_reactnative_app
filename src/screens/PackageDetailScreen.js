@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Alert, Button } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { AuthorizedService } from '../api/apiClient';
+import { getDeliveryById } from '../service/delivery.service';
 
 const PackageDetailScreen = () => {
     const route = useRoute();
@@ -13,8 +13,8 @@ const PackageDetailScreen = () => {
     useEffect(() => {
         const fetchDelivery = async () => {
             try {
-                const res = await AuthorizedService.get(`/v1/delivery/${id}`);
-                setDelivery(res.data);
+                const data = await getDeliveryById(id);
+                setDelivery(data);
             } catch (err) {
                 Alert.alert('Error', 'No se pudo cargar el detalle del paquete.');
                 console.error(err);
@@ -44,7 +44,6 @@ const PackageDetailScreen = () => {
                 </>
             )}
 
-            {/* ✅ Botón visible al final */}
             <View style={{ marginTop: 20 }}>
                 <Button title="Volver" onPress={() => navigation.goBack()} />
             </View>
