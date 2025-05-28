@@ -28,7 +28,8 @@ const useAuthStore = create((set, get) => ({
     } catch (error) {
       console.error('Login failed', error);
 
-      if (error?.response?.status === 401) {
+      console.warn(error?.response.data)
+      if (error?.response?.data?.message === 'The email has not been verified.') {
         set({ error: null, loading: false });
         return 'EMAIL_NOT_VERIFIED';
       } else {
@@ -66,18 +67,18 @@ const useAuthStore = create((set, get) => ({
 
     } catch (error) {
       console.error('[AuthStore] Email verification failed:', error);
-      
+
       let errorMessage = 'INCORRECT_CODE';
       if (error?.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error?.message) {
         errorMessage = error.message;
       }
-      
-      set({ 
-        error: errorMessage, 
-        loading: false, 
-        isEmailVerified: { email, verified: false } 
+
+      set({
+        error: errorMessage,
+        loading: false,
+        isEmailVerified: { email, verified: false }
       });
     }
   },
@@ -91,21 +92,21 @@ const useAuthStore = create((set, get) => ({
       console.log('[AuthStore] Resend code successful');
 
       set({ loading: false, error: false });
-      
+
     } catch (error) {
       console.error('[AuthStore] Resend code failed:', error);
-      
+
       let errorMessage = 'No fue posible reenviar el código';
       if (error?.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error?.message) {
         errorMessage = error.message;
       }
-      
-      set({ 
-        error: errorMessage, 
-        loading: false, 
-        isEmailVerified: { email, verified: false } 
+
+      set({
+        error: errorMessage,
+        loading: false,
+        isEmailVerified: { email, verified: false }
       });
     }
   },
@@ -118,7 +119,7 @@ const useAuthStore = create((set, get) => ({
       console.log('[AuthStore] Calling forgotPassword service...');
       const response = await forgotPassword(email);
       console.log('[AuthStore] forgotPassword response:', response);
-      
+
       set({ loading: false, error: false });
       console.log('[AuthStore] Password reset request successful');
       return true;
@@ -129,7 +130,7 @@ const useAuthStore = create((set, get) => ({
         response: error?.response?.data,
         status: error?.response?.status
       });
-      
+
       const errorMessage = error?.response?.data?.message || 'Error al solicitar el cambio de contraseña';
       set({ error: errorMessage, loading: false });
       return false;
@@ -144,7 +145,7 @@ const useAuthStore = create((set, get) => ({
       console.log('[AuthStore] Calling resetPassword service...');
       const response = await resetPassword({ email, token, password });
       console.log('[AuthStore] resetPassword response:', response);
-      
+
       set({ loading: false, error: false });
       console.log('[AuthStore] Password reset successful');
       return true;
@@ -155,7 +156,7 @@ const useAuthStore = create((set, get) => ({
         response: error?.response?.data,
         status: error?.response?.status
       });
-      
+
       const errorMessage = error?.response?.data?.message || 'Error al restablecer la contraseña';
       set({ error: errorMessage, loading: false });
       return false;
