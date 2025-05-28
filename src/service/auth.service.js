@@ -1,6 +1,6 @@
 import { UnauthorizedService } from "../api/apiClient";
 
-const URL = "/auth";
+const URL = "/v1/auth";
 
 export const login = async (data) => {
   const response = await UnauthorizedService.post(`${URL}/login`, data)
