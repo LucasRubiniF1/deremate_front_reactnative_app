@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Card, Avatar } from 'react-native-paper';
 
 const PackageCard = ({ pkg }) => {
     const navigation = useNavigation();
@@ -10,32 +11,53 @@ const PackageCard = ({ pkg }) => {
     };
 
     return (
-        <TouchableOpacity onPress={handlePress} style={styles.touchable}>
-            <View style={styles.card}>
-                <Text style={styles.title}>Paquete #{pkg.id}</Text>
-                <Text>Ubicación: {pkg.packageLocation}</Text>
-                <Text>Estado: {pkg.status}</Text>
-                <Text>Creado: {new Date(pkg.createdDate).toLocaleDateString()}</Text>
-            </View>
-        </TouchableOpacity>
+        <Pressable onPress={handlePress} style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}>
+            <Card style={styles.card} mode="contained">
+                <View style={styles.row}>
+                    <Avatar.Icon icon="archive-outline" size={36} style={styles.icon} />
+                    <View style={styles.details}>
+                        <Text style={styles.title}>Código: {pkg.id}</Text>
+                        <Text style={styles.text}>Ubicación en Depósito: {pkg.packageLocation}</Text>
+                    </View>
+                </View>
+            </Card>
+        </Pressable>
     );
 };
 
 const styles = StyleSheet.create({
-    touchable: {
-        borderRadius: 8
+    pressable: {
+        marginBottom: 12,
+        borderRadius: 12
+    },
+    pressed: {
+        opacity: 0.85
     },
     card: {
+        borderRadius: 12,
+        elevation: 2,
         backgroundColor: '#fff',
-        padding: 12,
-        marginBottom: 10,
-        borderRadius: 8,
-        elevation: 2
+        padding: 10
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    icon: {
+        backgroundColor: '#e3e3e3',
+        marginRight: 12
+    },
+    details: {
+        flex: 1
     },
     title: {
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 15,
         marginBottom: 4
+    },
+    text: {
+        fontSize: 14,
+        color: '#444'
     }
 });
 

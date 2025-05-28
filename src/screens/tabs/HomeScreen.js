@@ -14,7 +14,7 @@ const HomeScreen = () => {
 
   const fetchPackages = async () => {
     try {
-      const res = await AuthorizedService.get('/v1/delivery/warehouse');
+      const res = await AuthorizedService.get('/delivery/warehouse');
       setPackages(res.data);
       setFiltered(res.data);
     } catch (err) {
@@ -45,9 +45,12 @@ const HomeScreen = () => {
         <ActivityIndicator size="large" style={{ flex: 1 }} />
       ) : (
         <View style={styles.container}>
-          <TextInput style={styles.input} placeholder="Filtrar por código" value={code} onChangeText={setCode} />
-          <TextInput style={styles.input} placeholder="Filtrar por sector" value={sector} onChangeText={setSector} />
-          <TextInput style={styles.input} placeholder="Filtrar por estante" value={shelf} onChangeText={setShelf} />
+          <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
+          <TextInput style={styles.input} placeholder="Buscar por código de paquete" value={code} onChangeText={setCode} />
+          <TextInput style={styles.input} placeholder="Seleccionar sector" value={sector} onChangeText={setSector} />
+          <TextInput style={styles.input} placeholder="Seleccionar estante" value={shelf} onChangeText={setShelf} />
+
+          <Text style={styles.subtitle}>Paquetes en Depósito</Text>
 
           <FlatList
             data={filtered}
@@ -62,7 +65,27 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  input: { borderWidth: 1, borderColor: '#ccc', padding: 8, marginBottom: 8, borderRadius: 5 }
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingVertical: 8,
+    marginBottom: 12,
+    fontSize: 16
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+    color: '#3F51B5'
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 12,
+    textAlign: 'center',
+    color: '#3F51B5'
+  }
 });
 
 export default HomeScreen;
