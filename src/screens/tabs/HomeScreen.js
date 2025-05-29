@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { useWarehousePackages } from '../../hooks/useWarehousePackages';
 import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
+import PackageDetailDialog from '../../components/PackageDetailDialog';
 
 const HomeScreen = () => {
   const {
@@ -12,6 +13,8 @@ const HomeScreen = () => {
     sector, setSector,
     shelf, setShelf
   } = useWarehousePackages();
+
+  const [selectedPackage, setSelectedPackage] = useState(null);
 
   return (
     <AuthorizedRoute>
@@ -44,7 +47,15 @@ const HomeScreen = () => {
           <FlatList
             data={packages}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <PackageCard pkg={item} />}
+            renderItem={({ item }) => (
+              <PackageCard pkg={item} onPress={() => setSelectedPackage(item)} />
+            )}
+          />
+
+          <PackageDetailDialog
+            visible={!!selectedPackage}
+            onDismiss={() => setSelectedPackage(null)}
+            pkg={selectedPackage}
           />
         </View>
       )}
