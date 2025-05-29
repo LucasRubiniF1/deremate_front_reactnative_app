@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Text, Button, Avatar } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import useAccentColors from "../../hooks/useAccentColors";
 import useAuthStore from "../../store/useAuthStore";
-import {useRouter} from "../../hooks/useRouter";
+import { useRouter } from "../../hooks/useRouter";
 import AuthorizedRoute from "../../components/AuthorizedRoute";
 
 export default function ProfileScreen() {
@@ -14,20 +15,24 @@ export default function ProfileScreen() {
   const handleLogout = async () => {
     await logout();
     router.replace('Auth');
-  }
+  };
 
   return (
     <AuthorizedRoute>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <Avatar.Text size={64} label={user?.firstname?.charAt(0) + user?.lastname?.charAt(0) || '?'} style={[styles.avatar, { backgroundColor: colors.primary }]} />
+      <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.content}>
+          <Avatar.Text
+            size={64}
+            label={user?.firstname?.charAt(0) + user?.lastname?.charAt(0) || '?'}
+            style={[styles.avatar, { backgroundColor: colors.primary }]}
+          />
           <Text variant="titleLarge" style={styles.name}>
-            { `${user?.firstname ?? 'Cerrando'} ${user?.lastname ?? 'sesión'}` || 'Nombre no disponible'}
+            {`${user?.firstname ?? 'Cerrando'} ${user?.lastname ?? 'sesión'}` || 'Nombre no disponible'}
           </Text>
           <Text variant="bodyMedium" style={styles.email}>
             {user?.email || 'Email no disponible'}
           </Text>
-        </View>
+        </SafeAreaView>
 
         <Button
           mode="contained"
@@ -37,7 +42,7 @@ export default function ProfileScreen() {
         >
           Cerrar sesión
         </Button>
-      </View>
+      </SafeAreaView>
     </AuthorizedRoute>
   );
 }

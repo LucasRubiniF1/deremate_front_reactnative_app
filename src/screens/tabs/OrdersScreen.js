@@ -3,6 +3,7 @@ import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
 import { Card, Text, ActivityIndicator, Divider } from 'react-native-paper';
 import AuthorizedRoute from "../../components/AuthorizedRoute";
 import { getDeliveriesByUserId } from '../../service/delivery.service';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const formatDate = (date) => {
   if (!date) return 'No disponible';
@@ -10,30 +11,18 @@ const formatDate = (date) => {
     'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
   ];
-  
   const d = new Date(date);
-  const day = d.getDate();
-  const month = months[d.getMonth()];
-  const year = d.getFullYear();
-  const hours = d.getHours().toString().padStart(2, '0');
-  const minutes = d.getMinutes().toString().padStart(2, '0');
-  
-  return `${day} de ${month} de ${year} a las ${hours}:${minutes}`;
+  return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()} a las ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 };
 
 const DeliveryCard = ({ delivery }) => {
   const getStatusColor = (status) => {
     switch (status) {
-      case 'PENDING':
-        return '#FFA500';
-      case 'IN_PROGRESS':
-        return '#007AFF';
-      case 'COMPLETED':
-        return '#34C759';
-      case 'CANCELLED':
-        return '#FF3B30';
-      default:
-        return '#8E8E93';
+      case 'PENDING': return '#FFA500';
+      case 'IN_PROGRESS': return '#007AFF';
+      case 'COMPLETED': return '#34C759';
+      case 'CANCELLED': return '#FF3B30';
+      default: return '#8E8E93';
     }
   };
 
@@ -46,26 +35,20 @@ const DeliveryCard = ({ delivery }) => {
             {delivery.status}
           </Text>
         </View>
-
         <Divider style={styles.divider} />
-
         <View style={styles.section}>
           <Text variant="titleSmall">Ubicación del Paquete</Text>
           <Text>{delivery.packageLocation}</Text>
         </View>
-
         <View style={styles.section}>
           <Text variant="titleSmall">Ruta</Text>
           <Text>Origen: {delivery.route.origin}</Text>
           <Text>Destino: {delivery.route.destination}</Text>
-          {delivery.route.completedAt && (
-            <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>
-          )}
+          {delivery.route.completedAt && <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>}
         </View>
-
         <View style={styles.section}>
           <Text variant="titleSmall">Productos</Text>
-          {delivery.products.map((product, index) => (
+          {delivery.products.map(product => (
             <View key={product.id} style={styles.productItem}>
               <Text style={styles.productName}>{product.name}</Text>
               <Text>{product.description}</Text>
@@ -73,16 +56,11 @@ const DeliveryCard = ({ delivery }) => {
             </View>
           ))}
         </View>
-
         <View style={styles.section}>
           <Text variant="titleSmall">Fechas</Text>
           <Text>Creado: {formatDate(delivery.createdDate)}</Text>
-          {delivery.deliveryStartDate && (
-            <Text>Inicio: {formatDate(delivery.deliveryStartDate)}</Text>
-          )}
-          {delivery.deliveryEndDate && (
-            <Text>Finalizado: {formatDate(delivery.deliveryEndDate)}</Text>
-          )}
+          {delivery.deliveryStartDate && <Text>Inicio: {formatDate(delivery.deliveryStartDate)}</Text>}
+          {delivery.deliveryEndDate && <Text>Finalizado: {formatDate(delivery.deliveryEndDate)}</Text>}
         </View>
       </Card.Content>
     </Card>
@@ -118,26 +96,23 @@ export default function OrdersScreen() {
   if (loading) {
     return (
       <AuthorizedRoute>
-        <View style={styles.loadingContainer}>
+        <SafeAreaView style={styles.loadingContainer}>
           <ActivityIndicator size="large" />
-        </View>
+        </SafeAreaView>
       </AuthorizedRoute>
     );
   }
 
   return (
     <AuthorizedRoute>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <FlatList
           data={deliveries}
           renderItem={({ item }) => <DeliveryCard delivery={item} />}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.listContent}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
@@ -145,7 +120,7 @@ export default function OrdersScreen() {
             </View>
           }
         />
-      </View>
+      </SafeAreaView>
     </AuthorizedRoute>
   );
 }
@@ -154,13 +129,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: 60,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 60,
   },
   listContent: {
     padding: 16,

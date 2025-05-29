@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useWarehousePackages } from '../../hooks/useWarehousePackages';
 import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
@@ -21,7 +22,7 @@ const HomeScreen = () => {
       {loading ? (
         <ActivityIndicator size="large" style={{ flex: 1 }} />
       ) : (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
           <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
           <TextInput
             style={styles.input}
@@ -57,7 +58,7 @@ const HomeScreen = () => {
             onDismiss={() => setSelectedPackage(null)}
             pkg={selectedPackage}
           />
-        </View>
+        </SafeAreaView>
       )}
     </AuthorizedRoute>
   );
