@@ -22,6 +22,7 @@ export const useWarehousePackages = () => {
                 setLoading(false);
             }
         };
+
         fetch();
     }, []);
 
@@ -32,6 +33,7 @@ export const useWarehousePackages = () => {
             const matchShelf = !shelf || pkg.packageLocation?.toLowerCase().includes(`estante ${shelf}`.toLowerCase());
             return matchCode && matchSector && matchShelf;
         });
+
         setFiltered(filteredList);
     }, [code, sector, shelf, packages]);
 
