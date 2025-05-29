@@ -14,7 +14,7 @@ const HomeScreen = () => {
 
   const fetchPackages = async () => {
     try {
-      const res = await AuthorizedService.get('/delivery/warehouse');
+      const res = await AuthorizedService.get('/v1/delivery/warehouse');
       setPackages(res.data);
       setFiltered(res.data);
     } catch (err) {
