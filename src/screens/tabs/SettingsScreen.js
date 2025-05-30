@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Text, Switch, Divider, List, Avatar, Button, TextInput, Checkbox } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Text, Switch, Divider, List, Avatar, Button, TextInput, Checkbox
+} from "react-native-paper";
 import AuthorizedRoute from "../../components/AuthorizedRoute";
 
 export default function SettingsScreen() {
@@ -12,82 +15,83 @@ export default function SettingsScreen() {
 
   return (
     <AuthorizedRoute>
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Avatar.Icon size={64} icon="cog-outline" style={styles.avatar} />
-          <Text style={styles.title}>Ajustes Generales</Text>
-        </View>
-
-        <Divider style={styles.divider} />
-
-        <List.Section>
-          <List.Subheader style={styles.subheader}>Preferencias</List.Subheader>
-
-          <View style={styles.item}>
-            <Text style={styles.label}>Modo Oscuro</Text>
-            <Switch value={isDarkMode} onValueChange={setDarkMode} />
-          </View>
-
-          <View style={styles.item}>
-            <Text style={styles.label}>Notificaciones</Text>
-            <Switch value={notifications} onValueChange={setNotifications} />
-          </View>
-
-          <View style={styles.item}>
-            <Text style={styles.label}>Ubicación</Text>
-            <Switch value={locationEnabled} onValueChange={setLocationEnabled} />
+      <SafeAreaView style={styles.container}>
+        <ScrollView>
+          <View style={styles.header}>
+            <Avatar.Icon size={64} icon="cog-outline" style={styles.avatar} />
+            <Text style={styles.title}>Ajustes Generales</Text>
           </View>
 
           <Divider style={styles.divider} />
 
-          <List.Item
-            title="Privacidad"
-            description="Configuración de permisos y accesos"
-            left={(props) => <List.Icon {...props} icon="lock" />}
-          />
-          <List.Item
-            title="Idioma"
-            description="Español"
-            left={(props) => <List.Icon {...props} icon="translate" />}
-          />
-          <List.Item
-            title="Tema"
-            description="Personalización de la interfaz"
-            left={(props) => <List.Icon {...props} icon="palette" />}
-          />
-        </List.Section>
+          <List.Section>
+            <List.Subheader style={styles.subheader}>Preferencias</List.Subheader>
 
-        <Divider style={styles.divider} />
+            <View style={styles.item}>
+              <Text style={styles.label}>Modo Oscuro</Text>
+              <Switch value={isDarkMode} onValueChange={setDarkMode} />
+            </View>
 
-        <List.Section>
-          <List.Subheader style={styles.subheader}>Cuenta</List.Subheader>
+            <View style={styles.item}>
+              <Text style={styles.label}>Notificaciones</Text>
+              <Switch value={notifications} onValueChange={setNotifications} />
+            </View>
 
-          <TextInput
-            label="Correo electrónico"
-            mode="outlined"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-          />
+            <View style={styles.item}>
+              <Text style={styles.label}>Ubicación</Text>
+              <Switch value={locationEnabled} onValueChange={setLocationEnabled} />
+            </View>
 
-          <View style={styles.checkboxContainer}>
-            <Checkbox
-              status={newsletter ? "checked" : "unchecked"}
-              onPress={() => setNewsletter(!newsletter)}
+            <Divider style={styles.divider} />
+
+            <List.Item
+              title="Privacidad"
+              description="Configuración de permisos y accesos"
+              left={(props) => <List.Icon {...props} icon="lock" />}
             />
-            <Text style={styles.checkboxLabel}>Suscribirme al newsletter</Text>
-          </View>
+            <List.Item
+              title="Idioma"
+              description="Español"
+              left={(props) => <List.Icon {...props} icon="translate" />}
+            />
+            <List.Item
+              title="Tema"
+              description="Personalización de la interfaz"
+              left={(props) => <List.Icon {...props} icon="palette" />}
+            />
+          </List.Section>
 
-          <Button mode="contained-tonal" style={styles.button}>
-            Cambiar contraseña
-          </Button>
+          <Divider style={styles.divider} />
 
-        </List.Section>
+          <List.Section>
+            <List.Subheader style={styles.subheader}>Cuenta</List.Subheader>
 
-        <Divider style={styles.divider} />
+            <TextInput
+              label="Correo electrónico"
+              mode="outlined"
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+            />
 
-        <Text style={styles.footerText}>Versión 1.4.2 - Última actualización 27/05/2025</Text>
-      </ScrollView>
+            <View style={styles.checkboxContainer}>
+              <Checkbox
+                status={newsletter ? "checked" : "unchecked"}
+                onPress={() => setNewsletter(!newsletter)}
+              />
+              <Text style={styles.checkboxLabel}>Suscribirme al newsletter</Text>
+            </View>
+
+            <Button mode="contained" style={styles.button}>
+              Cambiar contraseña
+            </Button>
+          </List.Section>
+
+          <Divider style={styles.divider} />
+
+          <Text style={styles.footerText}>Versión 1.4.2 - Última actualización 27/05/2025</Text>
+        </ScrollView>
+      </SafeAreaView>
     </AuthorizedRoute>
   );
 }
@@ -95,11 +99,12 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
   },
   header: {
     alignItems: "center",
-    marginBottom: 20,
+    marginVertical: 20,
   },
   avatar: {
     marginBottom: 10,
@@ -122,13 +127,14 @@ const styles = StyleSheet.create({
   },
   divider: {
     marginVertical: 12,
-    backgroundColor: "#333",
+    backgroundColor: "#ddd",
   },
   input: {
     marginVertical: 10,
   },
   button: {
     marginTop: 10,
+    borderRadius: 8,
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -139,131 +145,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   footerText: {
-    marginTop: 20,
+    marginVertical: 24,
     fontSize: 12,
     textAlign: "center",
+    color: '#888',
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -35,16 +35,18 @@ const PackageDetailScreen = () => {
             <Text>Ubicación: {delivery.packageLocation}</Text>
             <Text>Creado: {new Date(delivery.createdDate).toLocaleString()}</Text>
 
-            {delivery.products?.length > 0 && (
-                <>
-                    <Text style={styles.subtitle}>Productos:</Text>
-                    {delivery.products.map((p, idx) => (
-                        <Text key={idx}>• {p.name} - ${p.price}</Text>
-                    ))}
-                </>
-            )}
+            {/* Información sensible removida */}
+            {/* 
+      {delivery.products?.length > 0 && (
+        <>
+          <Text style={styles.subtitle}>Productos:</Text>
+          {delivery.products.map((p, idx) => (
+            <Text key={idx}>• {p.name} - ${p.price}</Text>
+          ))}
+        </>
+      )} 
+      */}
 
-            {/* ✅ Botón visible al final */}
             <View style={{ marginTop: 20 }}>
                 <Button title="Volver" onPress={() => navigation.goBack()} />
             </View>
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
     container: { flex: 1, padding: 16 },
     title: { fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
     subtitle: { marginTop: 12, fontWeight: '600' },
-    error: { flex: 1, textAlign: 'center', color: 'red', marginTop: 20 }
+    error: { flex: 1, textAlign: 'center', color: 'red', marginTop: 20 },
 });
 
 export default PackageDetailScreen;
