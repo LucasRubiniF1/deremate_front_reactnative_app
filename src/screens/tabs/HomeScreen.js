@@ -19,47 +19,50 @@ const HomeScreen = () => {
 
   return (
     <AuthorizedRoute>
-      {loading ? (
-        <ActivityIndicator size="large" style={{ flex: 1 }} />
-      ) : (
-        <SafeAreaView style={styles.container}>
-          <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Buscar por código de paquete"
-            value={code}
-            onChangeText={setCode}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Seleccionar sector"
-            value={sector}
-            onChangeText={setSector}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Seleccionar estante"
-            value={shelf}
-            onChangeText={setShelf}
-          />
+      <SafeAreaView style={styles.container}>
+        {loading ? (
+          <ActivityIndicator size="large" style={{ flex: 1 }} />
+        ) : (
+          <View style={{ flex: 1 }}>
+            <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Buscar por código de paquete"
+              value={code}
+              onChangeText={setCode}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Seleccionar sector"
+              value={sector}
+              onChangeText={setSector}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Seleccionar estante"
+              value={shelf}
+              onChangeText={setShelf}
+            />
 
-          <Text style={styles.subtitle}>Paquetes en Depósito</Text>
+            <Text style={styles.subtitle}>Paquetes en Depósito</Text>
 
-          <FlatList
-            data={packages}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <PackageCard pkg={item} onPress={() => setSelectedPackage(item)} />
-            )}
-          />
+            <FlatList
+              data={packages}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <PackageCard pkg={item} onPress={() => setSelectedPackage(item)} />
+              )}
+              contentContainerStyle={{ paddingBottom: 100 }}
+            />
 
-          <PackageDetailDialog
-            visible={!!selectedPackage}
-            onDismiss={() => setSelectedPackage(null)}
-            pkg={selectedPackage}
-          />
-        </SafeAreaView>
-      )}
+            <PackageDetailDialog
+              visible={!!selectedPackage}
+              onDismiss={() => setSelectedPackage(null)}
+              pkg={selectedPackage}
+            />
+          </View>
+        )}
+      </SafeAreaView>
     </AuthorizedRoute>
   );
 };

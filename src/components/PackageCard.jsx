@@ -1,23 +1,28 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Card, Avatar } from 'react-native-paper';
+import { Card, Avatar, Chip } from 'react-native-paper';
 
-const PackageCard = ({ pkg }) => {
-    const navigation = useNavigation();
+const getStatusColor = (status) => {
+    switch (status) {
+        case 'NOT_DELIVERED': return '#FFD700'; // Amarillo
+        case 'REJECTED': return '#FF3B30';      // Rojo
+        case 'DELIVERED': return '#34C759';     // Verde
+        default: return '#999';                 // Gris
+    }
+};
 
-    const handlePress = () => {
-        navigation.navigate('PackageDetail', { id: pkg.id });
-    };
-
+const PackageCard = ({ pkg, onPress }) => {
     return (
-        <Pressable onPress={handlePress} style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}>
+        <Pressable onPress={() => onPress(pkg)} style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}>
             <Card style={styles.card} mode="contained">
                 <View style={styles.row}>
                     <Avatar.Icon icon="archive-outline" size={36} style={styles.icon} />
                     <View style={styles.details}>
-                        <Text style={styles.title}>Código: {pkg.id}</Text>
+                        <Text style={styles.title}>Código: <Text style={styles.bold}>{pkg.id}</Text></Text>
                         <Text style={styles.text}>Ubicación en Depósito: {pkg.packageLocation}</Text>
+                        <Chip style={[styles.chip, { backgroundColor: getStatusColor(pkg.status) }]} textStyle={styles.chipText}>
+                            {pkg.status}
+                        </Chip>
                     </View>
                 </View>
             </Card>
@@ -51,13 +56,23 @@ const styles = StyleSheet.create({
         flex: 1
     },
     title: {
-        fontWeight: 'bold',
         fontSize: 15,
         marginBottom: 4
+    },
+    bold: {
+        fontWeight: 'bold'
     },
     text: {
         fontSize: 14,
         color: '#444'
+    },
+    chip: {
+        alignSelf: 'flex-start',
+        marginTop: 6,
+    },
+    chipText: {
+        fontWeight: 'bold',
+        color: '#000'
     }
 });
 
