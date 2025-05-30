@@ -2,37 +2,43 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Dialog, Portal, Text, Button, Chip } from 'react-native-paper';
 
-const getStatusColor = (status) => {
+const getStatusStyle = (status) => {
     switch (status) {
-        case 'NOT_DELIVERED': return '#FFD700'; // Amarillo
-        case 'REJECTED': return '#FF3B30';      // Rojo
-        case 'DELIVERED': return '#34C759';     // Verde
-        default: return '#999';                 // Gris por defecto
+        case 'NOT_DELIVERED': return { backgroundColor: '#FFD700', color: '#000' };
+        case 'REJECTED': return { backgroundColor: '#FF3B30', color: '#fff' };
+        case 'DELIVERED': return { backgroundColor: '#34C759', color: '#fff' };
+        default: return { backgroundColor: '#CCC', color: '#000' };
     }
 };
 
 const PackageDetailDialog = ({ visible, onDismiss, pkg }) => {
     if (!pkg) return null;
 
+    const statusStyle = getStatusStyle(pkg.status);
+
     return (
         <Portal>
             <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
-                <Dialog.Title style={styles.title}>
+                <Dialog.Title>
                     <Text style={styles.bold}>Detalle del Paquete #{pkg.id}</Text>
                 </Dialog.Title>
                 <Dialog.Content>
                     <Chip icon="archive" style={styles.chip}>Código: {pkg.id}</Chip>
 
-                    <Text style={styles.label}>
-                        Estado: <Text style={[styles.value, { color: getStatusColor(pkg.status) }]}>{pkg.status}</Text>
-                    </Text>
+                    <View style={[styles.statusContainer, { backgroundColor: statusStyle.backgroundColor }]}>
+                        <Text style={[styles.statusText, { color: statusStyle.color }]}>
+                            {pkg.status}
+                        </Text>
+                    </View>
 
                     <Text style={styles.label}>
                         Ubicación: <Text style={styles.value}>{pkg.packageLocation}</Text>
                     </Text>
 
                     <Text style={styles.label}>
-                        Creado: <Text style={styles.value}>{new Date(pkg.createdDate).toLocaleString()}</Text>
+                        Creado: <Text style={styles.value}>
+                            {new Date(pkg.createdDate).toLocaleString()}
+                        </Text>
                     </Text>
                 </Dialog.Content>
                 <Dialog.Actions>
@@ -47,12 +53,9 @@ const styles = StyleSheet.create({
     dialog: {
         borderRadius: 12,
     },
-    title: {
-        fontWeight: 'bold',
-    },
     bold: {
         fontWeight: 'bold',
-        fontSize: 18
+        fontSize: 18,
     },
     chip: {
         alignSelf: 'flex-start',
@@ -61,11 +64,22 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 15,
         fontWeight: '600',
-        marginTop: 4,
+        marginTop: 6,
     },
     value: {
         fontWeight: '400',
         color: '#333',
+    },
+    statusContainer: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 6,
+        marginBottom: 10,
+    },
+    statusText: {
+        fontWeight: 'bold',
+        fontSize: 14,
     }
 });
 
