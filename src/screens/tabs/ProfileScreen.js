@@ -21,13 +21,9 @@ export default function ProfileScreen() {
   const initials = `${user?.firstname?.[0] ?? ''}${user?.lastname?.[0] ?? ''}`.toUpperCase();
   const fullName = `${user?.firstname ?? ''} ${user?.lastname ?? ''}`.trim();
   const email = user?.email ?? 'Email no disponible';
-  const createdDate = user?.createdAt
-    ? new Date(user.createdAt).toLocaleDateString()
-    : 'Fecha no disponible';
-
-  // Datos falsos para efecto visual (pueden venir del back si los agregás)
-  const deliveriesCount = 37;
-  const rating = 4;
+  const createdDate = 'Fecha no disponible'; // mock
+  const deliveriesCount = 37; // dato falso
+  const rating = 4; // de 5, dato falso
 
   const renderStars = () => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -49,8 +45,8 @@ export default function ProfileScreen() {
             label={initials || '?'}
             style={[styles.avatar, { backgroundColor: colors.primary }]}
           />
-          <Text variant="titleLarge" style={styles.name}>{fullName}</Text>
-          <Text variant="bodyMedium" style={styles.email}>{email}</Text>
+          <Text style={styles.name}>{fullName || 'Nombre no disponible'}</Text>
+          <Text style={styles.email}>{email}</Text>
 
           <Divider style={styles.divider} />
 
