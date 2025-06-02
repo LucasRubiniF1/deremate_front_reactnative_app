@@ -18,6 +18,18 @@ const HomeScreen = () => {
 
   const [selectedPackage, setSelectedPackage] = useState(null);
 
+  const handleCodeChange = (text) => {
+    if (/^\d*$/.test(text)) setCode(text);
+  };
+
+  const handleSectorChange = (text) => {
+    if (/^[\w\s]*$/.test(text)) setSector(text);
+  };
+
+  const handleShelfChange = (text) => {
+    if (/^\d*$/.test(text)) setShelf(text);
+  };
+
   const renderFiltersSummary = () => {
     if (!code && !sector && !shelf) return null;
 
@@ -40,7 +52,6 @@ const HomeScreen = () => {
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
 
-            {/* Chips visuales arriba */}
             <View style={styles.tagsContainer}>
               <View style={styles.tag}>
                 <Text style={styles.tagText}>🏛️ Sector: {sector || 'Todos'}</Text>
@@ -54,21 +65,21 @@ const HomeScreen = () => {
               mode="outlined"
               label="Buscar por código de paquete"
               value={code}
-              onChangeText={setCode}
+              onChangeText={handleCodeChange}
               style={styles.input}
             />
             <TextInput
               mode="outlined"
               label="Seleccionar sector"
               value={sector}
-              onChangeText={setSector}
+              onChangeText={handleSectorChange}
               style={styles.input}
             />
             <TextInput
               mode="outlined"
               label="Seleccionar estante"
               value={shelf}
-              onChangeText={setShelf}
+              onChangeText={handleShelfChange}
               style={styles.input}
             />
 
