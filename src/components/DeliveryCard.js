@@ -4,30 +4,23 @@ import { Card, Divider, Text } from 'react-native-paper';
 
 const formatDate = (date) => {
     if (!date) return 'No disponible';
-    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const months = [
+        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
     const d = new Date(date);
     return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()} a las ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 };
 
 const DeliveryCard = ({ delivery }) => {
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'PENDING': return '#FFA500';
-            case 'IN_PROGRESS': return '#007AFF';
-            case 'COMPLETED': return '#34C759';
-            case 'CANCELLED': return '#FF3B30';
-            default: return '#8E8E93';
-        }
-    };
-
     return (
         <Card style={styles.card}>
             <Card.Content>
                 <View style={styles.header}>
                     <Text variant="titleMedium">Entrega #{delivery.id}</Text>
-                    <Text style={[styles.status, { color: getStatusColor(delivery.status) }]}>
-                        {delivery.status}
-                    </Text>
+                    <View style={styles.statusContainer}>
+                        <Text style={styles.statusText}>{delivery.status}</Text>
+                    </View>
                 </View>
 
                 <Divider style={styles.divider} />
@@ -41,7 +34,9 @@ const DeliveryCard = ({ delivery }) => {
                     <Text variant="titleSmall">Ruta</Text>
                     <Text>Origen: {delivery.route.origin}</Text>
                     <Text>Destino: {delivery.route.destination}</Text>
-                    {delivery.route.completedAt && <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>}
+                    {delivery.route.completedAt && (
+                        <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>
+                    )}
                 </View>
 
                 <View style={styles.section}>
@@ -59,14 +54,25 @@ const styles = StyleSheet.create({
     card: {
         marginBottom: 16,
         elevation: 2,
+        borderRadius: 12,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: 8,
     },
-    status: {
+    statusContainer: {
+        backgroundColor: '#3F51B5',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 6,
+    },
+    statusText: {
+        color: 'white',
         fontWeight: 'bold',
+        fontSize: 12,
+        textTransform: 'uppercase',
     },
     divider: {
         marginVertical: 8,

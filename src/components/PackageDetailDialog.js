@@ -2,19 +2,15 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Dialog, Portal, Text, Button, Chip } from 'react-native-paper';
 
-const getStatusStyle = (status) => {
-    switch (status) {
-        case 'NOT_DELIVERED': return { backgroundColor: '#FFD700', color: '#000' };
-        case 'REJECTED': return { backgroundColor: '#FF3B30', color: '#fff' };
-        case 'DELIVERED': return { backgroundColor: '#34C759', color: '#fff' };
-        default: return { backgroundColor: '#CCC', color: '#000' };
-    }
-};
+const getStatusStyle = () => ({
+    backgroundColor: '#3F51B5',
+    color: '#fff'
+});
 
 const PackageDetailDialog = ({ visible, onDismiss, pkg }) => {
     if (!pkg) return null;
 
-    const statusStyle = getStatusStyle(pkg.status);
+    const statusStyle = getStatusStyle();
 
     return (
         <Portal>

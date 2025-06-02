@@ -2,15 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Card, Avatar, Chip } from 'react-native-paper';
 
-const getStatusColor = (status) => {
-    switch (status) {
-        case 'NOT_DELIVERED': return '#FFD700'; // Amarillo
-        case 'REJECTED': return '#FF3B30';      // Rojo
-        case 'DELIVERED': return '#34C759';     // Verde
-        default: return '#999';                 // Gris
-    }
-};
-
 const PackageCard = ({ pkg, onPress }) => {
     return (
         <Pressable onPress={() => onPress(pkg)} style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}>
@@ -20,7 +11,10 @@ const PackageCard = ({ pkg, onPress }) => {
                     <View style={styles.details}>
                         <Text style={styles.title}>Código: <Text style={styles.bold}>{pkg.id}</Text></Text>
                         <Text style={styles.text}>Ubicación en Depósito: {pkg.packageLocation}</Text>
-                        <Chip style={[styles.chip, { backgroundColor: getStatusColor(pkg.status) }]} textStyle={styles.chipText}>
+                        <Chip
+                            style={styles.chip}
+                            textStyle={styles.chipText}
+                        >
                             {pkg.status}
                         </Chip>
                     </View>
@@ -33,47 +27,49 @@ const PackageCard = ({ pkg, onPress }) => {
 const styles = StyleSheet.create({
     pressable: {
         marginBottom: 12,
-        borderRadius: 12
+        borderRadius: 12,
     },
     pressed: {
-        opacity: 0.85
+        opacity: 0.85,
     },
     card: {
         borderRadius: 12,
         elevation: 2,
         backgroundColor: '#fff',
-        padding: 10
+        padding: 10,
     },
     row: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     icon: {
         backgroundColor: '#e3e3e3',
-        marginRight: 12
+        marginRight: 12,
     },
     details: {
-        flex: 1
+        flex: 1,
     },
     title: {
         fontSize: 15,
-        marginBottom: 4
+        marginBottom: 4,
     },
     bold: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     text: {
         fontSize: 14,
-        color: '#444'
+        color: '#444',
     },
     chip: {
         alignSelf: 'flex-start',
         marginTop: 6,
+        backgroundColor: '#3F51B5',
     },
     chipText: {
+        color: 'white',
         fontWeight: 'bold',
-        color: '#000'
-    }
+        textTransform: 'uppercase',
+    },
 });
 
 export default PackageCard;

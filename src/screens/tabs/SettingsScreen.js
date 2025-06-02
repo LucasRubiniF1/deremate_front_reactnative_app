@@ -5,6 +5,8 @@ import {
   Text, Switch, Divider, List, Avatar, Button, TextInput, Checkbox
 } from "react-native-paper";
 import AuthorizedRoute from "../../components/AuthorizedRoute";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useRouter } from "../../hooks/useRouter";
 
 export default function SettingsScreen() {
   const [isDarkMode, setDarkMode] = useState(true);
@@ -12,6 +14,8 @@ export default function SettingsScreen() {
   const [locationEnabled, setLocationEnabled] = useState(true);
   const [email, setEmail] = useState("usuario@email.com");
   const [newsletter, setNewsletter] = useState(false);
+
+  const router = useRouter();
 
   return (
     <AuthorizedRoute>
@@ -24,6 +28,7 @@ export default function SettingsScreen() {
 
           <Divider style={styles.divider} />
 
+          {/* Preferencias */}
           <List.Section>
             <List.Subheader style={styles.subheader}>Preferencias</List.Subheader>
 
@@ -47,7 +52,7 @@ export default function SettingsScreen() {
             <List.Item
               title="Privacidad"
               description="Configuración de permisos y accesos"
-              left={(props) => <List.Icon {...props} icon="lock" />}
+              left={(props) => <List.Icon {...props} icon="lock-outline" />}
             />
             <List.Item
               title="Idioma"
@@ -57,12 +62,13 @@ export default function SettingsScreen() {
             <List.Item
               title="Tema"
               description="Personalización de la interfaz"
-              left={(props) => <List.Icon {...props} icon="palette" />}
+              left={(props) => <List.Icon {...props} icon="palette-outline" />}
             />
           </List.Section>
 
           <Divider style={styles.divider} />
 
+          {/* Cuenta */}
           <List.Section>
             <List.Subheader style={styles.subheader}>Cuenta</List.Subheader>
 
@@ -82,14 +88,23 @@ export default function SettingsScreen() {
               <Text style={styles.checkboxLabel}>Suscribirme al newsletter</Text>
             </View>
 
-            <Button mode="contained" style={styles.button}>
+            <Button
+              icon="lock-reset"
+              mode="contained"
+              style={styles.button}
+              onPress={() => router.push('ChangePassword')} // ← crear pantalla si la vas a usar
+            >
               Cambiar contraseña
             </Button>
           </List.Section>
 
           <Divider style={styles.divider} />
 
-          <Text style={styles.footerText}>Versión 1.4.2 - Última actualización 27/05/2025</Text>
+          {/* Footer visual */}
+          <View style={styles.footer}>
+            <Icon name="information-outline" size={16} color="#888" />
+            <Text style={styles.footerText}>  Versión 1.4.2 - Actualización 27/05/2025</Text>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </AuthorizedRoute>
@@ -144,10 +159,14 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     fontSize: 15,
   },
-  footerText: {
+  footer: {
     marginVertical: 24,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerText: {
     fontSize: 12,
-    textAlign: "center",
     color: '#888',
   },
 });

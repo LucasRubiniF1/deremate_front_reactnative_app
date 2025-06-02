@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text, TextInput, Card } from 'react-native-paper';
 import { useWarehousePackages } from '../../hooks/useWarehousePackages';
 import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
@@ -17,6 +18,19 @@ const HomeScreen = () => {
 
   const [selectedPackage, setSelectedPackage] = useState(null);
 
+  const renderFiltersSummary = () => {
+    if (!code && !sector && !shelf) return null;
+
+    return (
+      <Card style={styles.filterSummary}>
+        <Text style={styles.filterText}>🔍 Buscando:</Text>
+        {code ? <Text style={styles.filterItem}>• Código: {code}</Text> : null}
+        {sector ? <Text style={styles.filterItem}>• Sector: {sector}</Text> : null}
+        {shelf ? <Text style={styles.filterItem}>• Estante: {shelf}</Text> : null}
+      </Card>
+    );
+  };
+
   return (
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
@@ -25,24 +39,40 @@ const HomeScreen = () => {
         ) : (
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
+
+            {/* Chips visuales arriba */}
+            <View style={styles.tagsContainer}>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>🏛️ Sector: {sector || 'Todos'}</Text>
+              </View>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>📚 Estante: {shelf || 'Todos'}</Text>
+              </View>
+            </View>
+
             <TextInput
-              style={styles.input}
-              placeholder="Buscar por código de paquete"
+              mode="outlined"
+              label="Buscar por código de paquete"
               value={code}
               onChangeText={setCode}
+              style={styles.input}
             />
             <TextInput
-              style={styles.input}
-              placeholder="Seleccionar sector"
+              mode="outlined"
+              label="Seleccionar sector"
               value={sector}
               onChangeText={setSector}
+              style={styles.input}
             />
             <TextInput
-              style={styles.input}
-              placeholder="Seleccionar estante"
+              mode="outlined"
+              label="Seleccionar estante"
               value={shelf}
               onChangeText={setShelf}
+              style={styles.input}
             />
+
+            {renderFiltersSummary()}
 
             <Text style={styles.subtitle}>Paquetes en Depósito</Text>
 
@@ -68,13 +98,9 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: '#f9f9f9' },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    paddingVertical: 8,
     marginBottom: 12,
-    fontSize: 16
   },
   title: {
     fontSize: 20,
@@ -86,9 +112,42 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginVertical: 12,
+    marginVertical: 16,
     textAlign: 'center',
     color: '#3F51B5'
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  tag: {
+    backgroundColor: '#EDE7F6',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 4,
+  },
+  tagText: {
+    fontSize: 14,
+    color: '#5E35B1',
+    fontWeight: '500',
+  },
+  filterSummary: {
+    padding: 12,
+    marginBottom: 16,
+    backgroundColor: '#E8EAF6',
+    borderRadius: 8
+  },
+  filterText: {
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  filterItem: {
+    fontSize: 14,
   }
 });
 
