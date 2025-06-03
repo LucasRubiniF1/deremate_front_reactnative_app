@@ -6,6 +6,68 @@ import { useWarehousePackages } from '../../hooks/useWarehousePackages';
 import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import PackageDetailDialog from '../../components/PackageDetailDialog';
+import { useTheme } from 'react-native-paper';
+
+const getStyles = theme =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: theme.colors.background,
+    },
+    input: {
+      marginBottom: 12,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      textAlign: 'center',
+      color: theme.colors.primary,
+    },
+    subtitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginVertical: 16,
+      textAlign: 'center',
+      color: theme.colors.primary,
+    },
+    tagsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 12,
+      marginBottom: 12,
+    },
+    tag: {
+      backgroundColor: theme.colors.secondaryContainer,
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      borderRadius: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginHorizontal: 4,
+    },
+    tagText: {
+      fontSize: 14,
+      color: theme.colors.onSecondaryContainer,
+      fontWeight: '500',
+    },
+    filterSummary: {
+      padding: 12,
+      marginBottom: 16,
+      backgroundColor: theme.colors.primaryContainer,
+      borderRadius: theme.roundness * 2,
+    },
+    filterText: {
+      fontWeight: 'bold',
+      marginBottom: 4,
+      color: theme.colors.onPrimaryContainer,
+    },
+    filterItem: {
+      fontSize: 14,
+      color: theme.colors.onPrimaryContainer,
+    },
+  });
 
 const HomeScreen = () => {
   const {
@@ -17,6 +79,9 @@ const HomeScreen = () => {
     refetch
   } = useWarehousePackages();
 
+  const theme = useTheme();
+  const styles = getStyles(theme);
+
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -26,15 +91,15 @@ const HomeScreen = () => {
     setRefreshing(false);
   };
 
-  const handleCodeChange = (text) => {
+  const handleCodeChange = text => {
     if (/^\d*$/.test(text)) setCode(text);
   };
 
-  const handleSectorChange = (text) => {
+  const handleSectorChange = text => {
     if (/^[\w\s]*$/.test(text)) setSector(text);
   };
 
-  const handleShelfChange = (text) => {
+  const handleShelfChange = text => {
     if (/^\d*$/.test(text)) setShelf(text);
   };
 
@@ -97,7 +162,7 @@ const HomeScreen = () => {
 
             <FlatList
               data={packages}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={item => item.id.toString()}
               renderItem={({ item }) => (
                 <PackageCard pkg={item} onPress={() => setSelectedPackage(item)} />
               )}
@@ -118,57 +183,5 @@ const HomeScreen = () => {
     </AuthorizedRoute>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f9f9f9' },
-  input: { marginBottom: 12 },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-    color: '#3F51B5'
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 16,
-    textAlign: 'center',
-    color: '#3F51B5'
-  },
-  tagsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 12,
-    marginBottom: 12,
-  },
-  tag: {
-    backgroundColor: '#EDE7F6',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 4,
-  },
-  tagText: {
-    fontSize: 14,
-    color: '#5E35B1',
-    fontWeight: '500',
-  },
-  filterSummary: {
-    padding: 12,
-    marginBottom: 16,
-    backgroundColor: '#E8EAF6',
-    borderRadius: 8
-  },
-  filterText: {
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  filterItem: {
-    fontSize: 14,
-  }
-});
 
 export default HomeScreen;

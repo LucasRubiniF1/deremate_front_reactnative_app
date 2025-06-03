@@ -4,16 +4,12 @@ import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStack from './src/navigator/RootStack';
 
-
 const theme = {
-  ...MD3LightTheme,
+  ...MD3DarkTheme,
   colors: {
-    ...MD3LightTheme.colors,
-    primary: 'tomato',
-    secondary: 'yellow',
+    ...MD3DarkTheme.colors,
   },
 };
-
 
 export default function App() {
   return (
