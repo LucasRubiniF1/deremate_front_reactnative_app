@@ -5,10 +5,73 @@ import useAuthStore from '../../store/useAuthStore';
 import { SimpleButton } from '../../components/SimpleButton';
 import { IconButton } from 'react-native-paper';
 import { SimpleSnackbar } from '../../components/SimpleSnackbar';
+import { useTheme } from "react-native-paper";
+
+const getStyles = (theme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: theme.colors.background,
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 24,
+    fontWeight: 'bold',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 24,
+  },
+  input: {
+    borderWidth: 2,
+    borderRadius: 6,
+    fontSize: 24,
+    padding: 10,
+    width: 50,
+    textAlign: 'center',
+    marginHorizontal: 4,
+  },
+  passwordContainer: {
+    width: '100%',
+    marginBottom: 24,
+  },
+  passwordInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  passwordInput: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    padding: 10,
+    marginRight: 8,
+  },
+  eyeIcon: {
+    margin: 0,
+  },
+  submitButton: {
+    width: '100%',
+    marginBottom: 12,
+  },
+  resendButton: {
+    width: '100%',
+    marginBottom: 12,
+  },
+  returnButton: {
+    width: '100%',
+  },
+});
+
+
 
 export default function VerificationScreen({ route }) {
   const { mode = 'email', email: routeEmail } = route?.params || {};
-  
+
   const { verifyEmail, resendCode, error, isEmailVerified, resetPassword } = useAuthStore();
   const [code, setCode] = useState(['', '', '', '']);
   const [status, setStatus] = useState('default');
@@ -82,7 +145,7 @@ export default function VerificationScreen({ route }) {
   const handleSubmit = () => {
     cleanupErrors();
     const fullCode = code.join('');
-    
+
     if (fullCode.length !== 4) {
       setErrorMessage('Por favor ingresa el código completo');
       setErrorVisible(true);
@@ -140,10 +203,13 @@ export default function VerificationScreen({ route }) {
 
   const getBorderColor = () => {
     if (status === 'error' && error !== 'EMAIL_NOT_VERIFIED') return '#FF3B30';
-    if (status === 'success') return '#34C759'; 
+    if (status === 'success') return '#34C759';
     if (isEmailVerified.verified) return '#34C759';
-    return '#CCCCCC'; 
+    return '#CCCCCC';
   };
+
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   return (
     <View style={styles.container}>
@@ -244,61 +310,3 @@ export default function VerificationScreen({ route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    padding: 24,
-  },
-  title: { 
-    fontSize: 20, 
-    marginBottom: 24,
-    fontWeight: 'bold',
-  },
-  inputContainer: { 
-    flexDirection: 'row', 
-    gap: 10,
-    marginBottom: 24,
-  },
-  input: {
-    borderWidth: 2,
-    borderRadius: 6,
-    fontSize: 24,
-    padding: 10,
-    width: 50,
-    textAlign: 'center',
-    marginHorizontal: 4,
-  },
-  passwordContainer: {
-    width: '100%',
-    marginBottom: 24,
-  },
-  passwordInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  passwordInput: {
-    flex: 1,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 10,
-    marginRight: 8,
-  },
-  eyeIcon: {
-    margin: 0,
-  },
-  submitButton: {
-    width: '100%',
-    marginBottom: 12,
-  },
-  resendButton: {
-    width: '100%',
-    marginBottom: 12,
-  },
-  returnButton: {
-    width: '100%',
-  },
-});
