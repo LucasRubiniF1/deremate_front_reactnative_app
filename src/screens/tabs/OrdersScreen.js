@@ -5,6 +5,29 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import DeliveryCard from '../../components/DeliveryCard';
 import { getDeliveriesByUserId } from '../../service/delivery.service';
+import { useTheme } from 'react-native-paper';
+
+const getStyles = theme =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    listContent: {
+      padding: 16,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+  });
 
 export default function OrdersScreen() {
   const [deliveries, setDeliveries] = useState([]);
@@ -32,6 +55,9 @@ export default function OrdersScreen() {
     fetchDeliveries();
   };
 
+  const theme = useTheme();
+  const styles = getStyles(theme);
+
   if (loading) {
     return (
       <AuthorizedRoute>
@@ -48,11 +74,9 @@ export default function OrdersScreen() {
         <FlatList
           data={deliveries}
           renderItem={({ item }) => <DeliveryCard delivery={item} />}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.listContent}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text>No hay entregas asignadas</Text>
