@@ -50,6 +50,8 @@ const PackageDetailDialog = ({ visible, onDismiss, pkg }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
 
+  console.log(pkg.createdDate);
+
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={onDismiss}>
