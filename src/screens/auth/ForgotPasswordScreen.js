@@ -6,9 +6,37 @@ import { SimpleButton } from "../../components/SimpleButton";
 import { SimpleSnackbar } from "../../components/SimpleSnackbar";
 import { useRouter } from "../../hooks/useRouter";
 import useAuthStore from "../../store/useAuthStore";
+import { useTheme } from "react-native-paper";
 
 // Test log to verify logging is working
 console.log('=== FORGOT PASSWORD SCREEN LOADED ===');
+
+const getStyles = (theme) => StyleSheet.create({
+  externalContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: theme.colors.background,
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: 12,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginBottom: 24,
+    color: '#666',
+  },
+  input: {
+    marginBottom: 16,
+  },
+});
+
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
@@ -16,6 +44,9 @@ export default function ForgotPasswordScreen() {
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
   const { resetPasswordRequest, loading, error } = useAuthStore();
+
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   // Email validation regex
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -109,39 +140,14 @@ export default function ForgotPasswordScreen() {
           disabled={loading}
         />
       </View>
-      <SimpleSnackbar 
-        mode="danger" 
+      <SimpleSnackbar
+        mode="danger"
         text={errorMessage}
-        closeLabel="OK" 
+        closeLabel="OK"
         setVisible={setVisible}
-        visible={visible} 
+        visible={visible}
       />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  externalContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'white',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 12,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    textAlign: 'center',
-    marginBottom: 24,
-    color: '#666',
-  },
-  input: {
-    marginBottom: 16,
-  },
-}); 

@@ -1,15 +1,12 @@
-import {Button} from "react-native-paper";
-import React from "react";
-import {StyleSheet} from "react-native";
-import useAccentColors from "../hooks/useAccentColors";
+import { Button } from "react-native-paper";
+import { StyleSheet } from "react-native";
 
 export const SimpleButton = ({ mode, style, accent = false, label, onPress }) => {
-  const colors = useAccentColors();
 
   return (
     <Button
       mode={mode}
-      style={[styles.button, style, accent && { backgroundColor: colors.primary }]}
+      style={[styles.button, style, accent]}
       onPress={onPress}
     >
       {label}

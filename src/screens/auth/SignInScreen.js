@@ -6,10 +6,40 @@ import { TextInput } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { SimpleButton } from "../../components/SimpleButton";
 import { SimpleSnackbar } from "../../components/SimpleSnackbar";
+import { useTheme } from "react-native-paper";
+
+const getStyles = (theme) => StyleSheet.create({
+  externalContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: theme.colors.background,
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: 24,
+    fontWeight: 'bold',
+  },
+  input: {
+    marginBottom: 16,
+  },
+  button: {
+    marginVertical: 6,
+    borderRadius: 8,
+  },
+});
+
+
 
 export default function SignInScreen() {
   const { login, isAuthenticated, error, setEmailVerified } = useAuthStore();
   const router = useRouter();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -126,28 +156,4 @@ export default function SignInScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  externalContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'white',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 24,
-    fontWeight: 'bold',
-  },
-  input: {
-    marginBottom: 16,
-  },
-  button: {
-    marginVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#7C61CB',
-  },
-});
+

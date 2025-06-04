@@ -11,6 +11,31 @@ import {
   validatePasswordStrength
 } from "../../utils/validators";
 import useAuthStore from "../../store/useAuthStore";
+import { useTheme } from "react-native-paper";
+
+
+const getStyles = (theme) => StyleSheet.create({
+  externalContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 24,
+    backgroundColor: theme.colors.background,
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: 24,
+    fontWeight: 'bold',
+  },
+  input: {
+    marginBottom: 16,
+  },
+});
+
+
 
 export default function SignUpScreen() {
   const { signUp, loading, error, isUserCreated } = useAuthStore();
@@ -24,6 +49,9 @@ export default function SignUpScreen() {
   const [visible, setVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarMode, setSnackbarMode] = useState('');
+
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
   const handleSignUp = () => {
     const validations = [
@@ -140,26 +168,7 @@ export default function SignUpScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  externalContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'white',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 24,
-    fontWeight: 'bold',
-  },
-  input: {
-    marginBottom: 16,
-  },
-});
+
 
 
 
