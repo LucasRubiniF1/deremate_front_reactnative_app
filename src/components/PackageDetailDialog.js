@@ -7,6 +7,7 @@ const getStatusStyle = () => ({
     color: '#fff'
 });
 
+
 const PackageDetailDialog = ({ visible, onDismiss, pkg }) => {
     if (!pkg) return null;
 
