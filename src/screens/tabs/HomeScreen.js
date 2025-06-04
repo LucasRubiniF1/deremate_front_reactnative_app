@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, FlatList, ActivityIndicator, StyleSheet, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, TextInput, Card } from 'react-native-paper';
 import { useWarehousePackages } from '../../hooks/useWarehousePackages';
@@ -13,10 +13,18 @@ const HomeScreen = () => {
     loading,
     code, setCode,
     sector, setSector,
-    shelf, setShelf
+    shelf, setShelf,
+    refetch
   } = useWarehousePackages();
 
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   const handleCodeChange = (text) => {
     if (/^\d*$/.test(text)) setCode(text);
@@ -46,7 +54,7 @@ const HomeScreen = () => {
   return (
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
-        {loading ? (
+        {loading && !refreshing ? (
           <ActivityIndicator size="large" style={{ flex: 1 }} />
         ) : (
           <View style={{ flex: 1 }}>
@@ -93,6 +101,9 @@ const HomeScreen = () => {
               renderItem={({ item }) => (
                 <PackageCard pkg={item} onPress={() => setSelectedPackage(item)} />
               )}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               contentContainerStyle={{ paddingBottom: 100 }}
             />
 
@@ -110,9 +121,7 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f9f9f9' },
-  input: {
-    marginBottom: 12,
-  },
+  input: { marginBottom: 12 },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
