@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Avatar, Button, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import { useRouter } from '../../hooks/useRouter';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
+import { info } from '../../service/user.service';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -68,11 +69,33 @@ export default function ProfileScreen() {
     router.replace('Auth');
   };
 
-  const initials = `${user?.firstname?.[0] ?? ''}${user?.lastname?.[0] ?? ''}`.toUpperCase();
-  const fullName = `${user?.firstname ?? ''} ${user?.lastname ?? ''}`.trim();
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [userInfo, setUserInfo] = useState(user);
+
+  const fetchUserInfo = async () => {
+    try {
+      const data = await info();
+      setUserInfo(data);
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserInfo();
+    console.log(userInfo);
+  }, []);
+
+  const initials =
+    `${userInfo?.firstname?.[0] ?? ''}${userInfo?.lastname?.[0] ?? ''}`.toUpperCase();
+  const fullName = `${userInfo?.firstname ?? ''} ${userInfo?.lastname ?? ''}`.trim();
   const userEmail = user?.email ?? 'Email no disponible';
   const createdDate = 'Fecha no disponible';
-  const deliveriesCount = 37;
+  const deliveriesCount = userInfo?.deliveriesCompleted ?? 0;
   const rating = 4;
 
   const renderStars = () => {
