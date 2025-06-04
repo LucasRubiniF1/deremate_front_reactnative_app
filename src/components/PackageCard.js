@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Card, Avatar, Chip } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
+import StatusChip from '../components/StatusChip';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -77,9 +78,7 @@ const PackageCard = ({ pkg, onPress }) => {
               Código: <Text style={styles.bold}>{pkg.id}</Text>
             </Text>
             <Text style={styles.text}>Ubicación en Depósito: {pkg.packageLocation}</Text>
-            <Chip style={styles.chip} textStyle={styles.chipText}>
-              {pkg.status}
-            </Chip>
+            <StatusChip status={pkg.status} styles={styles} />
           </View>
         </View>
       </Card>

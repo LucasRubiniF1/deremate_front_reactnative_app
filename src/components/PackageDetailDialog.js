@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Dialog, Portal, Text, Button, Chip } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
+import StatusChip from '../components/StatusChip';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -63,7 +64,7 @@ const PackageDetailDialog = ({ visible, onDismiss, pkg }) => {
             Código: {pkg.id}
           </Chip>
 
-          <Chip style={styles.chip}>{pkg.status}</Chip>
+          <StatusChip status={pkg.status} styles={styles} />
 
           <Text style={styles.label}>
             Ubicación: <Text style={styles.value}>{pkg.packageLocation}</Text>

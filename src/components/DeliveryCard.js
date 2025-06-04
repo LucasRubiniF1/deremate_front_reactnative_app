@@ -1,6 +1,41 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Divider, Text, Chip } from 'react-native-paper';
+import StatusChip from '../components/StatusChip';
+import { useTheme } from 'react-native-paper';
+
+const getStyles = theme =>
+  StyleSheet.create({
+    card: {
+      marginBottom: 16,
+      elevation: 2,
+      borderRadius: 12,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    statusContainer: {
+      backgroundColor: '#3F51B5',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 6,
+    },
+    statusText: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 12,
+      textTransform: 'uppercase',
+    },
+    divider: {
+      marginVertical: 8,
+    },
+    section: {
+      marginBottom: 16,
+    },
+  });
 
 const formatDate = date => {
   if (!date) return 'No disponible';
@@ -23,14 +58,15 @@ const formatDate = date => {
 };
 
 const DeliveryCard = ({ delivery }) => {
+  const theme = useTheme();
+  const styles = getStyles(theme);
+
   return (
     <Card style={styles.card}>
       <Card.Content>
         <View style={styles.header}>
           <Text variant="titleMedium">Entrega #{delivery.id}</Text>
-          <Chip style={styles.chip} textStyle={styles.chipText}>
-            {delivery.status}
-          </Chip>
+          <StatusChip status={delivery.status} styles={styles} />
         </View>
 
         <Divider style={styles.divider} />
@@ -63,37 +99,5 @@ const DeliveryCard = ({ delivery }) => {
     </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 16,
-    elevation: 2,
-    borderRadius: 12,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  statusContainer: {
-    backgroundColor: '#3F51B5',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  statusText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 12,
-    textTransform: 'uppercase',
-  },
-  divider: {
-    marginVertical: 8,
-  },
-  section: {
-    marginBottom: 16,
-  },
-});
 
 export default DeliveryCard;
