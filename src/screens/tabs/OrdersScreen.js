@@ -4,7 +4,7 @@ import { ActivityIndicator, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import DeliveryCard from '../../components/DeliveryCard';
-import { getDeliveriesByUserId } from '../../service/delivery.service';
+import { getDeliveriesByUser } from '../../service/delivery.service';
 import { useTheme } from 'react-native-paper';
 
 const getStyles = theme =>
@@ -36,7 +36,7 @@ export default function OrdersScreen() {
 
   const fetchDeliveries = async () => {
     try {
-      const data = await getDeliveriesByUserId();
+      const data = await getDeliveriesByUser();
       setDeliveries(data);
     } catch (error) {
       console.error('Error fetching deliveries:', error);

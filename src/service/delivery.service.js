@@ -13,7 +13,7 @@ export const fetchPackagesInWarehouse = async () => {
   }
 };
 
-export const getDeliveryById = async (id) => {
+export const getDeliveryById = async id => {
   try {
     const response = await AuthorizedService.get(`${BASE_URL}/${id}`);
     return response.data;
@@ -23,25 +23,20 @@ export const getDeliveryById = async (id) => {
       error: {
         message: error.message,
         status: error.response?.status,
-        data: error.response?.data
-      }
+        data: error.response?.data,
+      },
     });
     throw error;
   }
 };
 
-export const getDeliveriesByUserId = async () => {
+export const getDeliveriesByUser = async () => {
   console.log('[Delivery Service] Fetching deliveries for current user');
   try {
-    const userId = await getUserIdFromToken();
-    if (!userId) {
-      throw new Error('No user ID found in token');
-    }
-
-    const response = await AuthorizedService.get(`${BASE_URL}/user/${userId}`);
+    const response = await AuthorizedService.get(`${BASE_URL}/`);
     console.log('[Delivery Service] Deliveries fetched successfully:', {
       count: response.data.length,
-      status: response.status
+      status: response.status,
     });
     return response.data;
   } catch (error) {
@@ -49,8 +44,8 @@ export const getDeliveriesByUserId = async () => {
       error: {
         message: error.message,
         status: error.response?.status,
-        data: error.response?.data
-      }
+        data: error.response?.data,
+      },
     });
     throw error;
   }
