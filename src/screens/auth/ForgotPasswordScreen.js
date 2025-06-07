@@ -1,42 +1,42 @@
-import { useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
-import { TextInput } from "react-native-paper";
-import { SimpleButton } from "../../components/SimpleButton";
-import { SimpleSnackbar } from "../../components/SimpleSnackbar";
-import { useRouter } from "../../hooks/useRouter";
-import useAuthStore from "../../store/useAuthStore";
-import { useTheme } from "react-native-paper";
+import { useState, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
+import { SimpleButton } from '../../components/SimpleButton';
+import { SimpleSnackbar } from '../../components/SimpleSnackbar';
+import { useRouter } from '../../hooks/useRouter';
+import useAuthStore from '../../store/useAuthStore';
+import { useTheme } from 'react-native-paper';
 
 // Test log to verify logging is working
 console.log('=== FORGOT PASSWORD SCREEN LOADED ===');
 
-const getStyles = (theme) => StyleSheet.create({
-  externalContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: theme.colors.background,
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 12,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    textAlign: 'center',
-    marginBottom: 24,
-    color: '#666',
-  },
-  input: {
-    marginBottom: 16,
-  },
-});
-
+const getStyles = theme =>
+  StyleSheet.create({
+    externalContainer: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: theme.colors.background,
+    },
+    title: {
+      textAlign: 'center',
+      marginBottom: 12,
+      fontWeight: 'bold',
+    },
+    subtitle: {
+      textAlign: 'center',
+      marginBottom: 24,
+      color: '#666',
+    },
+    input: {
+      marginBottom: 16,
+    },
+  });
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
@@ -70,7 +70,7 @@ export default function ForgotPasswordScreen() {
     }
   }, [error]);
 
-  const validateEmail = (email) => {
+  const validateEmail = email => {
     if (!email) {
       setErrorMessage('Por favor ingresa tu correo electrónico');
       setVisible(true);
@@ -100,7 +100,9 @@ export default function ForgotPasswordScreen() {
   return (
     <View style={styles.externalContainer}>
       <View style={styles.container}>
-        <Text variant="titleLarge" style={styles.title}>Recuperar contraseña</Text>
+        <Text variant="titleLarge" style={styles.title}>
+          Recuperar contraseña
+        </Text>
         <Text variant="bodyMedium" style={styles.subtitle}>
           Ingresa tu correo electrónico y te enviaremos instrucciones para recuperar tu contraseña.
         </Text>
@@ -108,7 +110,7 @@ export default function ForgotPasswordScreen() {
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={(text) => {
+          onChangeText={text => {
             cleanupErrors();
             setEmail(text);
           }}
@@ -150,4 +152,3 @@ export default function ForgotPasswordScreen() {
     </View>
   );
 }
-

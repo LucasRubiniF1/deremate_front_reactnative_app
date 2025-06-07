@@ -16,7 +16,7 @@ export async function getUserIdFromToken() {
   try {
     const token = await getToken();
     if (!token) return null;
-    
+
     // JWT tokens are in format: header.payload.signature
     const payload = token.split('.')[1];
     // Decode base64

@@ -1,39 +1,38 @@
-import { useEffect, useState } from "react";
-import useAuthStore from "../../store/useAuthStore";
-import { useRouter } from "../../hooks/useRouter";
-import { Text } from "react-native-paper";
-import { TextInput } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
-import { SimpleButton } from "../../components/SimpleButton";
-import { SimpleSnackbar } from "../../components/SimpleSnackbar";
-import { useTheme } from "react-native-paper";
+import { useEffect, useState } from 'react';
+import useAuthStore from '../../store/useAuthStore';
+import { useRouter } from '../../hooks/useRouter';
+import { Text } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { SimpleButton } from '../../components/SimpleButton';
+import { SimpleSnackbar } from '../../components/SimpleSnackbar';
+import { useTheme } from 'react-native-paper';
 
-const getStyles = (theme) => StyleSheet.create({
-  externalContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: theme.colors.background,
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 24,
-    fontWeight: 'bold',
-  },
-  input: {
-    marginBottom: 16,
-  },
-  button: {
-    marginVertical: 6,
-    borderRadius: 8,
-  },
-});
-
-
+const getStyles = theme =>
+  StyleSheet.create({
+    externalContainer: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: theme.colors.background,
+    },
+    title: {
+      textAlign: 'center',
+      marginBottom: 24,
+      fontWeight: 'bold',
+    },
+    input: {
+      marginBottom: 16,
+    },
+    button: {
+      marginVertical: 6,
+      borderRadius: 8,
+    },
+  });
 
 export default function SignInScreen() {
   const { login, isAuthenticated, error, setEmailVerified } = useAuthStore();
@@ -80,7 +79,7 @@ export default function SignInScreen() {
     cleanupErrors();
 
     if (!email.trim() || !password.trim()) {
-      setErrorMessage("Debes ingresar tu correo y contraseña.");
+      setErrorMessage('Debes ingresar tu correo y contraseña.');
       setVisible(true);
       return;
     }
@@ -90,7 +89,7 @@ export default function SignInScreen() {
       setEmailVerified({
         email,
         password,
-        verified: false
+        verified: false,
       });
       router.push('Verification');
     }
@@ -99,12 +98,14 @@ export default function SignInScreen() {
   return (
     <View style={styles.externalContainer}>
       <View style={styles.container}>
-        <Text variant="titleLarge" style={styles.title}>Iniciar sesión</Text>
+        <Text variant="titleLarge" style={styles.title}>
+          Iniciar sesión
+        </Text>
 
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={(text) => {
+          onChangeText={text => {
             cleanupErrors();
             setEmail(text);
           }}
@@ -115,7 +116,7 @@ export default function SignInScreen() {
         <TextInput
           label="Contraseña"
           value={password}
-          onChangeText={(text) => {
+          onChangeText={text => {
             cleanupErrors();
             setPassword(text);
           }}
@@ -124,26 +125,27 @@ export default function SignInScreen() {
           mode="outlined"
         />
 
-        <SimpleButton
-          label="Ingresar"
-          accent mode="contained"
-          onPress={handleLogin} />
+        <SimpleButton label="Ingresar" accent mode="contained" onPress={handleLogin} />
 
         <SimpleButton
           label="Crear una cuenta"
-          accent mode="contained"
+          accent
+          mode="contained"
           onPress={() => {
             cleanupErrors();
             router.push('SignUp');
-          }} />
+          }}
+        />
 
         <SimpleButton
           label="Olvidé mi contraseña"
-          accent mode="contained"
+          accent
+          mode="contained"
           onPress={() => {
             cleanupErrors();
             router.push('ForgotPassword');
-          }} />
+          }}
+        />
       </View>
       <SimpleSnackbar
         mode="danger"
@@ -155,5 +157,3 @@ export default function SignInScreen() {
     </View>
   );
 }
-
-

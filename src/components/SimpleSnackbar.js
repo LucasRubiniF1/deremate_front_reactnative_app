@@ -1,13 +1,20 @@
-import { Snackbar } from "react-native-paper";
+import { Snackbar } from 'react-native-paper';
 
 const COLORS = {
   info: '#3354d6',
   success: '#00ff00',
   warning: '#fff200',
-  danger: '#ff0000'
-}
+  danger: '#ff0000',
+};
 
-export const SimpleSnackbar = ({ mode = 'info', visible = false, setVisible, onPress, text, closeLabel = "" }) => {
+export const SimpleSnackbar = ({
+  mode = 'info',
+  visible = false,
+  setVisible,
+  onPress,
+  text,
+  closeLabel = '',
+}) => {
   return (
     <Snackbar
       visible={visible}
@@ -16,8 +23,9 @@ export const SimpleSnackbar = ({ mode = 'info', visible = false, setVisible, onP
       action={{
         label: closeLabel,
         onPress: onPress,
-      }}>
+      }}
+    >
       {text}
     </Snackbar>
-  )
-}
+  );
+};
