@@ -7,6 +7,7 @@ import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import PackageDetailDialog from '../../components/PackageDetailDialog';
 import { useTheme } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -67,6 +68,21 @@ const getStyles = theme =>
       fontSize: 14,
       color: theme.colors.onPrimaryContainer,
     },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    emptyText: {
+      fontSize: 16,
+      color: theme.colors.onSurfaceVariant,
+      textAlign: 'center',
+      marginTop: 12,
+    },
+    emptyIcon: {
+      marginBottom: 12,
+    },
   });
 
 const HomeScreen = () => {
@@ -107,6 +123,27 @@ const HomeScreen = () => {
         {sector ? <Text style={styles.filterItem}>• Sector: {sector}</Text> : null}
         {shelf ? <Text style={styles.filterItem}>• Estante: {shelf}</Text> : null}
       </Card>
+    );
+  };
+
+  const renderEmptyComponent = () => {
+    if (code || sector || shelf) {
+      return (
+        <View style={styles.emptyContainer}>
+          <MaterialIcons name="search-off" size={48} color={theme.colors.onSurfaceVariant} style={styles.emptyIcon} />
+          <Text style={styles.emptyText}>
+            No se encontraron paquetes con los filtros seleccionados
+          </Text>
+        </View>
+      );
+    }
+    return (
+      <View style={styles.emptyContainer}>
+        <MaterialIcons name="inventory" size={48} color={theme.colors.onSurfaceVariant} style={styles.emptyIcon} />
+        <Text style={styles.emptyText}>
+          No hay paquetes disponibles en el depósito
+        </Text>
+      </View>
     );
   };
 
@@ -161,7 +198,8 @@ const HomeScreen = () => {
                 <PackageCard pkg={item} onPress={() => setSelectedPackage(item)} />
               )}
               refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-              contentContainerStyle={{ paddingBottom: 100 }}
+              contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
+              ListEmptyComponent={renderEmptyComponent}
             />
 
             <PackageDetailDialog
