@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { AppState } from 'react-native';
-import useAuthStore from "../store/useAuthStore";
-import {useRouter} from "../hooks/useRouter";
-import {useFocusEffect} from "@react-navigation/native";
+import useAuthStore from '../store/useAuthStore';
+import { useRouter } from '../hooks/useRouter';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function AuthorizedRoute({ children }) {
   const subscriptionRef = useRef(null);
@@ -10,11 +10,8 @@ export default function AuthorizedRoute({ children }) {
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
 
-  const handleAppStateChange = (nextAppState) => {
-    if (
-      appStateRef.current.match(/inactive|background/) &&
-      nextAppState === 'active'
-    ) {
+  const handleAppStateChange = nextAppState => {
+    if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
       console.log('LOG: EVENT_ON_RESUME');
       if (!isAuthenticated) {
         router.replace('Auth');
@@ -24,10 +21,7 @@ export default function AuthorizedRoute({ children }) {
   };
 
   useFocusEffect(() => {
-    subscriptionRef.current = AppState.addEventListener(
-      'change',
-      handleAppStateChange
-    );
+    subscriptionRef.current = AppState.addEventListener('change', handleAppStateChange);
 
     const initialAppState = AppState.currentState;
     if (initialAppState === 'active') {

@@ -1,10 +1,8 @@
-import {useDecisionEngine} from "../hooks/useDecisionEngine";
-import {View} from "react-native";
+import { useDecisionEngine } from '../hooks/useDecisionEngine';
+import { View } from 'react-native';
 
 export default function DecisionScreen() {
-  useDecisionEngine()
+  useDecisionEngine();
 
-  return (
-    <View></View>
-  );
+  return <View></View>;
 }

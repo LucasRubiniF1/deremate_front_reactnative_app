@@ -70,14 +70,8 @@ const getStyles = theme =>
   });
 
 const HomeScreen = () => {
-  const {
-    packages,
-    loading,
-    code, setCode,
-    sector, setSector,
-    shelf, setShelf,
-    refetch
-  } = useWarehousePackages();
+  const { packages, loading, code, setCode, sector, setSector, shelf, setShelf, refetch } =
+    useWarehousePackages();
 
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -166,9 +160,7 @@ const HomeScreen = () => {
               renderItem={({ item }) => (
                 <PackageCard pkg={item} onPress={() => setSelectedPackage(item)} />
               )}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
               contentContainerStyle={{ paddingBottom: 100 }}
             />
 

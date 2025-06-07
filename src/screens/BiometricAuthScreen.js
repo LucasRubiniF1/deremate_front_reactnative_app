@@ -1,12 +1,17 @@
-import Reanimated, {useAnimatedStyle, withSequence, withSpring, withTiming} from "react-native-reanimated";
-import {StyleSheet, View} from "react-native";
-import useAccentColors from "../hooks/useAccentColors";
-import useAuthStore from "../store/useAuthStore";
-import {useEffect, useState} from "react";
-import * as LocalAuthentication from "expo-local-authentication";
-import {Icon, Text} from "react-native-paper";
-import {SimpleButton} from "../components/SimpleButton";
-import {useRouter} from "../hooks/useRouter";
+import Reanimated, {
+  useAnimatedStyle,
+  withSequence,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import { StyleSheet, View } from 'react-native';
+import useAccentColors from '../hooks/useAccentColors';
+import useAuthStore from '../store/useAuthStore';
+import { useEffect, useState } from 'react';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { Icon, Text } from 'react-native-paper';
+import { SimpleButton } from '../components/SimpleButton';
+import { useRouter } from '../hooks/useRouter';
 
 const RESULT_ENUM = {
   CANCELLED: 'CANCELLED',
@@ -14,7 +19,7 @@ const RESULT_ENUM = {
   ERROR: 'ERROR',
   SUCCESS: 'SUCCESS',
   NOT_ENROLLED: 'NOT_ENROLLED',
-}
+};
 
 const AnimatedView = Reanimated.createAnimatedComponent(View);
 
@@ -32,8 +37,12 @@ export default function BiometricAuthScreen() {
   const checkSupportedAuthentication = async () => {
     const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
     if (types && types.length) {
-      let isFacialRecognitionAvailable = types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION);
-      let isFingerprintAvailable = types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT);
+      let isFacialRecognitionAvailable = types.includes(
+        LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+      );
+      let isFingerprintAvailable = types.includes(
+        LocalAuthentication.AuthenticationType.FINGERPRINT
+      );
       let isIrisAvailable = types.includes(LocalAuthentication.AuthenticationType.IRIS);
 
       setFacialRecognitionAvailable(isFacialRecognitionAvailable);
@@ -46,16 +55,16 @@ export default function BiometricAuthScreen() {
       }
     }
 
-    await authenticate()
+    await authenticate();
   };
 
   const startSuccessFlow = async () => {
     setResult(RESULT_ENUM.SUCCESS);
 
     setTimeout(() => {
-      router.replace("MainTabs")
-    }, 1000)
-  }
+      router.replace('MainTabs');
+    }, 1000);
+  };
 
   const authenticate = async () => {
     if (loading) {
@@ -91,30 +100,34 @@ export default function BiometricAuthScreen() {
   const handleLogout = async () => {
     await logout();
     router.replace('Auth', { screen: 'SignIn' });
-  }
+  };
 
   const lockAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{
-        scale: withSpring(result === undefined ? 1 : 0.5, {
-          damping: 10,
-          stiffness: 100,
-        })
-      }],
-      opacity: withTiming(result === undefined ? 1 : 0, { duration: 300 })
+      transform: [
+        {
+          scale: withSpring(result === undefined ? 1 : 0.5, {
+            damping: 10,
+            stiffness: 100,
+          }),
+        },
+      ],
+      opacity: withTiming(result === undefined ? 1 : 0, { duration: 300 }),
     };
   });
 
   const unlockAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{
-        scale: withSequence(
-          withTiming(0, { duration: 0 }),
-          withSpring(1.2, { damping: 10, stiffness: 100 }),
-          withSpring(1, { damping: 10, stiffness: 100 })
-        )
-      }],
-      opacity: withTiming(result === RESULT_ENUM.SUCCESS ? 1 : 0, { duration: 300 })
+      transform: [
+        {
+          scale: withSequence(
+            withTiming(0, { duration: 0 }),
+            withSpring(1.2, { damping: 10, stiffness: 100 }),
+            withSpring(1, { damping: 10, stiffness: 100 })
+          ),
+        },
+      ],
+      opacity: withTiming(result === RESULT_ENUM.SUCCESS ? 1 : 0, { duration: 300 }),
     };
   });
 
@@ -126,7 +139,9 @@ export default function BiometricAuthScreen() {
     <View style={styles.externalContainer}>
       <View style={[styles.container, { backgroundColor: colors.primary }]}>
         <Icon size={80} source="truck" color="white" />
-        <Text variant="displayLarge" style={{ color: "white" }}>De Remate</Text>
+        <Text variant="displayLarge" style={{ color: 'white' }}>
+          De Remate
+        </Text>
       </View>
       <View style={styles.bottomContainer}>
         {!result && (
@@ -145,13 +160,27 @@ export default function BiometricAuthScreen() {
           <>
             <View style={styles.bottomTopContainer}>
               <Icon size={80} source="shield-account-outline" />
-              <Text variant="displaySmall" style={{ textAlign: "center" }}>Autenticate para desbloquear la app</Text>
+              <Text variant="displaySmall" style={{ textAlign: 'center' }}>
+                Autenticate para desbloquear la app
+              </Text>
             </View>
             <View style={styles.bottomActionsContainer}>
-              <SimpleButton accent mode="contained" label="Autenticarme" style={{ width: "100%" }} onPress={() => authenticate()} />
+              <SimpleButton
+                accent
+                mode="contained"
+                label="Autenticarme"
+                style={{ width: '100%' }}
+                onPress={() => authenticate()}
+              />
               <View style={styles.bottomActionsSubContainer}>
                 <Text variant="bodyMedium">{user?.email}</Text>
-                <Text variant="bodyMedium" style={{ color: colors.primary, fontWeight: "bold" }} onPress={handleLogout}>Cerrar sesión</Text>
+                <Text
+                  variant="bodyMedium"
+                  style={{ color: colors.primary, fontWeight: 'bold' }}
+                  onPress={handleLogout}
+                >
+                  Cerrar sesión
+                </Text>
               </View>
             </View>
           </>
@@ -170,7 +199,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 100,
     paddingHorizontal: 30,
-    alignItems: "center",
+    alignItems: 'center',
     borderBottomEndRadius: 15,
     borderBottomStartRadius: 15,
   },
@@ -182,27 +211,27 @@ const styles = StyleSheet.create({
 
   lockContainer: {
     marginTop: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   bottomTopContainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 4,
   },
 
   bottomActionsContainer: {
     gap: 10,
-    alignItems: "center",
+    alignItems: 'center',
   },
 
   bottomActionsSubContainer: {
     paddingTop: 10,
     borderTopWidth: 1,
-    width: "100%",
-    borderColor: "#cfcfcf",
-    alignItems: "center",
-  }
-})
+    width: '100%',
+    borderColor: '#cfcfcf',
+    alignItems: 'center',
+  },
+});

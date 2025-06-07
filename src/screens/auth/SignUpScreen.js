@@ -1,41 +1,39 @@
-import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, TextInput } from "react-native-paper";
-import { SimpleButton } from "../../components/SimpleButton";
-import { useRouter } from "../../hooks/useRouter";
-import { SimpleSnackbar } from "../../components/SimpleSnackbar";
+import { useState, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Text, TextInput } from 'react-native-paper';
+import { SimpleButton } from '../../components/SimpleButton';
+import { useRouter } from '../../hooks/useRouter';
+import { SimpleSnackbar } from '../../components/SimpleSnackbar';
 import {
   validateEmail,
   validateName,
   validatePasswordsMatch,
-  validatePasswordStrength
-} from "../../utils/validators";
-import useAuthStore from "../../store/useAuthStore";
-import { useTheme } from "react-native-paper";
+  validatePasswordStrength,
+} from '../../utils/validators';
+import useAuthStore from '../../store/useAuthStore';
+import { useTheme } from 'react-native-paper';
 
-
-const getStyles = (theme) => StyleSheet.create({
-  externalContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: theme.colors.background,
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: 24,
-    fontWeight: 'bold',
-  },
-  input: {
-    marginBottom: 16,
-  },
-});
-
-
+const getStyles = theme =>
+  StyleSheet.create({
+    externalContainer: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 24,
+      backgroundColor: theme.colors.background,
+    },
+    title: {
+      textAlign: 'center',
+      marginBottom: 24,
+      fontWeight: 'bold',
+    },
+    input: {
+      marginBottom: 16,
+    },
+  });
 
 export default function SignUpScreen() {
   const { signUp, loading, error, isUserCreated } = useAuthStore();
@@ -65,7 +63,7 @@ export default function SignUpScreen() {
     const errors = validations.filter(Boolean);
 
     if (errors.length) {
-      setSnackbarMode('danger')
+      setSnackbarMode('danger');
       setSnackbarMessage(errors.join('\n'));
       setVisible(true);
       return;
@@ -76,7 +74,7 @@ export default function SignUpScreen() {
 
   useEffect(() => {
     if (error) {
-      setSnackbarMode('danger')
+      setSnackbarMode('danger');
       setSnackbarMessage(error);
       setVisible(true);
     }
@@ -100,7 +98,9 @@ export default function SignUpScreen() {
   return (
     <View style={styles.externalContainer}>
       <View style={styles.container}>
-        <Text variant="titleLarge" style={styles.title}>Crear cuenta</Text>
+        <Text variant="titleLarge" style={styles.title}>
+          Crear cuenta
+        </Text>
 
         <TextInput
           label="Correo"
@@ -151,62 +151,27 @@ export default function SignUpScreen() {
 
         <SimpleButton
           label="Registrarse"
-          accent mode="contained"
+          accent
+          mode="contained"
           onPress={handleSignUp}
           disabled={loading}
         />
 
         <SimpleButton
           label="Ya tengo cuenta"
-          accent mode="contained"
+          accent
+          mode="contained"
           onPress={() => router.replace('SignIn')}
           disabled={loading}
         />
       </View>
-      <SimpleSnackbar mode={snackbarMode} text={snackbarMessage} closeLabel="OK" setVisible={setVisible} visible={visible} />
+      <SimpleSnackbar
+        mode={snackbarMode}
+        text={snackbarMessage}
+        closeLabel="OK"
+        setVisible={setVisible}
+        visible={visible}
+      />
     </View>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

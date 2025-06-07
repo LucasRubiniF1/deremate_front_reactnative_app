@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import useAuthStore from '../store/useAuthStore';
-import {useRouter} from "./useRouter";
+import { useRouter } from './useRouter';
 
 export const useDecisionEngine = () => {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const tryRestoreSession = async () => {

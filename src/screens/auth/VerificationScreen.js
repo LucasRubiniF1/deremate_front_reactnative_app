@@ -5,69 +5,68 @@ import useAuthStore from '../../store/useAuthStore';
 import { SimpleButton } from '../../components/SimpleButton';
 import { IconButton } from 'react-native-paper';
 import { SimpleSnackbar } from '../../components/SimpleSnackbar';
-import { useTheme } from "react-native-paper";
+import { useTheme } from 'react-native-paper';
 
-const getStyles = (theme) => StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    backgroundColor: theme.colors.background,
-  },
-  title: {
-    fontSize: 20,
-    marginBottom: 24,
-    fontWeight: 'bold',
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 24,
-  },
-  input: {
-    borderWidth: 2,
-    borderRadius: 6,
-    fontSize: 24,
-    padding: 10,
-    width: 50,
-    textAlign: 'center',
-    marginHorizontal: 4,
-  },
-  passwordContainer: {
-    width: '100%',
-    marginBottom: 24,
-  },
-  passwordInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  passwordInput: {
-    flex: 1,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 10,
-    marginRight: 8,
-  },
-  eyeIcon: {
-    margin: 0,
-  },
-  submitButton: {
-    width: '100%',
-    marginBottom: 12,
-  },
-  resendButton: {
-    width: '100%',
-    marginBottom: 12,
-  },
-  returnButton: {
-    width: '100%',
-  },
-});
-
-
+const getStyles = theme =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+      backgroundColor: theme.colors.background,
+    },
+    title: {
+      fontSize: 20,
+      marginBottom: 24,
+      fontWeight: 'bold',
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      gap: 10,
+      marginBottom: 24,
+    },
+    input: {
+      borderWidth: 2,
+      borderRadius: 6,
+      fontSize: 24,
+      padding: 10,
+      width: 50,
+      textAlign: 'center',
+      marginHorizontal: 4,
+    },
+    passwordContainer: {
+      width: '100%',
+      marginBottom: 24,
+    },
+    passwordInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    passwordInput: {
+      flex: 1,
+      borderWidth: 2,
+      borderColor: '#ccc',
+      borderRadius: 6,
+      padding: 10,
+      marginRight: 8,
+    },
+    eyeIcon: {
+      margin: 0,
+    },
+    submitButton: {
+      width: '100%',
+      marginBottom: 12,
+    },
+    resendButton: {
+      width: '100%',
+      marginBottom: 12,
+    },
+    returnButton: {
+      width: '100%',
+    },
+  });
 
 export default function VerificationScreen({ route }) {
   const { mode = 'email', email: routeEmail } = route?.params || {};
@@ -119,7 +118,7 @@ export default function VerificationScreen({ route }) {
     return routeEmail;
   };
 
-  const validatePassword = (pass) => {
+  const validatePassword = pass => {
     if (!PASSWORD_REGEX.test(pass)) {
       setErrorMessage('La contraseña debe tener al menos 6 caracteres, una mayúscula y un número');
       setErrorVisible(true);
@@ -169,24 +168,20 @@ export default function VerificationScreen({ route }) {
     }
   };
 
-  const verifyCode = async (fullCode) => verifyEmail(fullCode, getEmail());
+  const verifyCode = async fullCode => verifyEmail(fullCode, getEmail());
 
-  const verifyPasswordReset = async (fullCode) => {
+  const verifyPasswordReset = async fullCode => {
     const success = await resetPassword(getEmail(), fullCode, password);
     if (success) {
-      Alert.alert(
-        'Éxito',
-        'Tu contraseña ha sido restablecida correctamente',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              console.log('[VerificationScreen] Navigating to SignIn after success message');
-              router.replace('SignIn');
-            }
-          }
-        ]
-      );
+      Alert.alert('Éxito', 'Tu contraseña ha sido restablecida correctamente', [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('[VerificationScreen] Navigating to SignIn after success message');
+            router.replace('SignIn');
+          },
+        },
+      ]);
     }
   };
 
@@ -220,12 +215,12 @@ export default function VerificationScreen({ route }) {
         {code.map((digit, index) => (
           <TextInput
             key={index}
-            ref={(ref) => (inputsRef.current[index] = ref)}
+            ref={ref => (inputsRef.current[index] = ref)}
             style={[styles.input, { borderColor: getBorderColor() }]}
             keyboardType="numeric"
             maxLength={1}
             value={digit}
-            onChangeText={(text) => handleChange(text, index)}
+            onChangeText={text => handleChange(text, index)}
           />
         ))}
       </View>
@@ -241,7 +236,7 @@ export default function VerificationScreen({ route }) {
               onChangeText={setPassword}
             />
             <IconButton
-              icon={showPassword ? "eye-off" : "eye"}
+              icon={showPassword ? 'eye-off' : 'eye'}
               onPress={() => setShowPassword(!showPassword)}
               style={styles.eyeIcon}
             />
@@ -255,7 +250,7 @@ export default function VerificationScreen({ route }) {
               onChangeText={setConfirmPassword}
             />
             <IconButton
-              icon={showConfirmPassword ? "eye-off" : "eye"}
+              icon={showConfirmPassword ? 'eye-off' : 'eye'}
               onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               style={styles.eyeIcon}
             />
@@ -309,4 +304,3 @@ export default function VerificationScreen({ route }) {
     </View>
   );
 }
-

@@ -1,7 +1,14 @@
 import { create } from 'zustand';
 import { deleteToken, getToken, saveToken } from '../utils/secureStore';
-import { login, resendCode, signup, verify, forgotPassword, resetPassword } from "../service/auth.service";
-import { info } from "../service/user.service";
+import {
+  login,
+  resendCode,
+  signup,
+  verify,
+  forgotPassword,
+  resetPassword,
+} from '../service/auth.service';
+import { info } from '../service/user.service';
 
 const useAuthStore = create((set, get) => ({
   user: null,
@@ -9,8 +16,8 @@ const useAuthStore = create((set, get) => ({
   isUserCreated: false,
   loading: false,
   error: null,
-  isEmailVerified: { email: null, password: null, verified: false},
-  setEmailVerified: (data) => set({ isEmailVerified: data }),
+  isEmailVerified: { email: null, password: null, verified: false },
+  setEmailVerified: data => set({ isEmailVerified: data }),
 
   login: async (email, password) => {
     set({ loading: true, error: null });
@@ -24,11 +31,10 @@ const useAuthStore = create((set, get) => ({
 
       const infoResponse = await info();
       set({ user: infoResponse, isAuthenticated: true, loading: false, error: false });
-
     } catch (error) {
       console.error('Login failed', error);
 
-      console.warn(error?.response.data)
+      console.warn(error?.response.data);
       if (error?.response?.data?.message === 'The email has not been verified.') {
         set({ error: null, loading: false });
         return 'EMAIL_NOT_VERIFIED';
@@ -45,7 +51,6 @@ const useAuthStore = create((set, get) => ({
       await signup({ email, password, firstName, lastName });
 
       set({ loading: false, error: false, isUserCreated: true });
-
     } catch (error) {
       set({ error: 'Error al crear la cuenta', loading: false, isUserCreated: false });
     }
@@ -64,7 +69,6 @@ const useAuthStore = create((set, get) => ({
       set({ loading: false, error: false, isEmailVerified: { email, verified: true } });
 
       await get().login(email, password);
-
     } catch (error) {
       console.error('[AuthStore] Email verification failed:', error);
 
@@ -78,12 +82,12 @@ const useAuthStore = create((set, get) => ({
       set({
         error: errorMessage,
         loading: false,
-        isEmailVerified: { email, verified: false }
+        isEmailVerified: { email, verified: false },
       });
     }
   },
 
-  resendCode: async (email) => {
+  resendCode: async email => {
     console.log('[AuthStore] Starting resend code for:', email);
     set({ loading: true, error: null });
 
@@ -92,7 +96,6 @@ const useAuthStore = create((set, get) => ({
       console.log('[AuthStore] Resend code successful');
 
       set({ loading: false, error: false });
-
     } catch (error) {
       console.error('[AuthStore] Resend code failed:', error);
 
@@ -106,12 +109,12 @@ const useAuthStore = create((set, get) => ({
       set({
         error: errorMessage,
         loading: false,
-        isEmailVerified: { email, verified: false }
+        isEmailVerified: { email, verified: false },
       });
     }
   },
 
-  resetPasswordRequest: async (email) => {
+  resetPasswordRequest: async email => {
     console.log('[AuthStore] Starting password reset request for email:', email);
     set({ loading: true, error: null });
 
@@ -128,10 +131,11 @@ const useAuthStore = create((set, get) => ({
       console.error('[AuthStore] Error details:', {
         message: error?.message,
         response: error?.response?.data,
-        status: error?.response?.status
+        status: error?.response?.status,
       });
 
-      const errorMessage = error?.response?.data?.message || 'Error al solicitar el cambio de contraseña';
+      const errorMessage =
+        error?.response?.data?.message || 'Error al solicitar el cambio de contraseña';
       set({ error: errorMessage, loading: false });
       return false;
     }
@@ -154,7 +158,7 @@ const useAuthStore = create((set, get) => ({
       console.error('[AuthStore] Error details:', {
         message: error?.message,
         response: error?.response?.data,
-        status: error?.response?.status
+        status: error?.response?.status,
       });
 
       const errorMessage = error?.response?.data?.message || 'Error al restablecer la contraseña';

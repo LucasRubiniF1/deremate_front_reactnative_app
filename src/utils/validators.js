@@ -5,7 +5,7 @@ export function validateEmail(email) {
 
 export function validateName(name, isName = true) {
   const regex = /^[^\d]+$/;
-  const text = (isName) ? "nombre" : "apellido";
+  const text = isName ? 'nombre' : 'apellido';
   if (!name.trim()) return `El ${text} es obligatorio.`;
   return regex.test(name.trim()) ? null : `El ${text} no puede contener números.`;
 }
@@ -25,6 +25,3 @@ export function validatePasswordStrength(password) {
 export function validatePasswordsMatch(password, confirmPassword) {
   return password === confirmPassword ? null : 'Las contraseñas no coinciden.';
 }
-
-
-

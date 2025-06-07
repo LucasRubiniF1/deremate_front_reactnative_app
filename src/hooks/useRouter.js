@@ -1,16 +1,16 @@
-import {CommonActions, useNavigation} from "@react-navigation/native";
-import {Log} from "../log/Log";
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { Log } from '../log/Log';
 
 export const useRouter = () => {
   const navigation = useNavigation();
 
   const push = (name, params) => {
-    Log.info("ROUTER", "Going to", name);
-    navigation.navigate(name, params)
-  }
+    Log.info('ROUTER', 'Going to', name);
+    navigation.navigate(name, params);
+  };
 
   const replace = (name, params) => {
-    Log.info("ROUTER", "Replacing with", name);
+    Log.info('ROUTER', 'Replacing with', name);
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -22,10 +22,10 @@ export const useRouter = () => {
         ],
       })
     );
-  }
+  };
 
   return {
     push,
     replace,
-  }
-}
+  };
+};
