@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { CameraView, Camera } from 'expo-camera';
 import { Button, ActivityIndicator } from 'react-native-paper';
 import { useRouter } from '../../hooks/useRouter';
+import { useFocusEffect } from '@react-navigation/native';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -19,6 +20,12 @@ export default function ScannerScreen() {
     })();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      setScanned(false);
+    }, [])
+  );
+
   const handleBarcodeScanned = ({ data }) => {
     if (scanned) return;
 
@@ -27,7 +34,6 @@ export default function ScannerScreen() {
       alert('Código inválido: El código QR escaneado no es un número válido.');
       return;
     }
-
     setScanned(true);
     router.push('DeliveryDetails', { deliveryId });
   };
