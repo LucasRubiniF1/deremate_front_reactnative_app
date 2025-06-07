@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Card, Divider, Text, Chip } from 'react-native-paper';
+import { View, StyleSheet, Linking, Platform } from 'react-native';
+import { Card, Divider, Text, Button } from 'react-native-paper';
 import StatusChip from '../components/StatusChip';
 import { useTheme } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -61,6 +62,29 @@ const DeliveryCard = ({ delivery }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
 
+  const openInMaps = () => {
+    const { destinationLatitude, destinationLongitude } = delivery.route;
+    
+    const getMapsUrl = () => {
+      if (Platform.OS === 'ios') {
+        return `maps://app?daddr=${destinationLatitude},${destinationLongitude}&dirflg=d`;
+      } else {
+        return `google.navigation:q=${destinationLatitude},${destinationLongitude}`;
+      }
+    };
+
+    const url = getMapsUrl();
+    Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        // Fallback to Google Maps URL if native navigation is not supported
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destinationLatitude},${destinationLongitude}&travelmode=driving`;
+        Linking.openURL(googleMapsUrl);
+      }
+    });
+  };
+
   return (
     <Card style={styles.card}>
       <Card.Content>
@@ -78,8 +102,19 @@ const DeliveryCard = ({ delivery }) => {
 
         <View style={styles.section}>
           <Text variant="titleSmall">Ruta</Text>
-          <Text>Origen: {delivery.route.origin}</Text>
-          <Text>Destino: {delivery.route.destination}</Text>
+          <Text>{delivery.route.description}</Text>
+          {delivery.route.destinationLatitude && delivery.route.destinationLongitude && (
+            <Button
+              mode="contained"
+              onPress={openInMaps}
+              style={{ marginTop: 8 }}
+              icon={({ size, color }) => (
+                <MaterialIcons name="directions" size={size} color={color} />
+              )}
+            >
+              Iniciar Navegación
+            </Button>
+          )}
           {delivery.route.completedAt && (
             <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>
           )}
