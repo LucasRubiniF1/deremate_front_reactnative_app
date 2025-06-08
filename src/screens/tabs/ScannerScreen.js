@@ -1,30 +1,35 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { CameraView, Camera } from 'expo-camera';
 import { Button, ActivityIndicator } from 'react-native-paper';
 import { useRouter } from '../../hooks/useRouter';
-import { useFocusEffect } from '@react-navigation/native';
+
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScannerScreen() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [loading, setLoading] = useState(true);
   const cameraRef = useRef(null);
   const router = useRouter();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
+      try {
+        setLoading(true);
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setHasPermission(status === 'granted');
+      } catch (error) {
+        console.error('Error requesting camera permissions:', error);
+        setHasPermission(false);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      setScanned(false);
-    }, [])
-  );
 
   const handleBarcodeScanned = ({ data }) => {
     if (scanned) return;
@@ -38,12 +43,14 @@ export default function ScannerScreen() {
     router.push('DeliveryDetails', { deliveryId });
   };
 
-  if (hasPermission === null) {
+  if (loading) {
     return (
       <AuthorizedRoute>
-        <SafeAreaView style={styles.centered}>
-          <ActivityIndicator size="large" />
-          <Text style={styles.info}>Solicitando permiso para la cámara...</Text>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" />
+            <Text style={styles.loadingText}>Cargando cámara...</Text>
+          </View>
         </SafeAreaView>
       </AuthorizedRoute>
     );
@@ -52,8 +59,21 @@ export default function ScannerScreen() {
   if (hasPermission === false) {
     return (
       <AuthorizedRoute>
-        <SafeAreaView style={styles.centered}>
-          <Text style={styles.error}>Permiso denegado para acceder a la cámara.</Text>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>
+              No se puede acceder a la cámara. Por favor, permite el acceso en la configuración.
+            </Text>
+            <Button
+              mode="contained"
+              onPress={async () => {
+                const { status } = await Camera.requestCameraPermissionsAsync();
+                setHasPermission(status === 'granted');
+              }}
+            >
+              Solicitar permisos de nuevo
+            </Button>
+          </View>
         </SafeAreaView>
       </AuthorizedRoute>
     );
@@ -62,19 +82,38 @@ export default function ScannerScreen() {
   return (
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
-        <CameraView
-          ref={cameraRef}
-          style={StyleSheet.absoluteFillObject}
-          facing="back"
-          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-          onBarcodeScanned={handleBarcodeScanned}
-        />
+        {hasPermission && isFocused ? (
+          <CameraView
+            ref={cameraRef}
+            style={StyleSheet.absoluteFillObject}
+            facing="back"
+            barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+            onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
+          />
+        ) : (
+          <View style={styles.inactiveContainer}>
+            <Text style={styles.inactiveText}>
+              {!isFocused ? 'Cámara pausada' : 'Activando cámara...'}
+            </Text>
+          </View>
+        )}
 
         {scanned && (
           <View style={styles.overlay}>
-            <Button mode="contained" onPress={() => setScanned(false)}>
+            <Text style={styles.overlayText}>¡QR escaneado!</Text>
+            <Button
+              mode="contained"
+              onPress={() => setScanned(false)}
+              style={styles.scanAgainButton}
+            >
               Escanear de nuevo
             </Button>
+          </View>
+        )}
+
+        {!scanned && hasPermission && isFocused && (
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.instructionsText}>Apunta la cámara hacia el código QR</Text>
           </View>
         )}
       </SafeAreaView>
@@ -85,26 +124,70 @@ export default function ScannerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
+    backgroundColor: 'black',
   },
-  overlay: {
-    position: 'absolute',
-    bottom: 40,
-    alignSelf: 'center',
-  },
-  centered: {
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    backgroundColor: 'black',
   },
-  info: {
+  loadingText: {
+    color: 'white',
     marginTop: 16,
     fontSize: 16,
-    color: '#333',
   },
-  error: {
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    padding: 20,
+  },
+  errorText: {
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 20,
     fontSize: 16,
-    color: '#D32F2F',
+  },
+  inactiveContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+  inactiveText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+  overlayText: {
+    color: 'white',
+    fontSize: 18,
+    marginBottom: 20,
+    fontWeight: 'bold',
+  },
+  scanAgainButton: {
+    marginTop: 10,
+  },
+  instructionsContainer: {
+    position: 'absolute',
+    bottom: 100,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  instructionsText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 10,
+    borderRadius: 8,
   },
 });

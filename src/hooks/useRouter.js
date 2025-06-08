@@ -24,8 +24,16 @@ export const useRouter = () => {
     );
   };
 
+  const goBack = () => {
+    Log.info('ROUTER', 'Going back');
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
+  };
+
   return {
     push,
     replace,
+    goBack,
   };
 };
