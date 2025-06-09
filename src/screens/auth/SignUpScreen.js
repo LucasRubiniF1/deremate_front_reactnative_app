@@ -36,6 +36,7 @@ const getStyles = theme =>
   });
 
 export default function SignUpScreen() {
+  console.log('[SignUpScreen] Component mounted');
   const { signUp, loading, error, isUserCreated } = useAuthStore();
   const router = useRouter();
 
@@ -51,7 +52,33 @@ export default function SignUpScreen() {
   const theme = useTheme();
   const styles = getStyles(theme);
 
+  const handleEmailChange = (text) => {
+    console.log('[SignUpScreen] Email changed:', text);
+    setEmail(text);
+  };
+
+  const handleFirstNameChange = (text) => {
+    console.log('[SignUpScreen] First name changed:', text);
+    setFirstName(text);
+  };
+
+  const handleLastNameChange = (text) => {
+    console.log('[SignUpScreen] Last name changed:', text);
+    setLastName(text);
+  };
+
+  const handlePasswordChange = (text) => {
+    console.log('[SignUpScreen] Password changed');
+    setPassword(text);
+  };
+
+  const handleConfirmPasswordChange = (text) => {
+    console.log('[SignUpScreen] Confirm password changed');
+    setConfirmPassword(text);
+  };
+
   const handleSignUp = () => {
+    console.log('[SignUpScreen] Sign up attempt initiated');
     const validations = [
       validateName(firstName),
       validateName(lastName, false),
@@ -63,17 +90,37 @@ export default function SignUpScreen() {
     const errors = validations.filter(Boolean);
 
     if (errors.length) {
+      console.log('[SignUpScreen] Validation errors:', errors);
       setSnackbarMode('danger');
       setSnackbarMessage(errors.join('\n'));
       setVisible(true);
       return;
     }
 
+    console.log('[SignUpScreen] Validation successful, attempting sign up');
     signUp(email, password, firstName, lastName);
   };
 
+  const handleBackToSignIn = () => {
+    console.log('[SignUpScreen] Navigating back to sign in');
+    router.replace('SignIn');
+  };
+
+  useEffect(() => {
+    console.log('[SignUpScreen] Initial state:', {
+      loading,
+      error,
+      isUserCreated
+    });
+
+    return () => {
+      console.log('[SignUpScreen] Component unmounting');
+    };
+  }, []);
+
   useEffect(() => {
     if (error) {
+      console.log('[SignUpScreen] Error received:', error);
       setSnackbarMode('danger');
       setSnackbarMessage(error);
       setVisible(true);
@@ -82,16 +129,21 @@ export default function SignUpScreen() {
 
   useEffect(() => {
     if (isUserCreated) {
+      console.log('[SignUpScreen] User created successfully, preparing redirect');
       setSnackbarMode('success');
       setSnackbarMessage('Cuenta creada exitosamente. Redirigiendo...');
       setVisible(true);
 
       const timeout = setTimeout(() => {
+        console.log('[SignUpScreen] Redirecting to sign in screen');
         useAuthStore.setState({ isUserCreated: null });
         router.replace('SignIn');
       }, 2000);
 
-      return () => clearTimeout(timeout);
+      return () => {
+        console.log('[SignUpScreen] Cleaning up redirect timeout');
+        clearTimeout(timeout);
+      };
     }
   }, [isUserCreated]);
 
@@ -105,7 +157,7 @@ export default function SignUpScreen() {
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={handleEmailChange}
           style={styles.input}
           mode="outlined"
           disabled={loading}
@@ -114,7 +166,7 @@ export default function SignUpScreen() {
         <TextInput
           label="Nombre"
           value={firstName}
-          onChangeText={setFirstName}
+          onChangeText={handleFirstNameChange}
           style={styles.input}
           mode="outlined"
           disabled={loading}
@@ -123,7 +175,7 @@ export default function SignUpScreen() {
         <TextInput
           label="Apellido"
           value={lastName}
-          onChangeText={setLastName}
+          onChangeText={handleLastNameChange}
           style={styles.input}
           mode="outlined"
           disabled={loading}
@@ -132,7 +184,7 @@ export default function SignUpScreen() {
         <TextInput
           label="Contraseña"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={handlePasswordChange}
           secureTextEntry
           style={styles.input}
           mode="outlined"
@@ -142,7 +194,7 @@ export default function SignUpScreen() {
         <TextInput
           label="Confirmar contraseña"
           value={confirmPassword}
-          onChangeText={setConfirmPassword}
+          onChangeText={handleConfirmPasswordChange}
           secureTextEntry
           style={styles.input}
           mode="outlined"
@@ -161,7 +213,7 @@ export default function SignUpScreen() {
           label="Ya tengo cuenta"
           accent
           mode="contained"
-          onPress={() => router.replace('SignIn')}
+          onPress={handleBackToSignIn}
           disabled={loading}
         />
       </View>
