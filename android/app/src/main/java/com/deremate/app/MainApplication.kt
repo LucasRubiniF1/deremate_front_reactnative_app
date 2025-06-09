@@ -1,4 +1,4 @@
-package com.anonymous.deremate_front_reactnative_app
+package com.deremate.app
 
 import android.app.Application
 import android.content.res.Configuration

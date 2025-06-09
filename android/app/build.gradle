@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.deremate_front_reactnative_app'
+    namespace 'com.deremate.app'
     defaultConfig {
-        applicationId 'com.anonymous.deremate_front_reactnative_app'
+        applicationId 'com.deremate.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

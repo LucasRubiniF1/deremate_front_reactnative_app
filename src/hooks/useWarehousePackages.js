@@ -1,46 +1,105 @@
-import { useEffect, useState, useCallback } from 'react';
-import { Alert } from 'react-native';
-import { fetchPackagesInWarehouse } from '../service/package.service';
+import { useState, useEffect, useRef } from 'react';
+import { schedulePushNotification } from '../service/notificationService';
+import { getToken } from '../utils/secureStore';
+import axios from 'axios';
+import { AppState } from 'react-native';
 
-export const useWarehousePackages = () => {
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+const POLLING_INTERVAL = 30000; // Check every 30 seconds
+
+export function useWarehousePackages() {
   const [packages, setPackages] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState('');
   const [sector, setSector] = useState('');
   const [shelf, setShelf] = useState('');
+  const [lastPackageId, setLastPackageId] = useState(null);
+  const pollingIntervalRef = useRef(null);
+  const appStateRef = useRef(AppState.currentState);
 
-  const fetch = useCallback(async () => {
+  const fetchPackages = async () => {
     try {
-      setLoading(true);
-      const data = await fetchPackagesInWarehouse();
-      setPackages(data);
-    } catch (err) {
-      Alert.alert('Error', 'No se pudieron cargar los paquetes.');
+      const token = await getToken();
+      const response = await axios.get(`${BASE_URL}/packages`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          code: code || undefined,
+          sector: sector || undefined,
+          shelf: shelf || undefined,
+        },
+      });
+
+      const newPackages = response.data;
+      setPackages(newPackages);
+
+      // Check for new packages
+      if (lastPackageId && newPackages.length > 0) {
+        const latestPackage = newPackages[0];
+        if (latestPackage.id > lastPackageId) {
+          await schedulePushNotification(
+            '¡Nuevo paquete disponible!',
+            `Se ha agregado un nuevo paquete al depósito: ${latestPackage.code}`,
+            { packageId: latestPackage.id }
+          );
+        }
+      }
+
+      if (newPackages.length > 0) {
+        setLastPackageId(newPackages[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching packages:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
+  // Start polling when component mounts
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    const startPolling = () => {
+      // Clear any existing interval
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+      
+      // Start new polling interval
+      pollingIntervalRef.current = setInterval(fetchPackages, POLLING_INTERVAL);
+    };
 
-  useEffect(() => {
-    const filteredList = packages.filter(pkg => {
-      const matchCode = !code || pkg.id.toString().includes(code);
-      const matchSector =
-        !sector || pkg.packageLocation?.toLowerCase().includes(`sector ${sector}`.toLowerCase());
-      const matchShelf =
-        !shelf || pkg.packageLocation?.toLowerCase().includes(`estante ${shelf}`.toLowerCase());
-      return matchCode && matchSector && matchShelf;
+    // Handle app state changes
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appStateRef.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        // App came to foreground
+        startPolling();
+      } else if (nextAppState.match(/inactive|background/)) {
+        // App went to background
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+        }
+      }
+      appStateRef.current = nextAppState;
     });
 
-    setFiltered(filteredList);
-  }, [code, sector, shelf, packages]);
+    // Initial fetch and start polling
+    fetchPackages();
+    startPolling();
+
+    // Cleanup
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+      subscription.remove();
+    };
+  }, [code, sector, shelf]); // Re-run when filters change
 
   return {
-    packages: filtered,
+    packages,
     loading,
     code,
     setCode,
@@ -48,6 +107,6 @@ export const useWarehousePackages = () => {
     setSector,
     shelf,
     setShelf,
-    refetch: fetch, // ✅ Esta es la función que vas a usar para el Refresh
+    refetch: fetchPackages,
   };
-};
+}
