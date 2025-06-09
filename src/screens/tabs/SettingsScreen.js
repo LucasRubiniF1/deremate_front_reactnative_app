@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -93,6 +93,7 @@ const getStyles = theme =>
   });
 
 export default function SettingsScreen() {
+  console.log('[SettingsScreen] Component mounted');
   const [isDarkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(false);
   const [locationEnabled, setLocationEnabled] = useState(true);
@@ -100,9 +101,53 @@ export default function SettingsScreen() {
   const [newsletter, setNewsletter] = useState(false);
 
   const router = useRouter();
-
   const theme = useTheme();
   const styles = getStyles(theme);
+
+  useEffect(() => {
+    console.log('[SettingsScreen] Initial preferences state:', {
+      isDarkMode,
+      notifications,
+      locationEnabled,
+      email,
+      newsletter
+    });
+
+    return () => {
+      console.log('[SettingsScreen] Component unmounting');
+    };
+  }, []);
+
+  const handleDarkModeChange = (value) => {
+    console.log('[SettingsScreen] Dark mode changed:', value);
+    setDarkMode(value);
+  };
+
+  const handleNotificationsChange = (value) => {
+    console.log('[SettingsScreen] Notifications changed:', value);
+    setNotifications(value);
+  };
+
+  const handleLocationChange = (value) => {
+    console.log('[SettingsScreen] Location enabled changed:', value);
+    setLocationEnabled(value);
+  };
+
+  const handleEmailChange = (text) => {
+    console.log('[SettingsScreen] Email changed:', text);
+    setEmail(text);
+  };
+
+  const handleNewsletterChange = () => {
+    const newValue = !newsletter;
+    console.log('[SettingsScreen] Newsletter subscription changed:', newValue);
+    setNewsletter(newValue);
+  };
+
+  const handlePasswordChange = () => {
+    console.log('[SettingsScreen] Navigating to change password screen');
+    router.push('ChangePassword');
+  };
 
   return (
     <AuthorizedRoute>
@@ -121,17 +166,17 @@ export default function SettingsScreen() {
 
             <View style={styles.item}>
               <Text style={styles.label}>Modo Oscuro</Text>
-              <Switch value={isDarkMode} onValueChange={setDarkMode} />
+              <Switch value={isDarkMode} onValueChange={handleDarkModeChange} />
             </View>
 
             <View style={styles.item}>
               <Text style={styles.label}>Notificaciones</Text>
-              <Switch value={notifications} onValueChange={setNotifications} />
+              <Switch value={notifications} onValueChange={handleNotificationsChange} />
             </View>
 
             <View style={styles.item}>
               <Text style={styles.label}>Ubicación</Text>
-              <Switch value={locationEnabled} onValueChange={setLocationEnabled} />
+              <Switch value={locationEnabled} onValueChange={handleLocationChange} />
             </View>
 
             <Divider style={styles.divider} />
@@ -163,14 +208,14 @@ export default function SettingsScreen() {
               label="Correo electrónico"
               mode="outlined"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={handleEmailChange}
               style={styles.input}
             />
 
             <View style={styles.checkboxContainer}>
               <Checkbox
                 status={newsletter ? 'checked' : 'unchecked'}
-                onPress={() => setNewsletter(!newsletter)}
+                onPress={handleNewsletterChange}
               />
               <Text style={styles.checkboxLabel}>Suscribirme al newsletter</Text>
             </View>
@@ -179,7 +224,7 @@ export default function SettingsScreen() {
               icon="lock-reset"
               mode="contained"
               style={styles.button}
-              onPress={() => router.push('ChangePassword')}
+              onPress={handlePasswordChange}
             >
               Cambiar contraseña
             </Button>
