@@ -9,6 +9,7 @@ import AuthorizedRoute from '../../components/AuthorizedRoute';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ScannerScreen() {
+  console.log('[ScannerScreen] Component mounted');
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -17,33 +18,51 @@ export default function ScannerScreen() {
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    console.log('[ScannerScreen] Requesting camera permissions...');
     (async () => {
       try {
         setLoading(true);
         const { status } = await Camera.requestCameraPermissionsAsync();
+        console.log('[ScannerScreen] Camera permission status:', status);
         setHasPermission(status === 'granted');
       } catch (error) {
-        console.error('Error requesting camera permissions:', error);
+        console.error('[ScannerScreen] Error requesting camera permissions:', error);
         setHasPermission(false);
       } finally {
         setLoading(false);
       }
     })();
+
+    return () => {
+      console.log('[ScannerScreen] Component unmounting');
+    };
   }, []);
 
+  useEffect(() => {
+    console.log('[ScannerScreen] Camera focus state changed:', { isFocused });
+  }, [isFocused]);
+
   const handleBarcodeScanned = ({ data }) => {
-    if (scanned) return;
+    console.log('[ScannerScreen] Barcode scanned:', data);
+    if (scanned) {
+      console.log('[ScannerScreen] Already scanned, ignoring new scan');
+      return;
+    }
 
     const deliveryId = parseInt(data, 10);
     if (isNaN(deliveryId)) {
+      console.log('[ScannerScreen] Invalid QR code: not a valid number');
       alert('Código inválido: El código QR escaneado no es un número válido.');
       return;
     }
+
+    console.log('[ScannerScreen] Valid QR code scanned, navigating to delivery:', deliveryId);
     setScanned(true);
     router.push('DeliveryDetails', { deliveryId });
   };
 
   if (loading) {
+    console.log('[ScannerScreen] Rendering loading state');
     return (
       <AuthorizedRoute>
         <SafeAreaView style={styles.container}>
@@ -57,6 +76,7 @@ export default function ScannerScreen() {
   }
 
   if (hasPermission === false) {
+    console.log('[ScannerScreen] Rendering permission denied state');
     return (
       <AuthorizedRoute>
         <SafeAreaView style={styles.container}>
@@ -67,7 +87,9 @@ export default function ScannerScreen() {
             <Button
               mode="contained"
               onPress={async () => {
+                console.log('[ScannerScreen] Requesting camera permissions again');
                 const { status } = await Camera.requestCameraPermissionsAsync();
+                console.log('[ScannerScreen] New camera permission status:', status);
                 setHasPermission(status === 'granted');
               }}
             >
@@ -78,6 +100,12 @@ export default function ScannerScreen() {
       </AuthorizedRoute>
     );
   }
+
+  console.log('[ScannerScreen] Rendering camera view:', {
+    hasPermission,
+    isFocused,
+    scanned
+  });
 
   return (
     <AuthorizedRoute>
@@ -103,7 +131,10 @@ export default function ScannerScreen() {
             <Text style={styles.overlayText}>¡QR escaneado!</Text>
             <Button
               mode="contained"
-              onPress={() => setScanned(false)}
+              onPress={() => {
+                console.log('[ScannerScreen] Resetting scan state');
+                setScanned(false);
+              }}
               style={styles.scanAgainButton}
             >
               Escanear de nuevo
