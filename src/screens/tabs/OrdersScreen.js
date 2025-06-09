@@ -30,27 +30,37 @@ const getStyles = theme =>
   });
 
 export default function OrdersScreen() {
+  console.log('[OrdersScreen] Component mounted');
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchDeliveries = async () => {
+    console.log('[OrdersScreen] Fetching deliveries...');
     try {
       const data = await getDeliveriesByUser();
+      console.log('[OrdersScreen] Deliveries fetched successfully:', data.length, 'items');
       setDeliveries(data);
     } catch (error) {
-      console.error('Error fetching deliveries:', error);
+      console.error('[OrdersScreen] Error fetching deliveries:', error);
     } finally {
+      console.log('[OrdersScreen] Fetch operation completed');
       setLoading(false);
       setRefreshing(false);
     }
   };
 
   useEffect(() => {
+    console.log('[OrdersScreen] Initial fetch triggered');
     fetchDeliveries();
+
+    return () => {
+      console.log('[OrdersScreen] Component unmounting');
+    };
   }, []);
 
   const onRefresh = () => {
+    console.log('[OrdersScreen] Manual refresh triggered');
     setRefreshing(true);
     fetchDeliveries();
   };
@@ -59,6 +69,7 @@ export default function OrdersScreen() {
   const styles = getStyles(theme);
 
   if (loading) {
+    console.log('[OrdersScreen] Rendering loading state');
     return (
       <AuthorizedRoute>
         <SafeAreaView style={styles.loadingContainer}>
@@ -68,6 +79,7 @@ export default function OrdersScreen() {
     );
   }
 
+  console.log('[OrdersScreen] Rendering deliveries list:', deliveries.length, 'items');
   return (
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
