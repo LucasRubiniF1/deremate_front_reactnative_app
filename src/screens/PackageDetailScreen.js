@@ -4,6 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { AuthorizedService } from '../api/apiClient';
 
 const PackageDetailScreen = () => {
+  console.log('[PackageDetailScreen] Component mounted');
   const route = useRoute();
   const navigation = useNavigation();
   const { id } = route.params;
@@ -11,22 +12,38 @@ const PackageDetailScreen = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log(`[PackageDetailScreen] Fetching delivery details for ID: ${id}`);
     const fetchDelivery = async () => {
       try {
+        console.log('[PackageDetailScreen] Making API request...');
         const res = await AuthorizedService.get(`/v1/delivery/${id}`);
+        console.log('[PackageDetailScreen] API response received:', res.data);
         setDelivery(res.data);
       } catch (err) {
+        console.error('[PackageDetailScreen] Error fetching delivery:', err);
         Alert.alert('Error', 'No se pudo cargar el detalle del paquete.');
-        console.error(err);
       } finally {
+        console.log('[PackageDetailScreen] Fetch operation completed');
         setLoading(false);
       }
     };
     fetchDelivery();
+
+    return () => {
+      console.log('[PackageDetailScreen] Component unmounting');
+    };
   }, [id]);
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-  if (!delivery) return <Text style={styles.error}>No se encontró el paquete</Text>;
+  if (loading) {
+    console.log('[PackageDetailScreen] Rendering loading state');
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  }
+  if (!delivery) {
+    console.log('[PackageDetailScreen] No delivery data found');
+    return <Text style={styles.error}>No se encontró el paquete</Text>;
+  }
+
+  console.log('[PackageDetailScreen] Rendering delivery details');
 
   return (
     <View style={styles.container}>
