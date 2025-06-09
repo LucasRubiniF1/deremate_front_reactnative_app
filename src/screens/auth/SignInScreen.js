@@ -35,6 +35,7 @@ const getStyles = theme =>
   });
 
 export default function SignInScreen() {
+  console.log('[SignInScreen] Component mounted');
   const { login, isAuthenticated, error, setEmailVerified } = useAuthStore();
   const router = useRouter();
   const theme = useTheme();
@@ -47,19 +48,26 @@ export default function SignInScreen() {
 
   // Cleanup function
   const cleanupErrors = () => {
+    console.log('[SignInScreen] Cleaning up errors');
     setVisible(false);
     setErrorMessage('');
   };
 
   // Reset state when component mounts
   useEffect(() => {
+    console.log('[SignInScreen] Initializing component state');
     cleanupErrors();
     setEmail('');
     setPassword('');
+
+    return () => {
+      console.log('[SignInScreen] Component unmounting');
+    };
   }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
+      console.log('[SignInScreen] User authenticated, navigating to biometric auth');
       cleanupErrors();
       router.replace('BiometricAuth');
     }
@@ -67,32 +75,64 @@ export default function SignInScreen() {
 
   useEffect(() => {
     if (error === 'Account is already verified') {
-      // If account is already verified, proceed with login
+      console.log('[SignInScreen] Account already verified, proceeding with login');
       login(email, password);
     } else if (error) {
+      console.log('[SignInScreen] Error received:', error);
       setErrorMessage(error);
       setVisible(true);
     }
   }, [error]);
 
+  const handleEmailChange = (text) => {
+    console.log('[SignInScreen] Email changed:', text);
+    cleanupErrors();
+    setEmail(text);
+  };
+
+  const handlePasswordChange = (text) => {
+    console.log('[SignInScreen] Password changed');
+    cleanupErrors();
+    setPassword(text);
+  };
+
   const handleLogin = async () => {
+    console.log('[SignInScreen] Login attempt initiated');
     cleanupErrors();
 
     if (!email.trim() || !password.trim()) {
+      console.log('[SignInScreen] Login validation failed: empty fields');
       setErrorMessage('Debes ingresar tu correo y contraseña.');
       setVisible(true);
       return;
     }
 
+    console.log('[SignInScreen] Attempting login for email:', email);
     const result = await login(email, password);
+    
     if (result === 'EMAIL_NOT_VERIFIED') {
+      console.log('[SignInScreen] Email not verified, navigating to verification screen');
       setEmailVerified({
         email,
         password,
         verified: false,
       });
       router.push('Verification');
+    } else {
+      console.log('[SignInScreen] Login result:', result);
     }
+  };
+
+  const handleSignUp = () => {
+    console.log('[SignInScreen] Navigating to sign up screen');
+    cleanupErrors();
+    router.push('SignUp');
+  };
+
+  const handleForgotPassword = () => {
+    console.log('[SignInScreen] Navigating to forgot password screen');
+    cleanupErrors();
+    router.push('ForgotPassword');
   };
 
   return (
@@ -105,10 +145,7 @@ export default function SignInScreen() {
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={text => {
-            cleanupErrors();
-            setEmail(text);
-          }}
+          onChangeText={handleEmailChange}
           style={styles.input}
           mode="outlined"
         />
@@ -116,35 +153,31 @@ export default function SignInScreen() {
         <TextInput
           label="Contraseña"
           value={password}
-          onChangeText={text => {
-            cleanupErrors();
-            setPassword(text);
-          }}
+          onChangeText={handlePasswordChange}
           secureTextEntry
           style={styles.input}
           mode="outlined"
         />
 
-        <SimpleButton label="Ingresar" accent mode="contained" onPress={handleLogin} />
+        <SimpleButton 
+          label="Ingresar" 
+          accent 
+          mode="contained" 
+          onPress={handleLogin} 
+        />
 
         <SimpleButton
           label="Crear una cuenta"
           accent
           mode="contained"
-          onPress={() => {
-            cleanupErrors();
-            router.push('SignUp');
-          }}
+          onPress={handleSignUp}
         />
 
         <SimpleButton
           label="Olvidé mi contraseña"
           accent
           mode="contained"
-          onPress={() => {
-            cleanupErrors();
-            router.push('ForgotPassword');
-          }}
+          onPress={handleForgotPassword}
         />
       </View>
       <SimpleSnackbar
