@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Text, Avatar, Button, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useAuthStore from '../../store/useAuthStore';
@@ -59,14 +59,21 @@ const getStyles = theme =>
   });
 
 export default function ProfileScreen() {
+  console.log('[ProfileScreen] Component mounted');
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const theme = useTheme();
   const styles = getStyles(theme);
 
   const handleLogout = async () => {
-    await logout();
-    router.replace('Auth');
+    console.log('[ProfileScreen] Logout initiated');
+    try {
+      await logout();
+      console.log('[ProfileScreen] Logout successful, navigating to Auth screen');
+      router.replace('Auth');
+    } catch (error) {
+      console.error('[ProfileScreen] Logout failed:', error);
+    }
   };
 
   const [loading, setLoading] = useState(true);
@@ -74,20 +81,33 @@ export default function ProfileScreen() {
   const [userInfo, setUserInfo] = useState(user);
 
   const fetchUserInfo = async () => {
+    console.log('[ProfileScreen] Fetching user info...');
     try {
       const data = await info();
+      console.log('[ProfileScreen] User info fetched successfully:', {
+        name: `${data.firstname} ${data.lastname}`,
+        deliveriesCompleted: data.deliveriesCompleted
+      });
       setUserInfo(data);
     } catch (error) {
-      console.error('Error fetching user info:', error);
+      console.error('[ProfileScreen] Error fetching user info:', error);
     } finally {
+      console.log('[ProfileScreen] Fetch operation completed');
       setLoading(false);
       setRefreshing(false);
     }
   };
 
   useEffect(() => {
+    console.log('[ProfileScreen] Initial user data:', {
+      email: user?.email,
+      hasUserInfo: !!userInfo
+    });
     fetchUserInfo();
-    console.log(userInfo);
+
+    return () => {
+      console.log('[ProfileScreen] Component unmounting');
+    };
   }, []);
 
   const initials =
@@ -98,7 +118,16 @@ export default function ProfileScreen() {
   const deliveriesCount = userInfo?.deliveriesCompleted ?? 0;
   const rating = 4;
 
+  console.log('[ProfileScreen] Rendering with user data:', {
+    initials,
+    fullName,
+    userEmail,
+    deliveriesCount,
+    rating
+  });
+
   const renderStars = () => {
+    console.log('[ProfileScreen] Rendering star rating:', rating);
     return Array.from({ length: 5 }, (_, i) => (
       <Icon
         key={i}
@@ -108,6 +137,17 @@ export default function ProfileScreen() {
       />
     ));
   };
+
+  if (loading) {
+    console.log('[ProfileScreen] Rendering loading state');
+    return (
+      <AuthorizedRoute>
+        <SafeAreaView style={styles.container}>
+          <ActivityIndicator size="large" style={{ flex: 1 }} />
+        </SafeAreaView>
+      </AuthorizedRoute>
+    );
+  }
 
   return (
     <AuthorizedRoute>
@@ -140,7 +180,11 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <Button mode="contained" onPress={handleLogout} style={styles.logoutButton}>
+        <Button 
+          mode="contained" 
+          onPress={handleLogout} 
+          style={styles.logoutButton}
+        >
           Cerrar sesión
         </Button>
       </SafeAreaView>
