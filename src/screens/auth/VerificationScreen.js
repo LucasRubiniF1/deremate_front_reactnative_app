@@ -69,6 +69,7 @@ const getStyles = theme =>
   });
 
 export default function VerificationScreen({ route }) {
+  console.log('[VerificationScreen] Component mounted with mode:', route?.params?.mode || 'email');
   const { mode = 'email', email: routeEmail } = route?.params || {};
 
   const { verifyEmail, resendCode, error, isEmailVerified, resetPassword } = useAuthStore();
@@ -89,6 +90,7 @@ export default function VerificationScreen({ route }) {
 
   // Cleanup function
   const cleanupErrors = () => {
+    console.log('[VerificationScreen] Cleaning up errors');
     setErrorVisible(false);
     setErrorMessage('');
     setStatus('default');
@@ -96,15 +98,21 @@ export default function VerificationScreen({ route }) {
 
   // Reset state when component mounts or mode changes
   useEffect(() => {
+    console.log('[VerificationScreen] Resetting state for mode:', mode);
     setCode(['', '', '', '']);
     cleanupErrors();
     setPassword('');
     setConfirmPassword('');
     setResendSuccess(false);
+
+    return () => {
+      console.log('[VerificationScreen] Component unmounting');
+    };
   }, [mode]);
 
   useEffect(() => {
     if (error) {
+      console.log('[VerificationScreen] Error received:', error);
       setErrorMessage(error);
       setErrorVisible(true);
       setStatus('error');
@@ -112,18 +120,20 @@ export default function VerificationScreen({ route }) {
   }, [error]);
 
   const getEmail = () => {
-    if (mode === 'email') {
-      return isEmailVerified.email;
-    }
-    return routeEmail;
+    const email = mode === 'email' ? isEmailVerified.email : routeEmail;
+    console.log('[VerificationScreen] Getting email for mode:', mode, 'email:', email);
+    return email;
   };
 
   const validatePassword = pass => {
+    console.log('[VerificationScreen] Validating password');
     if (!PASSWORD_REGEX.test(pass)) {
+      console.log('[VerificationScreen] Password validation failed');
       setErrorMessage('La contraseña debe tener al menos 6 caracteres, una mayúscula y un número');
       setErrorVisible(true);
       return false;
     }
+    console.log('[VerificationScreen] Password validation successful');
     return true;
   };
 
@@ -131,30 +141,37 @@ export default function VerificationScreen({ route }) {
     // Only allow numbers
     if (!/^\d?$/.test(text)) return;
 
+    console.log('[VerificationScreen] Code digit changed:', { index, value: text });
     const newCode = [...code];
     newCode[index] = text;
     setCode(newCode);
     cleanupErrors();
 
     if (text && index < 3) {
+      console.log('[VerificationScreen] Moving focus to next input');
       inputsRef.current[index + 1]?.focus();
     }
   };
 
   const handleSubmit = () => {
+    console.log('[VerificationScreen] Submit initiated');
     cleanupErrors();
     const fullCode = code.join('');
 
     if (fullCode.length !== 4) {
+      console.log('[VerificationScreen] Invalid code length:', fullCode.length);
       setErrorMessage('Por favor ingresa el código completo');
       setErrorVisible(true);
       return;
     }
 
     if (mode === 'email') {
+      console.log('[VerificationScreen] Verifying email code');
       verifyCode(fullCode);
     } else if (mode === 'password') {
+      console.log('[VerificationScreen] Verifying password reset');
       if (password !== confirmPassword) {
+        console.log('[VerificationScreen] Passwords do not match');
         setErrorMessage('Las contraseñas no coinciden');
         setErrorVisible(true);
         return;
@@ -168,11 +185,16 @@ export default function VerificationScreen({ route }) {
     }
   };
 
-  const verifyCode = async fullCode => verifyEmail(fullCode, getEmail());
+  const verifyCode = async fullCode => {
+    console.log('[VerificationScreen] Verifying email code for:', getEmail());
+    return verifyEmail(fullCode, getEmail());
+  };
 
   const verifyPasswordReset = async fullCode => {
+    console.log('[VerificationScreen] Verifying password reset for:', getEmail());
     const success = await resetPassword(getEmail(), fullCode, password);
     if (success) {
+      console.log('[VerificationScreen] Password reset successful');
       Alert.alert('Éxito', 'Tu contraseña ha sido restablecida correctamente', [
         {
           text: 'OK',
@@ -182,18 +204,28 @@ export default function VerificationScreen({ route }) {
           },
         },
       ]);
+    } else {
+      console.log('[VerificationScreen] Password reset failed');
     }
   };
 
   const handleResendCode = async () => {
+    console.log('[VerificationScreen] Resending code to:', getEmail());
     cleanupErrors();
     try {
       await resendCode(getEmail());
+      console.log('[VerificationScreen] Code resent successfully');
       setResendSuccess(true);
     } catch (error) {
+      console.error('[VerificationScreen] Error resending code:', error);
       setErrorMessage('Error al reenviar el código');
       setErrorVisible(true);
     }
+  };
+
+  const handleBackToSignIn = () => {
+    console.log('[VerificationScreen] Navigating back to sign in');
+    router.replace('SignIn');
   };
 
   const getBorderColor = () => {
@@ -281,7 +313,7 @@ export default function VerificationScreen({ route }) {
           label="Volver al inicio de sesión"
           accent
           mode="contained"
-          onPress={() => router.replace('SignIn')}
+          onPress={handleBackToSignIn}
           style={styles.returnButton}
         />
       )}
