@@ -234,7 +234,7 @@ export default function SettingsScreen() {
 
           <View style={styles.footer}>
             <Icon name="information-outline" size={16} color={theme.colors.onSurfaceVariant} />
-            <Text style={styles.footerText}> Versión 1.4.2 - Actualización 27/05/2025</Text>
+            <Text style={styles.footerText}> Versión 1.5.0 - Actualización 09/06/2025</Text>
           </View>
         </ScrollView>
       </SafeAreaView>
