@@ -131,8 +131,10 @@ export default function DeliveryDetailsScreen() {
     setIsRejecting(true);
 
     try {
+      setTimeout(() => {
+        Alert.alert('Rechazo', 'Entrega rechazada correctamente', [{ text: 'OK' }]);
+      }, 100);
       router.goBack();
-      alert('Entrega rechazada');
     } finally {
       setIsRejecting(false);
     }
