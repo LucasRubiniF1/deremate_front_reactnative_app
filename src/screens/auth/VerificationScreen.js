@@ -20,6 +20,7 @@ const getStyles = theme =>
       fontSize: 20,
       marginBottom: 24,
       fontWeight: 'bold',
+      color: theme.colors.onSurface,
     },
     inputContainer: {
       flexDirection: 'row',
@@ -34,6 +35,8 @@ const getStyles = theme =>
       width: 50,
       textAlign: 'center',
       marginHorizontal: 4,
+      backgroundColor: theme.colors.surface, // Fondo del tema
+      color: theme.colors.onSurface,
     },
     passwordContainer: {
       width: '100%',
@@ -51,6 +54,8 @@ const getStyles = theme =>
       borderRadius: 6,
       padding: 10,
       marginRight: 8,
+      backgroundColor: theme.colors.surface, // Fondo del tema
+      color: theme.colors.onSurface,
     },
     eyeIcon: {
       margin: 0,

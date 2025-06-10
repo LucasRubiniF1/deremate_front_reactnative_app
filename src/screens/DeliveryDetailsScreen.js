@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import AuthorizedRoute from '../components/AuthorizedRoute';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
@@ -87,39 +87,55 @@ export default function DeliveryDetailsScreen() {
   }, [deliveryId]);
 
   const handleAcceptDelivery = async () => {
-    if (isAccepting) {
+    // Prevenir múltiples ejecuciones
+    if (isAccepting || isRejecting) {
       return;
     }
+
     setIsAccepting(true);
-    console.log('Handling accept delivery for route ID:', deliveryData?.route?.id);
-    if (!deliveryData || !deliveryData.route || !deliveryData.route.id) {
-      console.error('[DeliveryDetailsScreen] Invalid delivery data');
-      return;
-    }
+
     try {
+      // Validación de datos
+      if (!deliveryData?.route?.id) {
+        throw new Error('Datos de entrega inválidos');
+      }
+
+      console.log('Accepting delivery for route ID:', deliveryData.route.id);
+
+      // Llamada al servicio
       await acceptRouteById(deliveryData.route.id);
+
+      // Éxito: navegar primero, luego mostrar alert
       navigation.navigate('MainTabs', {
         screen: 'Orders',
       });
 
-      alert('Entrega aceptada correctamente');
+      // Usar setTimeout para que el alert aparezca después de la navegación
+      setTimeout(() => {
+        Alert.alert('Éxito', 'Entrega aceptada correctamente', [{ text: 'OK' }]);
+      }, 100);
     } catch (error) {
       console.error('[DeliveryDetailsScreen] Accept delivery failed:', error);
-
-      alert(error.message);
+      Alert.alert('Error', error.message || 'Error al aceptar la entrega', [{ text: 'OK' }]);
+    } finally {
+      // CRÍTICO: Siempre resetear el estado
       setIsAccepting(false);
-      return;
     }
   };
 
-  const handleRejectDelivery = () => {
-    if (isRejecting) {
+  const handleRejectDelivery = async () => {
+    if (isRejecting || isAccepting) {
       return;
     }
+
     setIsRejecting(true);
-    router.goBack();
-    alert('Entrega rechazada');
-    setIsRejecting(false);
+
+    try {
+      router.goBack();
+      alert('Entrega rechazada');
+    } finally {
+      setIsRejecting(false);
+    }
   };
 
   if (loading) {
@@ -162,7 +178,10 @@ export default function DeliveryDetailsScreen() {
           label={isAccepting ? 'Aceptando...' : 'Aceptar entrega'}
           accent
           mode="contained"
-          onPress={handleAcceptDelivery}
+          onPress={() => {
+            console.log('Accepting delivery...');
+            handleAcceptDelivery();
+          }}
           disabled={isAccepting || isRejecting}
           style={styles.acceptButton}
         />
@@ -170,7 +189,7 @@ export default function DeliveryDetailsScreen() {
           label={isRejecting ? 'Rechazando...' : 'Rechazar entrega'}
           accent
           mode="contained"
-          onPress={handleRejectDelivery}
+          onPress={() => handleRejectDelivery()}
           disabled={isAccepting || isRejecting}
           style={styles.rejectButton}
         />
