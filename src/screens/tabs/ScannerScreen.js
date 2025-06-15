@@ -104,7 +104,7 @@ export default function ScannerScreen() {
   console.log('[ScannerScreen] Rendering camera view:', {
     hasPermission,
     isFocused,
-    scanned
+    scanned,
   });
 
   return (

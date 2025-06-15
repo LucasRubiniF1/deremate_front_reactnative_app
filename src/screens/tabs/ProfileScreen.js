@@ -86,7 +86,7 @@ export default function ProfileScreen() {
       const data = await info();
       console.log('[ProfileScreen] User info fetched successfully:', {
         name: `${data.firstname} ${data.lastname}`,
-        deliveriesCompleted: data.deliveriesCompleted
+        deliveriesCompleted: data.deliveriesCompleted,
       });
       setUserInfo(data);
     } catch (error) {
@@ -101,7 +101,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     console.log('[ProfileScreen] Initial user data:', {
       email: user?.email,
-      hasUserInfo: !!userInfo
+      hasUserInfo: !!userInfo,
     });
     fetchUserInfo();
 
@@ -123,7 +123,7 @@ export default function ProfileScreen() {
     fullName,
     userEmail,
     deliveriesCount,
-    rating
+    rating,
   });
 
   const renderStars = () => {
@@ -180,11 +180,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <Button 
-          mode="contained" 
-          onPress={handleLogout} 
-          style={styles.logoutButton}
-        >
+        <Button mode="contained" onPress={handleLogout} style={styles.logoutButton}>
           Cerrar sesión
         </Button>
       </SafeAreaView>

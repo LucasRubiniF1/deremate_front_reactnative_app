@@ -151,7 +151,12 @@ const HomeScreen = () => {
     if (hasFilters) {
       return (
         <View style={styles.emptyContainer}>
-          <MaterialIcons name="search-off" size={48} color={theme.colors.onSurfaceVariant} style={styles.emptyIcon} />
+          <MaterialIcons
+            name="search-off"
+            size={48}
+            color={theme.colors.onSurfaceVariant}
+            style={styles.emptyIcon}
+          />
           <Text style={styles.emptyText}>
             No se encontraron paquetes con los filtros seleccionados
           </Text>
@@ -160,10 +165,13 @@ const HomeScreen = () => {
     }
     return (
       <View style={styles.emptyContainer}>
-        <MaterialIcons name="inventory" size={48} color={theme.colors.onSurfaceVariant} style={styles.emptyIcon} />
-        <Text style={styles.emptyText}>
-          No hay paquetes disponibles en el depósito
-        </Text>
+        <MaterialIcons
+          name="inventory"
+          size={48}
+          color={theme.colors.onSurfaceVariant}
+          style={styles.emptyIcon}
+        />
+        <Text style={styles.emptyText}>No hay paquetes disponibles en el depósito</Text>
       </View>
     );
   };
@@ -225,12 +233,12 @@ const HomeScreen = () => {
             data={packages}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => (
-              <PackageCard 
-                pkg={item} 
+              <PackageCard
+                pkg={item}
                 onPress={() => {
                   console.log('[HomeScreen] Package selected:', item.id);
                   setSelectedPackage(item);
-                }} 
+                }}
               />
             )}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

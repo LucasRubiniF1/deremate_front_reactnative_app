@@ -107,14 +107,16 @@ export default function ForgotPasswordScreen() {
     const success = await resetPasswordRequest(email);
 
     if (success) {
-      console.log('[ForgotPasswordScreen] Password reset request successful, navigating to verification');
+      console.log(
+        '[ForgotPasswordScreen] Password reset request successful, navigating to verification'
+      );
       router.push('Verification', { mode: 'password', email });
     } else {
       console.log('[ForgotPasswordScreen] Password reset request failed');
     }
   };
 
-  const handleEmailChange = (text) => {
+  const handleEmailChange = text => {
     console.log('[ForgotPasswordScreen] Email changed:', text);
     cleanupErrors();
     setEmail(text);

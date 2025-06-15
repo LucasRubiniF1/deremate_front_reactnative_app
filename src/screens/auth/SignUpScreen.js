@@ -52,27 +52,27 @@ export default function SignUpScreen() {
   const theme = useTheme();
   const styles = getStyles(theme);
 
-  const handleEmailChange = (text) => {
+  const handleEmailChange = text => {
     console.log('[SignUpScreen] Email changed:', text);
     setEmail(text);
   };
 
-  const handleFirstNameChange = (text) => {
+  const handleFirstNameChange = text => {
     console.log('[SignUpScreen] First name changed:', text);
     setFirstName(text);
   };
 
-  const handleLastNameChange = (text) => {
+  const handleLastNameChange = text => {
     console.log('[SignUpScreen] Last name changed:', text);
     setLastName(text);
   };
 
-  const handlePasswordChange = (text) => {
+  const handlePasswordChange = text => {
     console.log('[SignUpScreen] Password changed');
     setPassword(text);
   };
 
-  const handleConfirmPasswordChange = (text) => {
+  const handleConfirmPasswordChange = text => {
     console.log('[SignUpScreen] Confirm password changed');
     setConfirmPassword(text);
   };
@@ -110,7 +110,7 @@ export default function SignUpScreen() {
     console.log('[SignUpScreen] Initial state:', {
       loading,
       error,
-      isUserCreated
+      isUserCreated,
     });
 
     return () => {

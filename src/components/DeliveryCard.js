@@ -64,7 +64,7 @@ const DeliveryCard = ({ delivery }) => {
 
   const openInMaps = () => {
     const { destinationLatitude, destinationLongitude } = delivery.route;
-    
+
     const getMapsUrl = () => {
       if (Platform.OS === 'ios') {
         return `maps://app?daddr=${destinationLatitude},${destinationLongitude}&dirflg=d`;

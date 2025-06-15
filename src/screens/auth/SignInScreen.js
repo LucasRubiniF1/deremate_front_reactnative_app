@@ -84,13 +84,13 @@ export default function SignInScreen() {
     }
   }, [error]);
 
-  const handleEmailChange = (text) => {
+  const handleEmailChange = text => {
     console.log('[SignInScreen] Email changed:', text);
     cleanupErrors();
     setEmail(text);
   };
 
-  const handlePasswordChange = (text) => {
+  const handlePasswordChange = text => {
     console.log('[SignInScreen] Password changed');
     cleanupErrors();
     setPassword(text);
@@ -109,7 +109,7 @@ export default function SignInScreen() {
 
     console.log('[SignInScreen] Attempting login for email:', email);
     const result = await login(email, password);
-    
+
     if (result === 'EMAIL_NOT_VERIFIED') {
       console.log('[SignInScreen] Email not verified, navigating to verification screen');
       setEmailVerified({
@@ -159,19 +159,9 @@ export default function SignInScreen() {
           mode="outlined"
         />
 
-        <SimpleButton 
-          label="Ingresar" 
-          accent 
-          mode="contained" 
-          onPress={handleLogin} 
-        />
+        <SimpleButton label="Ingresar" accent mode="contained" onPress={handleLogin} />
 
-        <SimpleButton
-          label="Crear una cuenta"
-          accent
-          mode="contained"
-          onPress={handleSignUp}
-        />
+        <SimpleButton label="Crear una cuenta" accent mode="contained" onPress={handleSignUp} />
 
         <SimpleButton
           label="Olvidé mi contraseña"

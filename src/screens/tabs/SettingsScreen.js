@@ -110,7 +110,7 @@ export default function SettingsScreen() {
       notifications,
       locationEnabled,
       email,
-      newsletter
+      newsletter,
     });
 
     return () => {
@@ -118,22 +118,22 @@ export default function SettingsScreen() {
     };
   }, []);
 
-  const handleDarkModeChange = (value) => {
+  const handleDarkModeChange = value => {
     console.log('[SettingsScreen] Dark mode changed:', value);
     setDarkMode(value);
   };
 
-  const handleNotificationsChange = (value) => {
+  const handleNotificationsChange = value => {
     console.log('[SettingsScreen] Notifications changed:', value);
     setNotifications(value);
   };
 
-  const handleLocationChange = (value) => {
+  const handleLocationChange = value => {
     console.log('[SettingsScreen] Location enabled changed:', value);
     setLocationEnabled(value);
   };
 
-  const handleEmailChange = (text) => {
+  const handleEmailChange = text => {
     console.log('[SettingsScreen] Email changed:', text);
     setEmail(text);
   };

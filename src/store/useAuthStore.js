@@ -79,10 +79,12 @@ const useAuthStore = create((set, get) => ({
         errorMessage = error.message;
       }
 
+      const { password } = get().isEmailVerified;
+
       set({
         error: errorMessage,
         loading: false,
-        isEmailVerified: { email, verified: false },
+        isEmailVerified: { email, password, verified: false },
       });
     }
   },
@@ -106,10 +108,12 @@ const useAuthStore = create((set, get) => ({
         errorMessage = error.message;
       }
 
+      const { password } = get().isEmailVerified;
+
       set({
         error: errorMessage,
         loading: false,
-        isEmailVerified: { email, verified: false },
+        isEmailVerified: { email, password, verified: false },
       });
     }
   },
