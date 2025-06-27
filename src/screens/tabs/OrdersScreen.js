@@ -6,6 +6,7 @@ import AuthorizedRoute from '../../components/AuthorizedRoute';
 import DeliveryCard from '../../components/DeliveryCard';
 import { getDeliveriesByUser } from '../../service/delivery.service';
 import { useTheme } from 'react-native-paper';
+import {SimpleSnackbar} from "../../components/SimpleSnackbar";
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -34,6 +35,10 @@ export default function OrdersScreen() {
   const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("")
+  const [snackbarMode, setSnackbarMode] = useState("success")
 
   const fetchDeliveries = async () => {
     console.log('[OrdersScreen] Fetching deliveries...');
@@ -65,6 +70,13 @@ export default function OrdersScreen() {
     fetchDeliveries();
   };
 
+  const handleSnackbarMode = (newMode) => {
+    if (newMode === 'success') {
+      onRefresh();
+    }
+    setSnackbarMode(newMode);
+  }
+
   const theme = useTheme();
   const styles = getStyles(theme);
 
@@ -85,7 +97,7 @@ export default function OrdersScreen() {
       <SafeAreaView style={styles.container}>
         <FlatList
           data={deliveries}
-          renderItem={({ item }) => <DeliveryCard delivery={item} />}
+          renderItem={({ item }) => <DeliveryCard delivery={item} setSnackbarMode={handleSnackbarMode} setSnackbarMessage={setSnackbarMessage} setSnackbarVisible={setSnackbarVisible} />}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.listContent}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -94,6 +106,13 @@ export default function OrdersScreen() {
               <Text>No hay entregas asignadas</Text>
             </View>
           }
+        />
+        <SimpleSnackbar
+          mode={snackbarMode}
+          text={snackbarMessage}
+          closeLabel="OK"
+          setVisible={setSnackbarVisible}
+          visible={snackbarVisible}
         />
       </SafeAreaView>
     </AuthorizedRoute>

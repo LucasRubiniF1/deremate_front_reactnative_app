@@ -89,7 +89,9 @@ AuthorizedService.interceptors.response.use(
         .getState()
         .logout()
         .then(r => {
-          replace.push('(auth)/sign-in');
+          replace('Auth', {
+            screen: 'SignIn',
+          });
         });
     } else if ([400, 500].includes(error?.response?.status)) {
       if ([500].includes(error?.response?.status)) {

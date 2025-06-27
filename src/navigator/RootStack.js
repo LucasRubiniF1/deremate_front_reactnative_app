@@ -5,7 +5,8 @@ import AuthStack from './AuthStack';
 import MainTabsStack from './MainTabs';
 import DeliveryDetailsScreen from '../screens/DeliveryDetailsScreen';
 import PackageDetailScreen from '../screens/PackageDetailScreen';
-import { HeaderBackButton } from '@react-navigation/elements'; // 👈 agregado
+import { HeaderBackButton } from '@react-navigation/elements';
+import NavigateToDeliveryScreen from "../screens/NavigateToDeliveryScreen"; // 👈 agregado
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ export default function RootStack() {
       <Stack.Screen name="MainTabs" component={MainTabsStack} />
       <Stack.Screen name="Decision" component={DecisionScreen} />
       <Stack.Screen name="BiometricAuth" component={BiometricAuthScreen} />
+      <Stack.Screen name="NavigateToDelivery" component={NavigateToDeliveryScreen} />
       <Stack.Screen
         name="DeliveryDetails"
         component={DeliveryDetailsScreen}

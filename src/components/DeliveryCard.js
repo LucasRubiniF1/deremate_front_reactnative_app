@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, StyleSheet, Linking, Platform } from 'react-native';
 import { Card, Divider, Text, Button } from 'react-native-paper';
 import StatusChip from '../components/StatusChip';
 import { useTheme } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import PinModal from "./PinModal";
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -58,9 +59,11 @@ const formatDate = date => {
   return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()} a las ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 };
 
-const DeliveryCard = ({ delivery }) => {
+const DeliveryCard = ({ delivery, setSnackbarVisible, setSnackbarMessage, setSnackbarMode }) => {
   const theme = useTheme();
   const styles = getStyles(theme);
+
+  const [pinModalVisible, setPinModalVisible] = useState(false);
 
   const openInMaps = () => {
     const { destinationLatitude, destinationLongitude } = delivery.route;
@@ -85,6 +88,10 @@ const DeliveryCard = ({ delivery }) => {
     });
   };
 
+  const finishDelivery = () => {
+    console.log("Finishing delivery")
+  }
+
   return (
     <Card style={styles.card}>
       <Card.Content>
@@ -100,25 +107,44 @@ const DeliveryCard = ({ delivery }) => {
           <Text>{delivery.packageLocation}</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text variant="titleSmall">Ruta</Text>
-          <Text>{delivery.route.description}</Text>
-          {delivery.route.destinationLatitude && delivery.route.destinationLongitude && (
-            <Button
-              mode="contained"
-              onPress={openInMaps}
-              style={{ marginTop: 8 }}
-              icon={({ size, color }) => (
-                <MaterialIcons name="directions" size={size} color={color} />
-              )}
-            >
-              Iniciar Navegación
-            </Button>
-          )}
-          {delivery.route.completedAt && (
-            <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>
-          )}
-        </View>
+        {
+          delivery.status === 'NOT_DELIVERED' &&
+          <View style={styles.section}>
+            <Text variant="titleSmall">Ruta</Text>
+            <Text>{delivery.route.description}</Text>
+            {delivery.route.destinationLatitude && delivery.route.destinationLongitude && (
+              <View>
+                <Button
+                  mode="contained"
+                  onPress={openInMaps}
+                  style={{ marginTop: 8 }}
+                  icon={({ size, color }) => (
+                    <MaterialIcons name="directions" size={size} color={color} />
+                  )}
+                >
+                  Iniciar Navegación
+                </Button>
+
+                <Button
+                  mode="contained"
+                  onPress={() => setPinModalVisible(true)}
+                  style={{ marginTop: 8, backgroundColor: "#40ae40" }}
+                  icon={({ size, color }) => (
+                    <MaterialIcons name="check" size={size} color={color} />
+                  )}
+                >
+                  Finalizar entrega
+                </Button>
+                <PinModal visible={pinModalVisible} onClose={() => setPinModalVisible(false)} id={delivery.id}
+                          setSnackbarMode={setSnackbarMode} setSnackbarVisible={setSnackbarVisible}
+                          setSnackbarMessage={setSnackbarMessage}/>
+              </View>
+            )}
+            {delivery.route.completedAt && (
+              <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>
+            )}
+          </View>
+        }
 
         <View style={styles.section}>
           <Text variant="titleSmall">Fechas</Text>

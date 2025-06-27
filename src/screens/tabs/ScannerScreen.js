@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { CameraView, Camera } from 'expo-camera';
@@ -58,7 +58,7 @@ export default function ScannerScreen() {
 
     console.log('[ScannerScreen] Valid QR code scanned, navigating to delivery:', deliveryId);
     setScanned(true);
-    router.push('DeliveryDetails', { deliveryId });
+    router.push('NavigateToDelivery', { deliveryId });
   };
 
   if (loading) {

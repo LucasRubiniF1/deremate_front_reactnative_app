@@ -132,9 +132,8 @@ export default function DeliveryDetailsScreen() {
 
     try {
       setTimeout(() => {
-        Alert.alert('Rechazo', 'Entrega rechazada correctamente', [{ text: 'OK' }]);
-      }, 100);
-      router.goBack();
+        router.replace('MainTabs');
+      }, 200)
     } finally {
       setIsRejecting(false);
     }

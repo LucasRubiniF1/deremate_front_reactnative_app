@@ -39,7 +39,6 @@ const getStyles = theme =>
   });
 
 export default function ForgotPasswordScreen() {
-  console.log('[ForgotPasswordScreen] Component mounted');
   const [email, setEmail] = useState('');
   const [visible, setVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -54,19 +53,16 @@ export default function ForgotPasswordScreen() {
 
   // Cleanup function
   const cleanupErrors = () => {
-    console.log('[ForgotPasswordScreen] Cleaning up errors');
     setVisible(false);
     setErrorMessage('');
   };
 
   // Reset state when component mounts
   useEffect(() => {
-    console.log('[ForgotPasswordScreen] Initializing component state');
     cleanupErrors();
     setEmail('');
 
     return () => {
-      console.log('[ForgotPasswordScreen] Component unmounting');
     };
   }, []);
 

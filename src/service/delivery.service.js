@@ -1,5 +1,4 @@
 import { AuthorizedService } from '../api/apiClient';
-import { getUserIdFromToken } from '../utils/secureStore';
 
 const BASE_URL = '/v1/delivery';
 
@@ -50,3 +49,8 @@ export const getDeliveriesByUser = async () => {
     throw error;
   }
 };
+
+export const confirmDelivery = async (id, pin) => {
+  const response = await AuthorizedService.put(`${BASE_URL}/${id}/confirm?pin=${pin}`);
+  return response.data;
+}
