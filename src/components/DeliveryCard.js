@@ -149,11 +149,11 @@ const DeliveryCard = ({ delivery, setSnackbarVisible, setSnackbarMessage, setSna
         <View style={styles.section}>
           <Text variant="titleSmall">Fechas</Text>
           <Text>Creado: {formatDate(delivery.createdDate)}</Text>
-          {delivery.deliveryStartDate && (
-            <Text>Inicio: {formatDate(delivery.deliveryStartDate)}</Text>
+          {delivery.route.startedAt && (
+            <Text>Inicio: {formatDate(delivery.route.startedAt)}</Text>
           )}
-          {delivery.deliveryEndDate && (
-            <Text>Finalizado: {formatDate(delivery.deliveryEndDate)}</Text>
+          {delivery.route.completedAt && (
+            <Text>Finalizado: {formatDate(delivery.route.completedAt)}</Text>
           )}
         </View>
       </Card.Content>
