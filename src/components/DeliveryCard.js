@@ -148,7 +148,6 @@ const DeliveryCard = ({ delivery, setSnackbarVisible, setSnackbarMessage, setSna
 
         <View style={styles.section}>
           <Text variant="titleSmall">Fechas</Text>
-          <Text>Creado: {formatDate(delivery.createdDate)}</Text>
           {delivery.route.startedAt && (
             <Text>Inicio: {formatDate(delivery.route.startedAt)}</Text>
           )}
