@@ -41,7 +41,10 @@
     "react-native-screens": "~4.10.0",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.20.0",
-    "zustand": "^5.0.4"
+    "zustand": "^5.0.4",
+    "expo-notifications": "~0.31.3",
+    "expo-device": "~7.1.4",
+    "expo-constants": "~17.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -12,6 +12,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": {
+      "icon": "./assets/notification-icon.png",
+      "color": "#000000",
+      "iosDisplayInForeground": true
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -26,6 +31,8 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-secure-store"]
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }
