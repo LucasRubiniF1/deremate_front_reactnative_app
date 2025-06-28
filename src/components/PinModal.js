@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Modal, View, TextInput, Text, StyleSheet} from 'react-native';
 import {Button} from 'react-native-paper';
 import {confirmDelivery} from "../service/delivery.service";
@@ -45,6 +45,10 @@ const PinModal = ({visible, onClose, id, setSnackbarMode, setSnackbarVisible, se
     setSnackbarVisible(true);
     onClose();
   };
+
+  useEffect(() => {
+    setPin(['', '', '', ''])
+  }, [visible])
 
   return (
     <Modal visible={visible} transparent animationType="fade">
