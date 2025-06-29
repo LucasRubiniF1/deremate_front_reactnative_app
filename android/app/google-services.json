@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "213657807133",
+    "project_id": "deremate-app",
+    "storage_bucket": "deremate-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:213657807133:android:50a33a1a67c8ec6a1159f4",
+        "android_client_info": {
+          "package_name": "com.anonymous.deremate_front_reactnative_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCr9vUFfESnFtJzwOslzfDQP0HoAqMXz7A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
