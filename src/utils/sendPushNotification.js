@@ -1,7 +1,20 @@
-export async function sendPushNotification(expoPushToken, title = '🚚 Paquete nuevo', body = 'Tocá para ver el detalle del envío', screen = 'Home') {
-    if (!expoPushToken) {
-        console.warn('⚠️ Token no válido para notificación push');
-        return;
+/**
+ * Envía una notificación push usando Expo.
+ * @param {string} expoPushToken - Token del dispositivo.
+ * @param {string} [title='🚚 Paquete nuevo'] - Título de la notificación.
+ * @param {string} [body='Tocá para ver el detalle del envío'] - Cuerpo de la notificación.
+ * @param {string} [screen='Home'] - Pantalla destino que se abrirá al tocar la notificación.
+ * @returns {Promise<object|null>} - Respuesta de Expo o null si falla.
+ */
+export async function sendPushNotification(
+    expoPushToken,
+    title = '🚚 Paquete nuevo',
+    body = 'Tocá para ver el detalle del envío',
+    screen = 'Home'
+) {
+    if (typeof expoPushToken !== 'string' || !expoPushToken.startsWith('ExponentPushToken')) {
+        console.warn('⚠️ Token inválido para notificación push:', expoPushToken);
+        return null;
     }
 
     const message = {
@@ -17,7 +30,7 @@ export async function sendPushNotification(expoPushToken, title = '🚚 Paquete 
             method: 'POST',
             headers: {
                 Accept: 'application/json',
-                'Accept-encoding': 'gzip, deflate',
+                'Accept-Encoding': 'gzip, deflate',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(message),
@@ -25,7 +38,9 @@ export async function sendPushNotification(expoPushToken, title = '🚚 Paquete 
 
         const data = await response.json();
         console.log('✅ Notificación enviada:', data);
+        return data;
     } catch (error) {
-        console.error('❌ Error al enviar notificación:', error);
+        console.error('❌ Error al enviar notificación:', error.message);
+        return null;
     }
 }
