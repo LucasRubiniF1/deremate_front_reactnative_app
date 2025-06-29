@@ -1,10 +1,15 @@
-export async function sendPushNotification(expoPushToken) {
+export async function sendPushNotification(expoPushToken, title = '🚚 Paquete nuevo', body = 'Tocá para ver el detalle del envío', screen = 'Home') {
+    if (!expoPushToken) {
+        console.warn('⚠️ Token no válido para notificación push');
+        return;
+    }
+
     const message = {
         to: expoPushToken,
         sound: 'default',
-        title: '🚚 Paquete nuevo',
-        body: 'Tocá para ver el detalle del envío',
-        data: { screen: 'Home' }, // o cualquier pantalla de tu stack
+        title,
+        body,
+        data: { screen },
     };
 
     try {
