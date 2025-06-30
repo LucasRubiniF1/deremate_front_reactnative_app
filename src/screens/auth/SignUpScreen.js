@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
+import { Text, TextInput, HelperText, useTheme } from 'react-native-paper';
 import { SimpleButton } from '../../components/SimpleButton';
 import { useRouter } from '../../hooks/useRouter';
-import { SimpleSnackbar } from '../../components/SimpleSnackbar';
 import {
   validateEmail,
   validateName,
@@ -11,13 +10,11 @@ import {
   validatePasswordStrength,
 } from '../../utils/validators';
 import useAuthStore from '../../store/useAuthStore';
-import { useTheme } from 'react-native-paper';
 
-const getStyles = theme =>
+const getStyles = (theme) =>
   StyleSheet.create({
     externalContainer: {
       flex: 1,
-      justifyContent: 'space-between',
     },
     container: {
       flex: 1,
@@ -31,199 +28,169 @@ const getStyles = theme =>
       fontWeight: 'bold',
     },
     input: {
-      marginBottom: 16,
+      marginBottom: 8,
     },
   });
 
 export default function SignUpScreen() {
-  console.log('[SignUpScreen] Component mounted');
   const { signUp, loading, error, isUserCreated } = useAuthStore();
   const router = useRouter();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
+  // Form fields
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [visible, setVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarMode, setSnackbarMode] = useState('');
 
-  const theme = useTheme();
-  const styles = getStyles(theme);
+  // Touched states
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [firstNameTouched, setFirstNameTouched] = useState(false);
+  const [lastNameTouched, setLastNameTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmTouched, setConfirmTouched] = useState(false);
 
-  const handleEmailChange = text => {
-    console.log('[SignUpScreen] Email changed:', text);
-    setEmail(text);
-  };
+  // Error messages
+  const emailErr = validateEmail(email);
+  const firstNameErr = validateName(firstName);
+  const lastNameErr = validateName(lastName, false);
+  const passwordErr = validatePasswordStrength(password);
+  const confirmErr = validatePasswordsMatch(password, confirmPassword);
 
-  const handleFirstNameChange = text => {
-    console.log('[SignUpScreen] First name changed:', text);
-    setFirstName(text);
-  };
-
-  const handleLastNameChange = text => {
-    console.log('[SignUpScreen] Last name changed:', text);
-    setLastName(text);
-  };
-
-  const handlePasswordChange = text => {
-    console.log('[SignUpScreen] Password changed');
-    setPassword(text);
-  };
-
-  const handleConfirmPasswordChange = text => {
-    console.log('[SignUpScreen] Confirm password changed');
-    setConfirmPassword(text);
-  };
-
-  const handleSignUp = () => {
-    console.log('[SignUpScreen] Sign up attempt initiated');
-    const validations = [
-      validateName(firstName),
-      validateName(lastName, false),
-      validateEmail(email),
-      validatePasswordStrength(password),
-      validatePasswordsMatch(password, confirmPassword),
-    ];
-
-    const errors = validations.filter(Boolean);
-
-    if (errors.length) {
-      console.log('[SignUpScreen] Validation errors:', errors);
-      setSnackbarMode('danger');
-      setSnackbarMessage(errors.join('\n'));
-      setVisible(true);
-      return;
-    }
-
-    console.log('[SignUpScreen] Validation successful, attempting sign up');
-    signUp(email, password, firstName, lastName);
-  };
-
-  const handleBackToSignIn = () => {
-    console.log('[SignUpScreen] Navigating back to sign in');
-    router.replace('SignIn');
-  };
+  const [serverErr, setServerErr] = useState('');
 
   useEffect(() => {
-    console.log('[SignUpScreen] Initial state:', {
-      loading,
-      error,
-      isUserCreated,
-    });
-
-    return () => {
-      console.log('[SignUpScreen] Component unmounting');
-    };
-  }, []);
-
-  useEffect(() => {
-    if (error) {
-      console.log('[SignUpScreen] Error received:', error);
-      setSnackbarMode('danger');
-      setSnackbarMessage(error);
-      setVisible(true);
-    }
+    if (error) setServerErr(error);
   }, [error]);
 
   useEffect(() => {
-    if (isUserCreated) {
-      console.log('[SignUpScreen] User created successfully, preparing redirect');
-      setSnackbarMode('success');
-      setSnackbarMessage('Cuenta creada exitosamente. Redirigiendo...');
-      setVisible(true);
+    if (isUserCreated) router.replace('SignIn');
+  }, [isUserCreated, router]);
 
-      const timeout = setTimeout(() => {
-        console.log('[SignUpScreen] Redirecting to sign in screen');
-        useAuthStore.setState({ isUserCreated: null });
-        router.replace('SignIn');
-      }, 2000);
+  const formHasErrors =
+    !!emailErr ||
+    !!firstNameErr ||
+    !!lastNameErr ||
+    !!passwordErr ||
+    !!confirmErr ||
+    !email ||
+    !firstName ||
+    !lastName ||
+    !password ||
+    !confirmPassword;
 
-      return () => {
-        console.log('[SignUpScreen] Cleaning up redirect timeout');
-        clearTimeout(timeout);
-      };
-    }
-  }, [isUserCreated]);
+  const handleSignUp = () => {
+    setEmailTouched(true);
+    setFirstNameTouched(true);
+    setLastNameTouched(true);
+    setPasswordTouched(true);
+    setConfirmTouched(true);
+
+    if (formHasErrors) return;
+    signUp(email, password, firstName, lastName);
+  };
 
   return (
     <View style={styles.externalContainer}>
       <View style={styles.container}>
-        <Text variant="titleLarge" style={styles.title}>
-          Crear cuenta
-        </Text>
+        <Text variant="titleLarge" style={styles.title}>Crear cuenta</Text>
 
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={handleEmailChange}
-          style={styles.input}
+          onChangeText={setEmail}
+          onFocus={() => setEmailTouched(true)}
+          autoCapitalize="none"
+          keyboardType="email-address"
           mode="outlined"
+          style={styles.input}
+          error={emailTouched && !!emailErr}
           disabled={loading}
         />
+        <HelperText type="error" visible={emailTouched && !!emailErr}>
+          {emailErr}
+        </HelperText>
 
         <TextInput
           label="Nombre"
           value={firstName}
-          onChangeText={handleFirstNameChange}
-          style={styles.input}
+          onChangeText={setFirstName}
+          onFocus={() => setFirstNameTouched(true)}
           mode="outlined"
+          style={styles.input}
+          error={firstNameTouched && !!firstNameErr}
           disabled={loading}
         />
+        <HelperText type="error" visible={firstNameTouched && !!firstNameErr}>
+          {firstNameErr}
+        </HelperText>
 
         <TextInput
           label="Apellido"
           value={lastName}
-          onChangeText={handleLastNameChange}
-          style={styles.input}
+          onChangeText={setLastName}
+          onFocus={() => setLastNameTouched(true)}
           mode="outlined"
+          style={styles.input}
+          error={lastNameTouched && !!lastNameErr}
           disabled={loading}
         />
+        <HelperText type="error" visible={lastNameTouched && !!lastNameErr}>
+          {lastNameErr}
+        </HelperText>
 
         <TextInput
           label="Contraseña"
           value={password}
-          onChangeText={handlePasswordChange}
-          secureTextEntry
-          style={styles.input}
+          onChangeText={setPassword}
+          onFocus={() => setPasswordTouched(true)}
           mode="outlined"
+          style={styles.input}
+          secureTextEntry
+          error={passwordTouched && !!passwordErr}
           disabled={loading}
         />
+        <HelperText type="error" visible={passwordTouched && !!passwordErr}>
+          {passwordErr}
+        </HelperText>
 
         <TextInput
           label="Confirmar contraseña"
           value={confirmPassword}
-          onChangeText={handleConfirmPasswordChange}
-          secureTextEntry
-          style={styles.input}
+          onChangeText={setConfirmPassword}
+          onFocus={() => setConfirmTouched(true)}
           mode="outlined"
+          style={styles.input}
+          secureTextEntry
+          error={confirmTouched && !!confirmErr}
           disabled={loading}
         />
+        <HelperText type="error" visible={confirmTouched && !!confirmErr}>
+          {confirmErr}
+        </HelperText>
+
+        <HelperText type="error" visible={!!serverErr}>
+          {serverErr}
+        </HelperText>
 
         <SimpleButton
           label="Registrarse"
           accent
           mode="contained"
           onPress={handleSignUp}
-          disabled={loading}
+          disabled={loading || formHasErrors}
         />
 
         <SimpleButton
           label="Ya tengo cuenta"
           accent
           mode="contained"
-          onPress={handleBackToSignIn}
+          onPress={() => router.replace('SignIn')}
           disabled={loading}
         />
       </View>
-      <SimpleSnackbar
-        mode={snackbarMode}
-        text={snackbarMessage}
-        closeLabel="OK"
-        setVisible={setVisible}
-        visible={visible}
-      />
     </View>
   );
 }
