@@ -6,7 +6,7 @@ import MainTabsStack from './MainTabs';
 import DeliveryDetailsScreen from '../screens/DeliveryDetailsScreen';
 import PackageDetailScreen from '../screens/PackageDetailScreen';
 import { HeaderBackButton } from '@react-navigation/elements';
-import NavigateToDeliveryScreen from "../screens/NavigateToDeliveryScreen"; // 👈 agregado
+import NavigateToDeliveryScreen from '../screens/NavigateToDeliveryScreen'; // 👈 agregado
 
 const Stack = createNativeStackNavigator();
 

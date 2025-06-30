@@ -1,9 +1,16 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Modal, View, TextInput, Text, StyleSheet} from 'react-native';
-import {Button} from 'react-native-paper';
-import {confirmDelivery} from "../service/delivery.service";
+import React, { useEffect, useRef, useState } from 'react';
+import { Modal, View, TextInput, Text, StyleSheet } from 'react-native';
+import { Button } from 'react-native-paper';
+import { confirmDelivery } from '../service/delivery.service';
 
-const PinModal = ({visible, onClose, id, setSnackbarMode, setSnackbarVisible, setSnackbarMessage}) => {
+const PinModal = ({
+  visible,
+  onClose,
+  id,
+  setSnackbarMode,
+  setSnackbarVisible,
+  setSnackbarMessage,
+}) => {
   const [pin, setPin] = useState(['', '', '', '']);
   const inputs = useRef([]);
 
@@ -36,19 +43,19 @@ const PinModal = ({visible, onClose, id, setSnackbarMode, setSnackbarVisible, se
   const confirm = async () => {
     try {
       await confirmDelivery(id, pin.join(''));
-      setSnackbarMode("success");
-      setSnackbarMessage("¡Entrega finalizada exitosamente!")
+      setSnackbarMode('success');
+      setSnackbarMessage('¡Entrega finalizada exitosamente!');
     } catch (e) {
-      setSnackbarMode("danger")
-      setSnackbarMessage("El pin es incorrecto")
+      setSnackbarMode('danger');
+      setSnackbarMessage('El pin es incorrecto');
     }
     setSnackbarVisible(true);
     onClose();
   };
 
   useEffect(() => {
-    setPin(['', '', '', ''])
-  }, [visible])
+    setPin(['', '', '', '']);
+  }, [visible]);
 
   return (
     <Modal visible={visible} transparent animationType="fade">
@@ -67,7 +74,7 @@ const PinModal = ({visible, onClose, id, setSnackbarMode, setSnackbarVisible, se
                 maxLength={1}
                 value={digit}
                 onChangeText={value => handleChange(index, value)}
-                onKeyPress={({nativeEvent}) => handleKeyPress(index, nativeEvent.key)}
+                onKeyPress={({ nativeEvent }) => handleKeyPress(index, nativeEvent.key)}
               />
             ))}
           </View>
