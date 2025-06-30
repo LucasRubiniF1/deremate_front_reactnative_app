@@ -63,6 +63,8 @@ export default function SignUpScreen() {
   const [showServerErr, setShowServerErr] = useState(false);
 
   useEffect(() => {
+    console.log(error);
+    
     if (error) {
       setServerErr(error);
       setShowServerErr(true);
@@ -98,6 +100,7 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.externalContainer}>
+      <View style={styles.container}>
       <Banner
         visible={showServerErr}
         icon="alert-circle"
@@ -111,7 +114,7 @@ export default function SignUpScreen() {
       >
         {serverErr}
       </Banner>
-      <View style={styles.container}>
+      
         <Text variant="titleLarge" style={styles.title}>Crear cuenta</Text>
 
         <TextInput
@@ -126,9 +129,11 @@ export default function SignUpScreen() {
           error={emailTouched && !!emailErr}
           disabled={loading}
         />
-        <HelperText type="error" visible={emailTouched && !!emailErr}>
-          {emailErr}
-        </HelperText>
+        {emailTouched && !!emailErr && (
+          <HelperText type="error" visible>
+            {emailErr}
+          </HelperText>
+        )}
 
         <TextInput
           label="Nombre"
@@ -140,9 +145,11 @@ export default function SignUpScreen() {
           error={firstNameTouched && !!firstNameErr}
           disabled={loading}
         />
-        <HelperText type="error" visible={firstNameTouched && !!firstNameErr}>
-          {firstNameErr}
-        </HelperText>
+        {firstNameTouched && !!firstNameErr && (
+          <HelperText type="error" visible>
+            {firstNameErr}
+          </HelperText>
+        )}
 
         <TextInput
           label="Apellido"
@@ -154,9 +161,12 @@ export default function SignUpScreen() {
           error={lastNameTouched && !!lastNameErr}
           disabled={loading}
         />
-        <HelperText type="error" visible={lastNameTouched && !!lastNameErr}>
-          {lastNameErr}
-        </HelperText>
+        {lastNameTouched && !!lastNameErr && (
+          <HelperText type="error" visible>
+            {lastNameErr}
+          </HelperText>
+        )}
+        
 
         <TextInput
           label="Contraseña"
@@ -169,9 +179,11 @@ export default function SignUpScreen() {
           error={passwordTouched && !!passwordErr}
           disabled={loading}
         />
-        <HelperText type="error" visible={passwordTouched && !!passwordErr}>
-          {passwordErr}
-        </HelperText>
+        {passwordTouched && !!passwordErr && (
+          <HelperText type="error" visible>
+            {passwordErr}
+          </HelperText>
+        )}
 
         <TextInput
           label="Confirmar contraseña"
@@ -184,13 +196,11 @@ export default function SignUpScreen() {
           error={confirmTouched && !!confirmErr}
           disabled={loading}
         />
-        <HelperText type="error" visible={confirmTouched && !!confirmErr}>
-          {confirmErr}
-        </HelperText>
-
-        <HelperText type="error" visible={!!serverErr}>
-          {serverErr}
-        </HelperText>
+        {confirmTouched && !!confirmErr && (
+          <HelperText type="error" visible>
+            {confirmErr}
+          </HelperText>
+        )}
 
         <SimpleButton
           label="Registrarse"
