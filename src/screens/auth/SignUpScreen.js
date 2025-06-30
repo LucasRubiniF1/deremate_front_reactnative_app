@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, TextInput, HelperText, useTheme } from 'react-native-paper';
+import { Text, TextInput, HelperText, useTheme, Banner } from 'react-native-paper';
 import { SimpleButton } from '../../components/SimpleButton';
 import { useRouter } from '../../hooks/useRouter';
 import {
@@ -60,9 +60,13 @@ export default function SignUpScreen() {
   const confirmErr = validatePasswordsMatch(password, confirmPassword);
 
   const [serverErr, setServerErr] = useState('');
+  const [showServerErr, setShowServerErr] = useState(false);
 
   useEffect(() => {
-    if (error) setServerErr(error);
+    if (error) {
+      setServerErr(error);
+      setShowServerErr(true);
+    }
   }, [error]);
 
   useEffect(() => {
@@ -94,6 +98,19 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.externalContainer}>
+      <Banner
+        visible={showServerErr}
+        icon="alert-circle"
+        actions={[
+          {
+            label: 'Cerrar',
+            onPress: () => setShowServerErr(false),
+          },
+        ]}
+        style={{ backgroundColor: theme.colors.errorContainer }}
+      >
+        {serverErr}
+      </Banner>
       <View style={styles.container}>
         <Text variant="titleLarge" style={styles.title}>Crear cuenta</Text>
 
