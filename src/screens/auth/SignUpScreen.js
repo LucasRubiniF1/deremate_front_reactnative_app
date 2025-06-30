@@ -64,7 +64,7 @@ export default function SignUpScreen() {
 
   useEffect(() => {
     console.log(error);
-    
+
     if (error) {
       setServerErr(error);
       setShowServerErr(true);
@@ -101,20 +101,29 @@ export default function SignUpScreen() {
   return (
     <View style={styles.externalContainer}>
       <View style={styles.container}>
-      <Banner
-        visible={showServerErr}
-        icon="alert-circle"
-        actions={[
-          {
-            label: 'Cerrar',
-            onPress: () => setShowServerErr(false),
-          },
-        ]}
-        style={{ backgroundColor: theme.colors.errorContainer }}
-      >
-        {serverErr}
-      </Banner>
-      
+        {showServerErr && (
+          <Banner
+            visible
+            icon="alert-circle"
+            actions={[
+              {
+                label: 'Cerrar',
+                onPress: () => setShowServerErr(false),
+              },
+            ]}
+            style={{
+              backgroundColor: theme.colors.errorContainer,
+              borderRadius: 8,
+              marginBottom: 16,
+              alignSelf: 'center',
+              maxWidth: 500,
+              width: '100%',
+            }}
+          >
+            {serverErr}
+          </Banner>
+        )}
+
         <Text variant="titleLarge" style={styles.title}>Crear cuenta</Text>
 
         <TextInput
@@ -166,7 +175,7 @@ export default function SignUpScreen() {
             {lastNameErr}
           </HelperText>
         )}
-        
+
 
         <TextInput
           label="Contraseña"
