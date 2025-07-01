@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Alert } from 'react-native';
 import { fetchPackagesInWarehouse } from '../service/package.service';
+import { notificationService } from '../service/notification.service';
 
 export const useWarehousePackages = () => {
   const [packages, setPackages] = useState([]);
@@ -9,12 +10,43 @@ export const useWarehousePackages = () => {
   const [code, setCode] = useState('');
   const [sector, setSector] = useState('');
   const [shelf, setShelf] = useState('');
+  const isInitialized = useRef(false);
+
+  // Initialize notification service
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      if (!isInitialized.current) {
+        console.log('[useWarehousePackages] Initializing notifications...');
+        await notificationService.initialize((message) => {
+          console.log('[useWarehousePackages] New package notification received:', message);
+          // Refresh the packages list when a notification is received
+          fetch();
+        });
+        isInitialized.current = true;
+      }
+    };
+
+    initializeNotifications();
+
+    // Cleanup on unmount
+    return () => {
+      if (isInitialized.current) {
+        notificationService.cleanup();
+        isInitialized.current = false;
+      }
+    };
+  }, []);
 
   const fetch = useCallback(async () => {
     try {
       setLoading(true);
       const data = await fetchPackagesInWarehouse();
       setPackages(data);
+      
+      // Check for new packages and send notifications
+      if (isInitialized.current) {
+        notificationService.checkForNewPackages(data);
+      }
     } catch (err) {
       Alert.alert('Error', 'No se pudieron cargar los paquetes.');
     } finally {

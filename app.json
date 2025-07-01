@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.deremate_front_reactnative_app"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,11 +22,28 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.deremate_front_reactnative_app"
+      "package": "com.anonymous.deremate_front_reactnative_app",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-secure-store"]
+    "plugins": [
+      "expo-secure-store",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging"
+    ],
+    "notification": {
+      "icon": "./assets/notification-icon.png",
+      "color": "#3a86ff",
+      "iosDisplayInForeground": true,
+      "androidMode": "default",
+      "androidCollapsedTitle": "Nuevo Paquete Disponible"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "18493a92-42b2-4c73-802e-14ec5db62640"
+      }
+    }
   }
 }
