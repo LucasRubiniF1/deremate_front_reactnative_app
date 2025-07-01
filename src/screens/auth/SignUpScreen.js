@@ -104,6 +104,8 @@ export default function SignUpScreen() {
       setShowSuccess(true);
 
       const to = setTimeout(() => {
+        useAuthStore.setState({ isUserCreated: null });
+        setShowSuccess(false);
         router.replace('SignIn');
       }, 1500);
 
