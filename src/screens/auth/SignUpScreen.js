@@ -11,7 +11,7 @@ import {
 } from '../../utils/validators';
 import useAuthStore from '../../store/useAuthStore';
 
-const getStyles = (theme) =>
+const getStyles = theme =>
   StyleSheet.create({
     externalContainer: {
       flex: 1,
@@ -146,9 +146,10 @@ export default function SignUpScreen() {
   return (
     <View style={styles.externalContainer}>
       <View style={styles.container}>
-
-        <Text variant="titleLarge" style={styles.title}>Crear cuenta</Text>
-        {showErr && <TagMessage message={serverErr} color={"rgb(248, 113, 113)"} />}
+        <Text variant="titleLarge" style={styles.title}>
+          Crear cuenta
+        </Text>
+        {showErr && <TagMessage message={serverErr} color={'rgb(248, 113, 113)'} />}
         {showSuccess && <TagMessage message={successMsg} color="rgb(34, 197, 94)" />}
 
         <TextInput
@@ -227,7 +228,7 @@ export default function SignUpScreen() {
             <TextInput.Icon
               icon={showPassword ? 'eye-off' : 'eye'}
               onPress={toggleShowPassword}
-              forceTextInputFocus={false}      
+              forceTextInputFocus={false}
             />
           }
         />
@@ -254,7 +255,7 @@ export default function SignUpScreen() {
             <TextInput.Icon
               icon={showPassword ? 'eye-off' : 'eye'}
               onPress={toggleShowConfirmPassword}
-              forceTextInputFocus={false}      
+              forceTextInputFocus={false}
             />
           }
         />
