@@ -32,6 +32,28 @@ const getStyles = (theme) =>
     },
   });
 
+const TagMessage = ({ message, color }) => (
+  <Text
+    style={{
+      backgroundColor: color.replace('rgb', 'rgba').replace(')', ',0.15)'),
+      color,
+      borderColor: color,
+      borderWidth: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 16,
+      alignSelf: 'center',
+      marginBottom: 12,
+      fontSize: 12,
+      fontWeight: '500',
+      textAlign: 'center',
+      width: '100%',
+    }}
+  >
+    {message}
+  </Text>
+);
+
 export default function SignUpScreen() {
   const { signUp, loading, error, isUserCreated } = useAuthStore();
   const router = useRouter();
@@ -60,19 +82,28 @@ export default function SignUpScreen() {
   const confirmErr = validatePasswordsMatch(password, confirmPassword);
 
   const [serverErr, setServerErr] = useState('');
-  const [showServerErr, setShowServerErr] = useState(false);
+  const [showErr, setShowErr] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    console.log(error);
-
     if (error) {
       setServerErr(error);
-      setShowServerErr(true);
+      setShowErr(true);
     }
   }, [error]);
 
   useEffect(() => {
-    if (isUserCreated) router.replace('SignIn');
+    if (isUserCreated) {
+      setSuccessMsg('Cuenta creada exitosamente 🎉');
+      setShowSuccess(true);
+
+      const to = setTimeout(() => {
+        router.replace('SignIn');
+      }, 1500);
+
+      return () => clearTimeout(to);
+    }
   }, [isUserCreated, router]);
 
   const formHasErrors =
@@ -86,6 +117,13 @@ export default function SignUpScreen() {
     !lastName ||
     !password ||
     !confirmPassword;
+
+  const clearServerError = () => {
+    if (showErr) {
+      setShowErr(false);
+      setServerErr('');
+    }
+  };
 
   const handleSignUp = () => {
     setEmailTouched(true);
@@ -101,35 +139,18 @@ export default function SignUpScreen() {
   return (
     <View style={styles.externalContainer}>
       <View style={styles.container}>
-        {showServerErr && (
-          <Banner
-            visible
-            icon="alert-circle"
-            actions={[
-              {
-                label: 'Cerrar',
-                onPress: () => setShowServerErr(false),
-              },
-            ]}
-            style={{
-              backgroundColor: theme.colors.errorContainer,
-              borderRadius: 8,
-              marginBottom: 16,
-              alignSelf: 'center',
-              maxWidth: 500,
-              width: '100%',
-            }}
-          >
-            {serverErr}
-          </Banner>
-        )}
 
         <Text variant="titleLarge" style={styles.title}>Crear cuenta</Text>
+        {showErr && <TagMessage message={serverErr} color={"rgb(248, 113, 113)"} />}
+        {showSuccess && <TagMessage message={successMsg} color="rgb(34, 197, 94)" />}
 
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={t => {
+            setEmail(t);
+            clearServerError();
+          }}
           onFocus={() => setEmailTouched(true)}
           autoCapitalize="none"
           keyboardType="email-address"
@@ -147,7 +168,10 @@ export default function SignUpScreen() {
         <TextInput
           label="Nombre"
           value={firstName}
-          onChangeText={setFirstName}
+          onChangeText={t => {
+            setFirstName(t);
+            clearServerError();
+          }}
           onFocus={() => setFirstNameTouched(true)}
           mode="outlined"
           style={styles.input}
@@ -163,7 +187,10 @@ export default function SignUpScreen() {
         <TextInput
           label="Apellido"
           value={lastName}
-          onChangeText={setLastName}
+          onChangeText={t => {
+            setLastName(t);
+            clearServerError();
+          }}
           onFocus={() => setLastNameTouched(true)}
           mode="outlined"
           style={styles.input}
@@ -180,7 +207,10 @@ export default function SignUpScreen() {
         <TextInput
           label="Contraseña"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={t => {
+            setPassword(t);
+            clearServerError();
+          }}
           onFocus={() => setPasswordTouched(true)}
           mode="outlined"
           style={styles.input}
@@ -197,7 +227,10 @@ export default function SignUpScreen() {
         <TextInput
           label="Confirmar contraseña"
           value={confirmPassword}
-          onChangeText={setConfirmPassword}
+          onChangeText={t => {
+            setConfirmPassword(t);
+            clearServerError();
+          }}
           onFocus={() => setConfirmTouched(true)}
           mode="outlined"
           style={styles.input}
