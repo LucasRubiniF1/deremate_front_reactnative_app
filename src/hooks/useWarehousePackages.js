@@ -12,15 +12,15 @@ export const useWarehousePackages = () => {
   const [shelf, setShelf] = useState('');
   const isInitialized = useRef(false);
 
-  // Initialize notification service
+  // Initialize notification service (only for receiving push notifications)
   useEffect(() => {
     const initializeNotifications = async () => {
       if (!isInitialized.current) {
         console.log('[useWarehousePackages] Initializing notifications...');
         await notificationService.initialize((message) => {
-          console.log('[useWarehousePackages] New package notification received:', message);
-          // Refresh the packages list when a notification is received
-          fetch();
+          console.log('[useWarehousePackages] Push notification received:', message);
+          // Optionally, you can refresh the package list here if you want
+          // fetch();
         });
         isInitialized.current = true;
       }
@@ -42,11 +42,7 @@ export const useWarehousePackages = () => {
       setLoading(true);
       const data = await fetchPackagesInWarehouse();
       setPackages(data);
-      
-      // Check for new packages and send notifications
-      if (isInitialized.current) {
-        notificationService.checkForNewPackages(data);
-      }
+      // Removed: notificationService.checkForNewPackages(data);
     } catch (err) {
       Alert.alert('Error', 'No se pudieron cargar los paquetes.');
     } finally {
