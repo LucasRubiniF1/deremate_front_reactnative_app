@@ -29,6 +29,7 @@
     "eslint-plugin-react-native": "^5.0.0",
     "expo": "^53.0.9",
     "expo-camera": "^16.1.6",
+    "expo-dev-client": "~5.2.2",
     "expo-local-authentication": "~16.0.4",
     "expo-secure-store": "~14.2.3",
     "expo-status-bar": "~2.2.3",
@@ -43,8 +44,7 @@
     "react-native-screens": "~4.10.0",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.20.0",
-    "zustand": "^5.0.4",
-    "expo-dev-client": "~5.2.2"
+    "zustand": "^5.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

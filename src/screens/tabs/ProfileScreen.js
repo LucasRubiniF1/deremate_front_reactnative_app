@@ -9,6 +9,27 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { info } from '../../service/user.service';
 
+const formatDate = date => {
+  console.log('Fecha final: ', date);
+  if (!date) return 'No disponible';
+  const months = [
+    'enero',
+    'febrero',
+    'marzo',
+    'abril',
+    'mayo',
+    'junio',
+    'julio',
+    'agosto',
+    'septiembre',
+    'octubre',
+    'noviembre',
+    'diciembre',
+  ];
+  const d = new Date(date);
+  return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()} a las ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+};
+
 const getStyles = theme =>
   StyleSheet.create({
     container: {
@@ -114,7 +135,7 @@ export default function ProfileScreen() {
     `${userInfo?.firstname?.[0] ?? ''}${userInfo?.lastname?.[0] ?? ''}`.toUpperCase();
   const fullName = `${userInfo?.firstname ?? ''} ${userInfo?.lastname ?? ''}`.trim();
   const userEmail = user?.email ?? 'Email no disponible';
-  const createdDate = 'Fecha no disponible';
+  const createdDate = formatDate(user?.createdTime);
   const deliveriesCount = userInfo?.deliveriesCompleted ?? 0;
   const rating = 4;
 
@@ -124,6 +145,7 @@ export default function ProfileScreen() {
     userEmail,
     deliveriesCount,
     rating,
+    createdDate,
   });
 
   const renderStars = () => {
