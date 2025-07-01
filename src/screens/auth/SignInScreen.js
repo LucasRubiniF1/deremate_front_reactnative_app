@@ -194,13 +194,6 @@ export default function SignInScreen() {
           onPress={handleForgotPassword}
         />
       </View>
-      <SimpleSnackbar
-        mode="danger"
-        text={errorMessage}
-        closeLabel="OK"
-        setVisible={setVisible}
-        visible={visible}
-      />
     </View>
   );
 }
