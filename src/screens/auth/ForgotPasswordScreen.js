@@ -62,8 +62,7 @@ export default function ForgotPasswordScreen() {
     cleanupErrors();
     setEmail('');
 
-    return () => {
-    };
+    return () => {};
   }, []);
 
   useEffect(() => {

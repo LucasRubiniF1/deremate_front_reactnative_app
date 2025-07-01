@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
+import { Text, TextInput, HelperText, useTheme, Banner } from 'react-native-paper';
 import { SimpleButton } from '../../components/SimpleButton';
 import { useRouter } from '../../hooks/useRouter';
-import { SimpleSnackbar } from '../../components/SimpleSnackbar';
 import {
   validateEmail,
   validateName,
@@ -11,13 +10,11 @@ import {
   validatePasswordStrength,
 } from '../../utils/validators';
 import useAuthStore from '../../store/useAuthStore';
-import { useTheme } from 'react-native-paper';
 
 const getStyles = theme =>
   StyleSheet.create({
     externalContainer: {
       flex: 1,
-      justifyContent: 'space-between',
     },
     container: {
       flex: 1,
@@ -31,121 +28,120 @@ const getStyles = theme =>
       fontWeight: 'bold',
     },
     input: {
-      marginBottom: 16,
+      marginBottom: 8,
     },
   });
 
+const TagMessage = ({ message, color }) => (
+  <Text
+    style={{
+      backgroundColor: color.replace('rgb', 'rgba').replace(')', ',0.15)'),
+      color,
+      borderColor: color,
+      borderWidth: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 16,
+      alignSelf: 'center',
+      marginBottom: 12,
+      fontSize: 12,
+      fontWeight: '500',
+      textAlign: 'center',
+      width: '100%',
+    }}
+  >
+    {message}
+  </Text>
+);
+
 export default function SignUpScreen() {
-  console.log('[SignUpScreen] Component mounted');
   const { signUp, loading, error, isUserCreated } = useAuthStore();
   const router = useRouter();
+  const theme = useTheme();
+  const styles = getStyles(theme);
 
+  // Form fields
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [visible, setVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarMode, setSnackbarMode] = useState('');
 
-  const theme = useTheme();
-  const styles = getStyles(theme);
+  // Touched states
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [firstNameTouched, setFirstNameTouched] = useState(false);
+  const [lastNameTouched, setLastNameTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmTouched, setConfirmTouched] = useState(false);
 
-  const handleEmailChange = text => {
-    console.log('[SignUpScreen] Email changed:', text);
-    setEmail(text);
-  };
+  // Error messages
+  const emailErr = validateEmail(email);
+  const firstNameErr = validateName(firstName);
+  const lastNameErr = validateName(lastName, false);
+  const passwordErr = validatePasswordStrength(password);
+  const confirmErr = validatePasswordsMatch(password, confirmPassword);
 
-  const handleFirstNameChange = text => {
-    console.log('[SignUpScreen] First name changed:', text);
-    setFirstName(text);
-  };
+  const [serverErr, setServerErr] = useState('');
+  const [showErr, setShowErr] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleLastNameChange = text => {
-    console.log('[SignUpScreen] Last name changed:', text);
-    setLastName(text);
-  };
-
-  const handlePasswordChange = text => {
-    console.log('[SignUpScreen] Password changed');
-    setPassword(text);
-  };
-
-  const handleConfirmPasswordChange = text => {
-    console.log('[SignUpScreen] Confirm password changed');
-    setConfirmPassword(text);
-  };
-
-  const handleSignUp = () => {
-    console.log('[SignUpScreen] Sign up attempt initiated');
-    const validations = [
-      validateName(firstName),
-      validateName(lastName, false),
-      validateEmail(email),
-      validatePasswordStrength(password),
-      validatePasswordsMatch(password, confirmPassword),
-    ];
-
-    const errors = validations.filter(Boolean);
-
-    if (errors.length) {
-      console.log('[SignUpScreen] Validation errors:', errors);
-      setSnackbarMode('danger');
-      setSnackbarMessage(errors.join('\n'));
-      setVisible(true);
-      return;
-    }
-
-    console.log('[SignUpScreen] Validation successful, attempting sign up');
-    signUp(email, password, firstName, lastName);
-  };
-
-  const handleBackToSignIn = () => {
-    console.log('[SignUpScreen] Navigating back to sign in');
-    router.replace('SignIn');
-  };
-
-  useEffect(() => {
-    console.log('[SignUpScreen] Initial state:', {
-      loading,
-      error,
-      isUserCreated,
-    });
-
-    return () => {
-      console.log('[SignUpScreen] Component unmounting');
-    };
-  }, []);
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => setShowPassword(prev => !prev);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const toggleShowConfirmPassword = () => setShowConfirmPassword(prev => !prev);
 
   useEffect(() => {
     if (error) {
-      console.log('[SignUpScreen] Error received:', error);
-      setSnackbarMode('danger');
-      setSnackbarMessage(error);
-      setVisible(true);
+      setServerErr(error);
+      setShowErr(true);
     }
   }, [error]);
 
   useEffect(() => {
     if (isUserCreated) {
-      console.log('[SignUpScreen] User created successfully, preparing redirect');
-      setSnackbarMode('success');
-      setSnackbarMessage('Cuenta creada exitosamente. Redirigiendo...');
-      setVisible(true);
+      setSuccessMsg('Cuenta creada exitosamente 🎉');
+      setShowSuccess(true);
 
-      const timeout = setTimeout(() => {
-        console.log('[SignUpScreen] Redirecting to sign in screen');
+      const to = setTimeout(() => {
         useAuthStore.setState({ isUserCreated: null });
+        setShowSuccess(false);
         router.replace('SignIn');
-      }, 2000);
+      }, 1500);
 
-      return () => {
-        console.log('[SignUpScreen] Cleaning up redirect timeout');
-        clearTimeout(timeout);
-      };
+      return () => clearTimeout(to);
     }
-  }, [isUserCreated]);
+  }, [isUserCreated, router]);
+
+  const formHasErrors =
+    !!emailErr ||
+    !!firstNameErr ||
+    !!lastNameErr ||
+    !!passwordErr ||
+    !!confirmErr ||
+    !email ||
+    !firstName ||
+    !lastName ||
+    !password ||
+    !confirmPassword;
+
+  const clearServerError = () => {
+    if (showErr) {
+      setShowErr(false);
+      setServerErr('');
+    }
+  };
+
+  const handleSignUp = () => {
+    setEmailTouched(true);
+    setFirstNameTouched(true);
+    setLastNameTouched(true);
+    setPasswordTouched(true);
+    setConfirmTouched(true);
+
+    if (formHasErrors) return;
+    signUp(email, password, firstName, lastName);
+  };
 
   return (
     <View style={styles.externalContainer}>
@@ -153,77 +149,138 @@ export default function SignUpScreen() {
         <Text variant="titleLarge" style={styles.title}>
           Crear cuenta
         </Text>
+        {showErr && <TagMessage message={serverErr} color={'rgb(248, 113, 113)'} />}
+        {showSuccess && <TagMessage message={successMsg} color="rgb(34, 197, 94)" />}
 
         <TextInput
           label="Correo"
           value={email}
-          onChangeText={handleEmailChange}
-          style={styles.input}
+          onChangeText={t => {
+            setEmail(t);
+            clearServerError();
+          }}
+          onFocus={() => setEmailTouched(true)}
+          autoCapitalize="none"
+          keyboardType="email-address"
           mode="outlined"
+          style={styles.input}
+          error={emailTouched && !!emailErr}
           disabled={loading}
         />
+        {emailTouched && !!emailErr && (
+          <HelperText type="error" visible>
+            {emailErr}
+          </HelperText>
+        )}
 
         <TextInput
           label="Nombre"
           value={firstName}
-          onChangeText={handleFirstNameChange}
-          style={styles.input}
+          onChangeText={t => {
+            setFirstName(t);
+            clearServerError();
+          }}
+          onFocus={() => setFirstNameTouched(true)}
           mode="outlined"
+          style={styles.input}
+          error={firstNameTouched && !!firstNameErr}
           disabled={loading}
         />
+        {firstNameTouched && !!firstNameErr && (
+          <HelperText type="error" visible>
+            {firstNameErr}
+          </HelperText>
+        )}
 
         <TextInput
           label="Apellido"
           value={lastName}
-          onChangeText={handleLastNameChange}
-          style={styles.input}
+          onChangeText={t => {
+            setLastName(t);
+            clearServerError();
+          }}
+          onFocus={() => setLastNameTouched(true)}
           mode="outlined"
+          style={styles.input}
+          error={lastNameTouched && !!lastNameErr}
           disabled={loading}
         />
+        {lastNameTouched && !!lastNameErr && (
+          <HelperText type="error" visible>
+            {lastNameErr}
+          </HelperText>
+        )}
 
         <TextInput
           label="Contraseña"
           value={password}
-          onChangeText={handlePasswordChange}
-          secureTextEntry
-          style={styles.input}
+          onChangeText={t => {
+            setPassword(t);
+            clearServerError();
+          }}
+          onFocus={() => setPasswordTouched(true)}
           mode="outlined"
+          style={styles.input}
+          secureTextEntry={!showPassword}
+          error={passwordTouched && !!passwordErr}
           disabled={loading}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? 'eye-off' : 'eye'}
+              onPress={toggleShowPassword}
+              forceTextInputFocus={false}
+            />
+          }
         />
+        {passwordTouched && !!passwordErr && (
+          <HelperText type="error" visible>
+            {passwordErr}
+          </HelperText>
+        )}
 
         <TextInput
           label="Confirmar contraseña"
           value={confirmPassword}
-          onChangeText={handleConfirmPasswordChange}
-          secureTextEntry
-          style={styles.input}
+          onChangeText={t => {
+            setConfirmPassword(t);
+            clearServerError();
+          }}
+          onFocus={() => setConfirmTouched(true)}
           mode="outlined"
+          style={styles.input}
+          secureTextEntry={!showConfirmPassword}
+          error={confirmTouched && !!confirmErr}
           disabled={loading}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? 'eye-off' : 'eye'}
+              onPress={toggleShowConfirmPassword}
+              forceTextInputFocus={false}
+            />
+          }
         />
+        {confirmTouched && !!confirmErr && (
+          <HelperText type="error" visible>
+            {confirmErr}
+          </HelperText>
+        )}
 
         <SimpleButton
           label="Registrarse"
           accent
           mode="contained"
           onPress={handleSignUp}
-          disabled={loading}
+          disabled={loading || formHasErrors}
         />
 
         <SimpleButton
           label="Ya tengo cuenta"
           accent
           mode="contained"
-          onPress={handleBackToSignIn}
+          onPress={() => router.replace('SignIn')}
           disabled={loading}
         />
       </View>
-      <SimpleSnackbar
-        mode={snackbarMode}
-        text={snackbarMessage}
-        closeLabel="OK"
-        setVisible={setVisible}
-        visible={visible}
-      />
     </View>
   );
 }

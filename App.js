@@ -5,8 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStack from './src/navigator/RootStack';
 import { useColorScheme } from 'react-native';
 import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
-import {flushPendingActions, navigationRef} from "./src/navigator/RootNavigation";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { flushPendingActions, navigationRef } from './src/navigator/RootNavigation';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const CustomColors = {
   warning: '#FFB300',
@@ -40,7 +40,8 @@ export default function App() {
             ref={navigationRef}
             onReady={() => {
               flushPendingActions();
-            }}>
+            }}
+          >
             <RootStack />
           </NavigationContainer>
         </SafeAreaProvider>
