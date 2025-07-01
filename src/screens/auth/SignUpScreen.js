@@ -86,6 +86,11 @@ export default function SignUpScreen() {
   const [successMsg, setSuccessMsg] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => setShowPassword(prev => !prev);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const toggleShowConfirmPassword = () => setShowConfirmPassword(prev => !prev);
+
   useEffect(() => {
     if (error) {
       setServerErr(error);
@@ -203,7 +208,6 @@ export default function SignUpScreen() {
           </HelperText>
         )}
 
-
         <TextInput
           label="Contraseña"
           value={password}
@@ -214,9 +218,16 @@ export default function SignUpScreen() {
           onFocus={() => setPasswordTouched(true)}
           mode="outlined"
           style={styles.input}
-          secureTextEntry
+          secureTextEntry={!showPassword}
           error={passwordTouched && !!passwordErr}
           disabled={loading}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? 'eye-off' : 'eye'}
+              onPress={toggleShowPassword}
+              forceTextInputFocus={false}      
+            />
+          }
         />
         {passwordTouched && !!passwordErr && (
           <HelperText type="error" visible>
@@ -234,9 +245,16 @@ export default function SignUpScreen() {
           onFocus={() => setConfirmTouched(true)}
           mode="outlined"
           style={styles.input}
-          secureTextEntry
+          secureTextEntry={!showConfirmPassword}
           error={confirmTouched && !!confirmErr}
           disabled={loading}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? 'eye-off' : 'eye'}
+              onPress={toggleShowConfirmPassword}
+              forceTextInputFocus={false}      
+            />
+          }
         />
         {confirmTouched && !!confirmErr && (
           <HelperText type="error" visible>
