@@ -133,7 +133,7 @@ export default function DeliveryDetailsScreen() {
     try {
       setTimeout(() => {
         router.replace('MainTabs');
-      }, 200)
+      }, 200);
     } finally {
       setIsRejecting(false);
     }
@@ -176,42 +176,40 @@ export default function DeliveryDetailsScreen() {
           <Text>No se encontraron datos de entrega.</Text>
         )}
 
-        {
-          deliveryData && deliveryData?.route?.status !== "PENDING" ? (
-            <>
-              <SimpleButton
-                label={isRejecting ? 'Rechazando...' : 'La entrega ya ha sido tomada'}
-                accent
-                mode="contained"
-                onPress={() => handleRejectDelivery()}
-                disabled={isAccepting || isRejecting}
-                style={styles.rejectButton}
-              />
-            </>
-          ) : (
-            <>
-              <SimpleButton
-                label={isAccepting ? 'Aceptando...' : 'Aceptar entrega'}
-                accent
-                mode="contained"
-                onPress={() => {
-                  console.log('Accepting delivery...');
-                  handleAcceptDelivery();
-                }}
-                disabled={isAccepting || isRejecting}
-                style={styles.acceptButton}
-              />
-              <SimpleButton
-                label={isRejecting ? 'Rechazando...' : 'Rechazar entrega'}
-                accent
-                mode="contained"
-                onPress={() => handleRejectDelivery()}
-                disabled={isAccepting || isRejecting}
-                style={styles.rejectButton}
-              />
-            </>
-          )
-        }
+        {deliveryData && deliveryData?.route?.status !== 'PENDING' ? (
+          <>
+            <SimpleButton
+              label={isRejecting ? 'Rechazando...' : 'La entrega ya ha sido tomada'}
+              accent
+              mode="contained"
+              onPress={() => handleRejectDelivery()}
+              disabled={isAccepting || isRejecting}
+              style={styles.rejectButton}
+            />
+          </>
+        ) : (
+          <>
+            <SimpleButton
+              label={isAccepting ? 'Aceptando...' : 'Aceptar entrega'}
+              accent
+              mode="contained"
+              onPress={() => {
+                console.log('Accepting delivery...');
+                handleAcceptDelivery();
+              }}
+              disabled={isAccepting || isRejecting}
+              style={styles.acceptButton}
+            />
+            <SimpleButton
+              label={isRejecting ? 'Rechazando...' : 'Rechazar entrega'}
+              accent
+              mode="contained"
+              onPress={() => handleRejectDelivery()}
+              disabled={isAccepting || isRejecting}
+              style={styles.rejectButton}
+            />
+          </>
+        )}
       </SafeAreaView>
     </AuthorizedRoute>
   );

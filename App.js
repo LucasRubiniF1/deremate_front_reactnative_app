@@ -61,7 +61,8 @@ export default function App() {
             ref={navigationRef}
             onReady={() => {
               flushPendingActions();
-            }}>
+            }}
+          >
             <RootStack />
           </NavigationContainer>
         </SafeAreaProvider>

@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import { ActivityIndicator, Text } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {useRouter} from "../hooks/useRouter";
+import { useRouter } from '../hooks/useRouter';
 
 export default function NavigateToDeliveryScreen() {
   const { params } = useRoute();
-  const router = useRouter()
+  const router = useRouter();
   const deliveryId = params?.deliveryId;
 
   useEffect(() => {

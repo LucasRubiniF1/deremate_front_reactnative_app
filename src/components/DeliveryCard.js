@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Linking, Platform } from 'react-native';
 import { Card, Divider, Text, Button } from 'react-native-paper';
 import StatusChip from '../components/StatusChip';
 import { useTheme } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
-import PinModal from "./PinModal";
+import PinModal from './PinModal';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -89,8 +89,8 @@ const DeliveryCard = ({ delivery, setSnackbarVisible, setSnackbarMessage, setSna
   };
 
   const finishDelivery = () => {
-    console.log("Finishing delivery")
-  }
+    console.log('Finishing delivery');
+  };
 
   return (
     <Card style={styles.card}>
@@ -107,8 +107,7 @@ const DeliveryCard = ({ delivery, setSnackbarVisible, setSnackbarMessage, setSna
           <Text>{delivery.packageLocation}</Text>
         </View>
 
-        {
-          delivery.status === 'NOT_DELIVERED' &&
+        {delivery.status === 'NOT_DELIVERED' && (
           <View style={styles.section}>
             <Text variant="titleSmall">Ruta</Text>
             <Text>{delivery.route.description}</Text>
@@ -128,29 +127,32 @@ const DeliveryCard = ({ delivery, setSnackbarVisible, setSnackbarMessage, setSna
                 <Button
                   mode="contained"
                   onPress={() => setPinModalVisible(true)}
-                  style={{ marginTop: 8, backgroundColor: "#40ae40" }}
+                  style={{ marginTop: 8, backgroundColor: '#40ae40' }}
                   icon={({ size, color }) => (
                     <MaterialIcons name="check" size={size} color={color} />
                   )}
                 >
                   Finalizar entrega
                 </Button>
-                <PinModal visible={pinModalVisible} onClose={() => setPinModalVisible(false)} id={delivery.id}
-                          setSnackbarMode={setSnackbarMode} setSnackbarVisible={setSnackbarVisible}
-                          setSnackbarMessage={setSnackbarMessage}/>
+                <PinModal
+                  visible={pinModalVisible}
+                  onClose={() => setPinModalVisible(false)}
+                  id={delivery.id}
+                  setSnackbarMode={setSnackbarMode}
+                  setSnackbarVisible={setSnackbarVisible}
+                  setSnackbarMessage={setSnackbarMessage}
+                />
               </View>
             )}
             {delivery.route.completedAt && (
               <Text>Completada: {formatDate(delivery.route.completedAt)}</Text>
             )}
           </View>
-        }
+        )}
 
         <View style={styles.section}>
           <Text variant="titleSmall">Fechas</Text>
-          {delivery.route.startedAt && (
-            <Text>Inicio: {formatDate(delivery.route.startedAt)}</Text>
-          )}
+          {delivery.route.startedAt && <Text>Inicio: {formatDate(delivery.route.startedAt)}</Text>}
           {delivery.route.completedAt && (
             <Text>Finalizado: {formatDate(delivery.route.completedAt)}</Text>
           )}

@@ -53,4 +53,4 @@ export const getDeliveriesByUser = async () => {
 export const confirmDelivery = async (id, pin) => {
   const response = await AuthorizedService.put(`${BASE_URL}/${id}/confirm?pin=${pin}`);
   return response.data;
-}
+};

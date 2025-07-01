@@ -4,10 +4,12 @@ export function validateEmail(email) {
 }
 
 export function validateName(name, isName = true) {
-  const regex = /^[^\d]+$/;
+  const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s]+$/;
   const text = isName ? 'nombre' : 'apellido';
+
   if (!name.trim()) return `El ${text} es obligatorio.`;
-  return regex.test(name.trim()) ? null : `El ${text} no puede contener números.`;
+
+  return regex.test(name.trim()) ? null : `El ${text} no puede contener números ni símbolos.`;
 }
 
 export function validatePasswordStrength(password) {
