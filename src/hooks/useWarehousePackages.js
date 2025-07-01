@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Alert } from 'react-native';
 import { fetchPackagesInWarehouse } from '../service/package.service';
-import { notificationService } from '../service/notification.service';
 
 export const useWarehousePackages = () => {
   const [packages, setPackages] = useState([]);
@@ -11,31 +10,6 @@ export const useWarehousePackages = () => {
   const [sector, setSector] = useState('');
   const [shelf, setShelf] = useState('');
   const isInitialized = useRef(false);
-
-  // Initialize notification service (only for receiving push notifications)
-  useEffect(() => {
-    const initializeNotifications = async () => {
-      if (!isInitialized.current) {
-        console.log('[useWarehousePackages] Initializing notifications...');
-        await notificationService.initialize((message) => {
-          console.log('[useWarehousePackages] Push notification received:', message);
-          // Optionally, you can refresh the package list here if you want
-          // fetch();
-        });
-        isInitialized.current = true;
-      }
-    };
-
-    initializeNotifications();
-
-    // Cleanup on unmount
-    return () => {
-      if (isInitialized.current) {
-        notificationService.cleanup();
-        isInitialized.current = false;
-      }
-    };
-  }, []);
 
   const fetch = useCallback(async () => {
     try {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Platform, PermissionsAndroid, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Text,
@@ -15,6 +15,27 @@ import AuthorizedRoute from '../../components/AuthorizedRoute';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from '../../hooks/useRouter';
 import { useTheme } from 'react-native-paper';
+import messaging from '@react-native-firebase/messaging';
+import { saveFirebaseDeviceToken } from '../../service/firebase.service';
+
+const requestUserPermission = async () => {
+  if (Platform.OS === 'ios') {
+    const authStatus = await messaging().requestPermission();
+    return (
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL
+    );
+  } else if (Platform.OS === 'android') {
+    try {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      return true;
+    } catch (error) {
+      console.error('Fallo al solicitar permiso en Android', error);
+      return false;
+    }
+  }
+  return false;
+};
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -123,9 +144,28 @@ export default function SettingsScreen() {
     setDarkMode(value);
   };
 
-  const handleNotificationsChange = value => {
-    console.log('[SettingsScreen] Notifications changed:', value);
-    setNotifications(value);
+  const handleNotificationsChange = async value => {
+    if (value) {
+      const enabled = await requestUserPermission();
+
+      if (enabled) {
+        console.log('Permiso concedido. Obteniendo token...');
+        try {
+          const fcmToken = await messaging().getToken();
+          console.log('Tu FCM Token es:', fcmToken);
+
+          await saveFirebaseDeviceToken(fcmToken);
+
+          Alert.alert('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.');
+        } catch (error) {
+          console.error('Error obteniendo el FCM token:', error);
+          Alert.alert('Error', 'No se pudieron activar las notificaciones.');
+        }
+      } else {
+        console.log('Permiso de notificaciones denegado.');
+        Alert.alert('Permiso Denegado', 'No has concedido el permiso para recibir notificaciones.');
+      }
+    }
   };
 
   const handleLocationChange = value => {

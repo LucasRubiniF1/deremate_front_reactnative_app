@@ -3,11 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStack from './src/navigator/RootStack';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, Alert } from 'react-native';
 import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
-import {flushPendingActions, navigationRef} from "./src/navigator/RootNavigation";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
-import { notificationService } from './src/service/notification.service';
+import { flushPendingActions, navigationRef } from './src/navigator/RootNavigation';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import messaging from '@react-native-firebase/messaging';
 
 const CustomColors = {
   warning: '#FFB300',
@@ -33,24 +33,12 @@ export default function App() {
     [colorScheme, theme]
   );
 
-  // Initialize notifications when app starts
   useEffect(() => {
-    const initializeApp = async () => {
-      console.log('[App] Initializing app...');
-      
-      // Initialize notification service
-      await notificationService.initialize((message) => {
-        console.log('[App] Notification received:', message);
-        // Handle notification at app level if needed
-      });
-    };
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('¡Nueva Notificación!', JSON.stringify(remoteMessage.notification?.body));
+    });
 
-    initializeApp();
-
-    // Cleanup on app unmount
-    return () => {
-      notificationService.cleanup();
-    };
+    return unsubscribe;
   }, []);
 
   return (
@@ -70,3 +58,7 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
+
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Notificación recibida en segundo plano:', remoteMessage);
+});
