@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import useAuthStore from '../../store/useAuthStore';
 import { useRouter } from '../../hooks/useRouter';
-import { Text } from 'react-native-paper';
+import { Text, HelperText } from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { SimpleButton } from '../../components/SimpleButton';
@@ -33,6 +33,28 @@ const getStyles = theme =>
       borderRadius: 8,
     },
   });
+
+const TagMessage = ({ message, color }) => (
+  <Text
+    style={{
+      backgroundColor: color.replace('rgb', 'rgba').replace(')', ',0.15)'),
+      color,
+      borderColor: color,
+      borderWidth: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 16,
+      alignSelf: 'center',
+      marginBottom: 12,
+      fontSize: 12,
+      fontWeight: '500',
+      textAlign: 'center',
+      width: '100%',
+    }}
+  >
+    {message}
+  </Text>
+);
 
 export default function SignInScreen() {
   console.log('[SignInScreen] Component mounted');
@@ -142,6 +164,8 @@ export default function SignInScreen() {
           Iniciar sesión
         </Text>
 
+        {errorMessage && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
+
         <TextInput
           label="Correo"
           value={email}
@@ -170,13 +194,113 @@ export default function SignInScreen() {
           onPress={handleForgotPassword}
         />
       </View>
-      <SimpleSnackbar
-        mode="danger"
-        text={errorMessage}
-        closeLabel="OK"
-        setVisible={setVisible}
-        visible={visible}
-      />
     </View>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
