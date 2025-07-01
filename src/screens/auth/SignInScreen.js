@@ -164,11 +164,7 @@ export default function SignInScreen() {
           Iniciar sesión
         </Text>
 
-        {!!errorMessage && (
-          <HelperText type="error" visible style={styles.errorHelper}>
-            {errorMessage}
-          </HelperText>
-        )}
+        {errorMessage && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
 
         <TextInput
           label="Correo"
