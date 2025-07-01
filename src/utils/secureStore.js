@@ -12,6 +12,32 @@ export async function deleteToken() {
   await SecureStore.deleteItemAsync('userToken');
 }
 
+// FCM Token functions
+export async function saveFCMToken(token) {
+  await SecureStore.setItemAsync('fcmToken', token);
+}
+
+export async function getFCMToken() {
+  return await SecureStore.getItemAsync('fcmToken');
+}
+
+export async function deleteFCMToken() {
+  await SecureStore.deleteItemAsync('fcmToken');
+}
+
+// Generic token functions
+export async function saveTokenByKey(key, token) {
+  await SecureStore.setItemAsync(key, token);
+}
+
+export async function getTokenByKey(key) {
+  return await SecureStore.getItemAsync(key);
+}
+
+export async function deleteTokenByKey(key) {
+  await SecureStore.deleteItemAsync(key);
+}
+
 export async function getUserIdFromToken() {
   try {
     const token = await getToken();

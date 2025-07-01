@@ -6,6 +6,7 @@ import { useWarehousePackages } from '../../hooks/useWarehousePackages';
 import PackageCard from '../../components/PackageCard';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import PackageDetailDialog from '../../components/PackageDetailDialog';
+import NotificationBadge from '../../components/NotificationBadge';
 import { useTheme } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -83,6 +84,10 @@ const getStyles = theme =>
     emptyIcon: {
       marginBottom: 12,
     },
+    titleContainer: {
+      position: 'relative',
+      alignItems: 'center',
+    },
   });
 
 const HomeScreen = () => {
@@ -95,6 +100,7 @@ const HomeScreen = () => {
 
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [newPackageCount, setNewPackageCount] = useState(0);
 
   useEffect(() => {
     console.log('[HomeScreen] Initial packages loaded:', packages?.length || 0, 'items');
@@ -109,6 +115,8 @@ const HomeScreen = () => {
     await refetch();
     console.log('[HomeScreen] Refresh completed');
     setRefreshing(false);
+    // Clear new package count after refresh
+    setNewPackageCount(0);
   };
 
   const handleCodeChange = text => {
@@ -192,7 +200,10 @@ const HomeScreen = () => {
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
+            <NotificationBadge count={newPackageCount} />
+          </View>
 
           <View style={styles.tagsContainer}>
             <View style={styles.tag}>
