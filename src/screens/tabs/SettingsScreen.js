@@ -1,5 +1,11 @@
-import { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Platform, PermissionsAndroid, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Text,
@@ -10,25 +16,40 @@ import {
   Button,
   TextInput,
   Checkbox,
+  Dialog,
+  Portal,
+  Paragraph,
 } from 'react-native-paper';
 import AuthorizedRoute from '../../components/AuthorizedRoute';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from '../../hooks/useRouter';
 import { useTheme } from 'react-native-paper';
-import messaging from '@react-native-firebase/messaging';
+
+import { getApp } from '@react-native-firebase/app';
+import {
+  getMessaging,
+  getToken,
+  requestPermission,
+  AuthorizationStatus,
+} from '@react-native-firebase/messaging';
+
 import { saveFirebaseDeviceToken } from '../../service/firebase.service';
+
+const messaging = getMessaging(getApp());
 
 const requestUserPermission = async () => {
   if (Platform.OS === 'ios') {
-    const authStatus = await messaging().requestPermission();
+    const authStatus = await requestPermission(messaging);
     return (
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL
+      authStatus === AuthorizationStatus.AUTHORIZED ||
+      authStatus === AuthorizationStatus.PROVISIONAL
     );
   } else if (Platform.OS === 'android') {
     try {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-      return true;
+      const result = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+      return result === PermissionsAndroid.RESULTS.GRANTED;
     } catch (error) {
       console.error('Fallo al solicitar permiso en Android', error);
       return false;
@@ -42,54 +63,44 @@ const getStyles = theme =>
     container: {
       flex: 1,
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.background, // Usar color de fondo del tema
+      backgroundColor: theme.colors.background,
     },
     header: {
       alignItems: 'center',
       marginVertical: 20,
     },
     avatar: {
-      // Estilo de layout para Avatar.Icon
       marginBottom: 10,
-      // Avatar.Icon de Paper usará colores del tema por defecto
-      // (ej. theme.colors.secondaryContainer para el fondo y theme.colors.onSecondaryContainer para el ícono)
-      // o puedes personalizarlo con props si es necesario.
     },
     title: {
-      // Considera usar <Text variant="headlineMedium"> o <Text variant="titleLarge">
-      fontSize: theme.fonts.headlineMedium.fontSize, // Ejemplo de uso de fuentes del tema
+      fontSize: theme.fonts.headlineMedium.fontSize,
       fontWeight: theme.fonts.headlineMedium.fontWeight,
-      color: theme.colors.onBackground, // Color de texto sobre el fondo
+      color: theme.colors.onBackground,
     },
     subheader: {
-      // List.Subheader de Paper ya tiene estilos temáticos.
-      // Si necesitas anular:
-      fontSize: theme.fonts.titleSmall.fontSize, // Ejemplo
+      fontSize: theme.fonts.titleSmall.fontSize,
       fontWeight: theme.fonts.titleSmall.fontWeight,
-      color: theme.colors.onSurfaceVariant, // Color para subcabeceras
+      color: theme.colors.onSurfaceVariant,
     },
     item: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: 12, // Puedes ajustar o eliminar si List.Item se encarga bien
+      paddingVertical: 12,
     },
     label: {
-      fontSize: theme.fonts.bodyLarge.fontSize, // Ejemplo
-      color: theme.colors.onSurface, // Texto principal en items
+      fontSize: theme.fonts.bodyLarge.fontSize,
+      color: theme.colors.onSurface,
     },
     divider: {
       marginVertical: 12,
-      // backgroundColor: '#ddd', // ELIMINADO - Divider de Paper usa theme.colors.outlineVariant
     },
     input: {
-      // Estilo de layout para TextInput
       marginVertical: 10,
     },
     button: {
-      // Estilo de layout/forma para Button
       marginTop: 10,
-      borderRadius: theme.roundness * 2, // Consistente con Paper
+      borderRadius: theme.roundness * 2,
     },
     checkboxContainer: {
       flexDirection: 'row',
@@ -97,9 +108,9 @@ const getStyles = theme =>
       marginTop: 8,
     },
     checkboxLabel: {
-      fontSize: theme.fonts.bodyLarge.fontSize, // Ejemplo
+      fontSize: theme.fonts.bodyLarge.fontSize,
       color: theme.colors.onSurface,
-      marginLeft: 8, // Espacio entre Checkbox y Label
+      marginLeft: 8,
     },
     footer: {
       marginVertical: 24,
@@ -108,84 +119,81 @@ const getStyles = theme =>
       alignItems: 'center',
     },
     footerText: {
-      fontSize: theme.fonts.bodySmall.fontSize, // Ejemplo
-      color: theme.colors.onSurfaceVariant, // Texto de pie de página, menos prominente
+      fontSize: theme.fonts.bodySmall.fontSize,
+      color: theme.colors.onSurfaceVariant,
     },
   });
 
 export default function SettingsScreen() {
-  console.log('[SettingsScreen] Component mounted');
   const [isDarkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(false);
   const [locationEnabled, setLocationEnabled] = useState(true);
   const [email, setEmail] = useState('usuario@email.com');
   const [newsletter, setNewsletter] = useState(false);
 
+  // Dialog personalizado
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogMessage, setDialogMessage] = useState('');
+
+  const showDialog = (title, message) => {
+    setDialogTitle(title);
+    setDialogMessage(message);
+    setDialogVisible(true);
+  };
+
+  const hideDialog = () => setDialogVisible(false);
+
   const router = useRouter();
   const theme = useTheme();
   const styles = getStyles(theme);
 
   useEffect(() => {
-    console.log('[SettingsScreen] Initial preferences state:', {
-      isDarkMode,
-      notifications,
-      locationEnabled,
-      email,
-      newsletter,
-    });
-
+    console.log('[SettingsScreen] Component mounted');
     return () => {
       console.log('[SettingsScreen] Component unmounting');
     };
   }, []);
 
   const handleDarkModeChange = value => {
-    console.log('[SettingsScreen] Dark mode changed:', value);
     setDarkMode(value);
   };
 
   const handleNotificationsChange = async value => {
+    setNotifications(value);
+
     if (value) {
       const enabled = await requestUserPermission();
-
       if (enabled) {
-        console.log('Permiso concedido. Obteniendo token...');
         try {
-          const fcmToken = await messaging().getToken();
-          console.log('Tu FCM Token es:', fcmToken);
-
+          const fcmToken = await getToken(messaging);
           await saveFirebaseDeviceToken(fcmToken);
-
-          Alert.alert('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.');
+          showDialog('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.');
         } catch (error) {
           console.error('Error obteniendo el FCM token:', error);
-          Alert.alert('Error', 'No se pudieron activar las notificaciones.');
+          showDialog('Error', 'No se pudieron activar las notificaciones.');
         }
       } else {
-        console.log('Permiso de notificaciones denegado.');
-        Alert.alert('Permiso Denegado', 'No has concedido el permiso para recibir notificaciones.');
+        showDialog('Permiso Denegado', 'No has concedido el permiso para recibir notificaciones.');
       }
+    } else {
+      showDialog('Notificaciones Desactivadas', 'Ya no recibirás notificaciones.');
     }
   };
 
   const handleLocationChange = value => {
-    console.log('[SettingsScreen] Location enabled changed:', value);
     setLocationEnabled(value);
   };
 
   const handleEmailChange = text => {
-    console.log('[SettingsScreen] Email changed:', text);
     setEmail(text);
   };
 
   const handleNewsletterChange = () => {
-    const newValue = !newsletter;
-    console.log('[SettingsScreen] Newsletter subscription changed:', newValue);
-    setNewsletter(newValue);
+    setNewsletter(!newsletter);
   };
 
   const handlePasswordChange = () => {
-    console.log('[SettingsScreen] Navigating to change password screen');
     router.push('ChangePassword');
   };
 
@@ -200,7 +208,6 @@ export default function SettingsScreen() {
 
           <Divider style={styles.divider} />
 
-          {/* Preferencias */}
           <List.Section>
             <List.Subheader style={styles.subheader}>Preferencias</List.Subheader>
 
@@ -240,7 +247,6 @@ export default function SettingsScreen() {
 
           <Divider style={styles.divider} />
 
-          {/* Cuenta */}
           <List.Section>
             <List.Subheader style={styles.subheader}>Cuenta</List.Subheader>
 
@@ -277,6 +283,18 @@ export default function SettingsScreen() {
             <Text style={styles.footerText}> Versión 1.5.0 - Actualización 09/06/2025</Text>
           </View>
         </ScrollView>
+
+        <Portal>
+          <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+            <Dialog.Title>{dialogTitle}</Dialog.Title>
+            <Dialog.Content>
+              <Paragraph>{dialogMessage}</Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog}>OK</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
       </SafeAreaView>
     </AuthorizedRoute>
   );
