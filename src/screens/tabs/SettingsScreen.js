@@ -24,20 +24,32 @@ import AuthorizedRoute from '../../components/AuthorizedRoute';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from '../../hooks/useRouter';
 import { useTheme } from 'react-native-paper';
-import messaging from '@react-native-firebase/messaging';
+
+import { getApp } from '@react-native-firebase/app';
+import {
+  getMessaging,
+  getToken,
+  requestPermission,
+  AuthorizationStatus,
+} from '@react-native-firebase/messaging';
+
 import { saveFirebaseDeviceToken } from '../../service/firebase.service';
+
+const messaging = getMessaging(getApp());
 
 const requestUserPermission = async () => {
   if (Platform.OS === 'ios') {
-    const authStatus = await messaging().requestPermission();
+    const authStatus = await requestPermission(messaging);
     return (
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL
+      authStatus === AuthorizationStatus.AUTHORIZED ||
+      authStatus === AuthorizationStatus.PROVISIONAL
     );
   } else if (Platform.OS === 'android') {
     try {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-      return true;
+      const result = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+      return result === PermissionsAndroid.RESULTS.GRANTED;
     } catch (error) {
       console.error('Fallo al solicitar permiso en Android', error);
       return false;
@@ -154,7 +166,7 @@ export default function SettingsScreen() {
       const enabled = await requestUserPermission();
       if (enabled) {
         try {
-          const fcmToken = await messaging().getToken();
+          const fcmToken = await getToken(messaging);
           await saveFirebaseDeviceToken(fcmToken);
           showDialog('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.');
         } catch (error) {
@@ -272,7 +284,6 @@ export default function SettingsScreen() {
           </View>
         </ScrollView>
 
-        {/* Diálogo moderno */}
         <Portal>
           <Dialog visible={dialogVisible} onDismiss={hideDialog}>
             <Dialog.Title>{dialogTitle}</Dialog.Title>
