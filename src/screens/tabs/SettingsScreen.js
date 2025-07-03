@@ -31,6 +31,7 @@ import {
   getToken,
   requestPermission,
   AuthorizationStatus,
+  deleteToken, // ✅ agregado
 } from '@react-native-firebase/messaging';
 
 import { saveFirebaseDeviceToken } from '../../service/firebase.service';
@@ -58,71 +59,61 @@ const requestUserPermission = async () => {
   return false;
 };
 
-const getStyles = theme =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      paddingHorizontal: 16,
-      backgroundColor: theme.colors.background,
-    },
-    header: {
-      alignItems: 'center',
-      marginVertical: 20,
-    },
-    avatar: {
-      marginBottom: 10,
-    },
-    title: {
-      fontSize: theme.fonts.headlineMedium.fontSize,
-      fontWeight: theme.fonts.headlineMedium.fontWeight,
-      color: theme.colors.onBackground,
-    },
-    subheader: {
-      fontSize: theme.fonts.titleSmall.fontSize,
-      fontWeight: theme.fonts.titleSmall.fontWeight,
-      color: theme.colors.onSurfaceVariant,
-    },
-    item: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingVertical: 12,
-    },
-    label: {
-      fontSize: theme.fonts.bodyLarge.fontSize,
-      color: theme.colors.onSurface,
-    },
-    divider: {
-      marginVertical: 12,
-    },
-    input: {
-      marginVertical: 10,
-    },
-    button: {
-      marginTop: 10,
-      borderRadius: theme.roundness * 2,
-    },
-    checkboxContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: 8,
-    },
-    checkboxLabel: {
-      fontSize: theme.fonts.bodyLarge.fontSize,
-      color: theme.colors.onSurface,
-      marginLeft: 8,
-    },
-    footer: {
-      marginVertical: 24,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    footerText: {
-      fontSize: theme.fonts.bodySmall.fontSize,
-      color: theme.colors.onSurfaceVariant,
-    },
-  });
+// ✅ nueva función para borrar el token FCM local
+const disableNotifications = async () => {
+  try {
+    await deleteToken(messaging);
+    console.log('FCM token eliminado localmente');
+    // 🔁 opcional: avisá al backend si querés
+  } catch (err) {
+    console.warn('Error al eliminar el token FCM:', err);
+  }
+};
+
+const getStyles = theme => StyleSheet.create({
+  container: { flex: 1, paddingHorizontal: 16, backgroundColor: theme.colors.background },
+  header: { alignItems: 'center', marginVertical: 20 },
+  avatar: { marginBottom: 10 },
+  title: {
+    fontSize: theme.fonts.headlineMedium.fontSize,
+    fontWeight: theme.fonts.headlineMedium.fontWeight,
+    color: theme.colors.onBackground,
+  },
+  subheader: {
+    fontSize: theme.fonts.titleSmall.fontSize,
+    fontWeight: theme.fonts.titleSmall.fontWeight,
+    color: theme.colors.onSurfaceVariant,
+  },
+  item: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  label: {
+    fontSize: theme.fonts.bodyLarge.fontSize,
+    color: theme.colors.onSurface,
+  },
+  divider: { marginVertical: 12 },
+  input: { marginVertical: 10 },
+  button: { marginTop: 10, borderRadius: theme.roundness * 2 },
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  checkboxLabel: {
+    fontSize: theme.fonts.bodyLarge.fontSize,
+    color: theme.colors.onSurface,
+    marginLeft: 8,
+  },
+  footer: {
+    marginVertical: 24,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: theme.fonts.bodySmall.fontSize,
+    color: theme.colors.onSurfaceVariant,
+  },
+});
 
 export default function SettingsScreen() {
   const [isDarkMode, setDarkMode] = useState(true);
@@ -131,7 +122,6 @@ export default function SettingsScreen() {
   const [email, setEmail] = useState('usuario@email.com');
   const [newsletter, setNewsletter] = useState(false);
 
-  // Dialog personalizado
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogMessage, setDialogMessage] = useState('');
@@ -141,7 +131,6 @@ export default function SettingsScreen() {
     setDialogMessage(message);
     setDialogVisible(true);
   };
-
   const hideDialog = () => setDialogVisible(false);
 
   const router = useRouter();
@@ -155,9 +144,7 @@ export default function SettingsScreen() {
     };
   }, []);
 
-  const handleDarkModeChange = value => {
-    setDarkMode(value);
-  };
+  const handleDarkModeChange = value => setDarkMode(value);
 
   const handleNotificationsChange = async value => {
     setNotifications(value);
@@ -177,25 +164,15 @@ export default function SettingsScreen() {
         showDialog('Permiso Denegado', 'No has concedido el permiso para recibir notificaciones.');
       }
     } else {
+      await disableNotifications(); // ✅ limpiamos el token local
       showDialog('Notificaciones Desactivadas', 'Ya no recibirás notificaciones.');
     }
   };
 
-  const handleLocationChange = value => {
-    setLocationEnabled(value);
-  };
-
-  const handleEmailChange = text => {
-    setEmail(text);
-  };
-
-  const handleNewsletterChange = () => {
-    setNewsletter(!newsletter);
-  };
-
-  const handlePasswordChange = () => {
-    router.push('ChangePassword');
-  };
+  const handleLocationChange = value => setLocationEnabled(value);
+  const handleEmailChange = text => setEmail(text);
+  const handleNewsletterChange = () => setNewsletter(!newsletter);
+  const handlePasswordChange = () => router.push('ChangePassword');
 
   return (
     <AuthorizedRoute>
@@ -228,21 +205,9 @@ export default function SettingsScreen() {
 
             <Divider style={styles.divider} />
 
-            <List.Item
-              title="Privacidad"
-              description="Configuración de permisos y accesos"
-              left={props => <List.Icon {...props} icon="lock-outline" />}
-            />
-            <List.Item
-              title="Idioma"
-              description="Español"
-              left={props => <List.Icon {...props} icon="translate" />}
-            />
-            <List.Item
-              title="Tema"
-              description="Personalización de la interfaz"
-              left={props => <List.Icon {...props} icon="palette-outline" />}
-            />
+            <List.Item title="Privacidad" description="Configuración de permisos y accesos" left={props => <List.Icon {...props} icon="lock-outline" />} />
+            <List.Item title="Idioma" description="Español" left={props => <List.Icon {...props} icon="translate" />} />
+            <List.Item title="Tema" description="Personalización de la interfaz" left={props => <List.Icon {...props} icon="palette-outline" />} />
           </List.Section>
 
           <Divider style={styles.divider} />
@@ -259,19 +224,11 @@ export default function SettingsScreen() {
             />
 
             <View style={styles.checkboxContainer}>
-              <Checkbox
-                status={newsletter ? 'checked' : 'unchecked'}
-                onPress={handleNewsletterChange}
-              />
+              <Checkbox status={newsletter ? 'checked' : 'unchecked'} onPress={handleNewsletterChange} />
               <Text style={styles.checkboxLabel}>Suscribirme al newsletter</Text>
             </View>
 
-            <Button
-              icon="lock-reset"
-              mode="contained"
-              style={styles.button}
-              onPress={handlePasswordChange}
-            >
+            <Button icon="lock-reset" mode="contained" style={styles.button} onPress={handlePasswordChange}>
               Cambiar contraseña
             </Button>
           </List.Section>
