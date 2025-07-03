@@ -9,23 +9,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { info } from '../../service/user.service';
 
+// ✅ Import para eliminar el token FCM
+import { getMessaging, deleteToken } from '@react-native-firebase/messaging';
+import { getApp } from '@react-native-firebase/app';
+
 const formatDate = date => {
-  console.log('Fecha final: ', date);
   if (!date) return 'No disponible';
-  const months = [
-    'enero',
-    'febrero',
-    'marzo',
-    'abril',
-    'mayo',
-    'junio',
-    'julio',
-    'agosto',
-    'septiembre',
-    'octubre',
-    'noviembre',
-    'diciembre',
-  ];
+  const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
   const d = new Date(date);
   return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()} a las ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 };
@@ -80,17 +70,19 @@ const getStyles = theme =>
   });
 
 export default function ProfileScreen() {
-  console.log('[ProfileScreen] Component mounted');
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const theme = useTheme();
   const styles = getStyles(theme);
 
   const handleLogout = async () => {
-    console.log('[ProfileScreen] Logout initiated');
     try {
+      // ✅ Eliminar token FCM localmente
+      const messaging = getMessaging(getApp());
+      await deleteToken(messaging);
+      console.log('[ProfileScreen] FCM token eliminado');
+
       await logout();
-      console.log('[ProfileScreen] Logout successful, navigating to Auth screen');
       router.replace('Auth');
     } catch (error) {
       console.error('[ProfileScreen] Logout failed:', error);
@@ -102,54 +94,30 @@ export default function ProfileScreen() {
   const [userInfo, setUserInfo] = useState(user);
 
   const fetchUserInfo = async () => {
-    console.log('[ProfileScreen] Fetching user info...');
     try {
       const data = await info();
-      console.log('[ProfileScreen] User info fetched successfully:', {
-        name: `${data.firstname} ${data.lastname}`,
-        deliveriesCompleted: data.deliveriesCompleted,
-      });
       setUserInfo(data);
     } catch (error) {
       console.error('[ProfileScreen] Error fetching user info:', error);
     } finally {
-      console.log('[ProfileScreen] Fetch operation completed');
       setLoading(false);
       setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    console.log('[ProfileScreen] Initial user data:', {
-      email: user?.email,
-      hasUserInfo: !!userInfo,
-    });
     fetchUserInfo();
-
-    return () => {
-      console.log('[ProfileScreen] Component unmounting');
-    };
+    return () => { };
   }, []);
 
-  const initials =
-    `${userInfo?.firstname?.[0] ?? ''}${userInfo?.lastname?.[0] ?? ''}`.toUpperCase();
+  const initials = `${userInfo?.firstname?.[0] ?? ''}${userInfo?.lastname?.[0] ?? ''}`.toUpperCase();
   const fullName = `${userInfo?.firstname ?? ''} ${userInfo?.lastname ?? ''}`.trim();
   const userEmail = user?.email ?? 'Email no disponible';
   const createdDate = formatDate(user?.createdTime);
   const deliveriesCount = userInfo?.deliveriesCompleted ?? 0;
   const rating = 4;
 
-  console.log('[ProfileScreen] Rendering with user data:', {
-    initials,
-    fullName,
-    userEmail,
-    deliveriesCount,
-    rating,
-    createdDate,
-  });
-
   const renderStars = () => {
-    console.log('[ProfileScreen] Rendering star rating:', rating);
     return Array.from({ length: 5 }, (_, i) => (
       <Icon
         key={i}
@@ -161,7 +129,6 @@ export default function ProfileScreen() {
   };
 
   if (loading) {
-    console.log('[ProfileScreen] Rendering loading state');
     return (
       <AuthorizedRoute>
         <SafeAreaView style={styles.container}>
@@ -175,11 +142,7 @@ export default function ProfileScreen() {
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <Avatar.Text
-            size={80}
-            label={initials || '?'}
-            style={[styles.avatar, { backgroundColor: theme.colors.primary }]}
-          />
+          <Avatar.Text size={80} label={initials || '?'} style={[styles.avatar, { backgroundColor: theme.colors.primary }]} />
           <Text style={styles.name}>{fullName || 'Nombre no disponible'}</Text>
           <Text style={styles.email}>{userEmail}</Text>
 
