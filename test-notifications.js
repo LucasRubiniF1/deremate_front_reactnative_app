@@ -10,7 +10,7 @@ const testNotification = async () => {
     const response = await fetch('https://fcm.googleapis.com/fcm/send', {
       method: 'POST',
       headers: {
-        'Authorization': `key=${FCM_SERVER_KEY}`,
+        Authorization: `key=${FCM_SERVER_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -32,7 +32,7 @@ const testNotification = async () => {
 
     const result = await response.json();
     console.log('Notification sent:', result);
-    
+
     if (result.success === 1) {
       console.log('✅ Notification sent successfully!');
     } else {
@@ -69,12 +69,12 @@ const testMultipleNotifications = async () => {
   for (let i = 0; i < notifications.length; i++) {
     const notification = notifications[i];
     console.log(`\nSending notification ${i + 1}/${notifications.length}: ${notification.title}`);
-    
+
     try {
       const response = await fetch('https://fcm.googleapis.com/fcm/send', {
         method: 'POST',
         headers: {
-          'Authorization': `key=${FCM_SERVER_KEY}`,
+          Authorization: `key=${FCM_SERVER_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -148,4 +148,4 @@ Example usage:
 module.exports = {
   testNotification,
   testMultipleNotifications,
-}; 
+};

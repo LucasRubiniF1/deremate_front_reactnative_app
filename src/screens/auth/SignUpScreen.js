@@ -100,7 +100,7 @@ export default function SignUpScreen() {
 
   useEffect(() => {
     if (isUserCreated) {
-      setSuccessMsg('Cuenta creada exitosamente 🎉');
+      setSuccessMsg('Cuenta Creada Exitósamente 🎉');
       setShowSuccess(true);
 
       const to = setTimeout(() => {

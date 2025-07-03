@@ -4,7 +4,7 @@ import { useRouter } from '../../hooks/useRouter';
 import useAuthStore from '../../store/useAuthStore';
 import { SimpleButton } from '../../components/SimpleButton';
 import { IconButton } from 'react-native-paper';
-import { SimpleSnackbar } from '../../components/SimpleSnackbar';
+// import { SimpleSnackbar } from '../../components/SimpleSnackbar';
 import { useTheme } from 'react-native-paper';
 
 const getStyles = theme =>
@@ -72,6 +72,28 @@ const getStyles = theme =>
       width: '100%',
     },
   });
+
+const TagMessage = ({ message, color }) => (
+  <Text
+    style={{
+      backgroundColor: color.replace('rgb', 'rgba').replace(')', ',0.15)'),
+      color,
+      borderColor: color,
+      borderWidth: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 16,
+      alignSelf: 'center',
+      marginBottom: 30,
+      fontSize: 12,
+      fontWeight: '500',
+      textAlign: 'center',
+      width: '100%',
+    }}
+  >
+    {message}
+  </Text>
+);
 
 export default function VerificationScreen({ route }) {
   const { mode = 'email', email: routeEmail } = route?.params || {};
@@ -216,6 +238,12 @@ export default function VerificationScreen({ route }) {
       <Text style={styles.title}>
         {mode === 'email' ? 'Verificá tu correo' : 'Restablecer contraseña'}
       </Text>
+
+      {errorVisible && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
+      {resendSuccess && (
+        <TagMessage message={'Código Reenviado Exitósamente 🎉'} color={'rgb(34, 197, 94)'} />
+      )}
+
       <View style={styles.inputContainer}>
         {code.map((digit, index) => (
           <TextInput
@@ -291,21 +319,21 @@ export default function VerificationScreen({ route }) {
         />
       )}
 
-      <SimpleSnackbar
+      {/* <SimpleSnackbar
         mode="info"
         text="Código reenviado exitosamente"
         closeLabel="OK"
         setVisible={setResendSuccess}
         visible={resendSuccess}
-      />
+      /> */}
 
-      <SimpleSnackbar
+      {/* <SimpleSnackbar
         mode="danger"
         text={errorMessage}
         closeLabel="OK"
         setVisible={setErrorVisible}
         visible={errorVisible}
-      />
+      /> */}
     </View>
   );
 }
