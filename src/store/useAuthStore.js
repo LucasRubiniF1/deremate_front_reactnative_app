@@ -82,7 +82,7 @@ const useAuthStore = create((set, get) => ({
       const { password } = get().isEmailVerified;
 
       set({
-        error: "Código Incorrecto",
+        error: 'Código Incorrecto',
         loading: false,
         isEmailVerified: { email, password, verified: false },
       });

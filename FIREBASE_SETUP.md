@@ -35,6 +35,7 @@ This guide will help you set up Firebase Cloud Messaging (FCM) for push notifica
 ### 4. Configure iOS (if needed)
 
 For iOS, you'll need to:
+
 1. Add the `GoogleService-Info.plist` to your Xcode project
 2. Configure push notification capabilities in Xcode
 3. Generate and upload APNs certificates to Firebase
@@ -44,6 +45,7 @@ For iOS, you'll need to:
 You can test push notifications using:
 
 #### Firebase Console
+
 1. Go to Cloud Messaging in Firebase Console
 2. Click "Send your first message"
 3. Enter notification title and body
@@ -51,6 +53,7 @@ You can test push notifications using:
 5. Send the message
 
 #### Using FCM Token
+
 1. Run your app and check the console for the FCM token
 2. Use the token to send a test message via Firebase Console or FCM API
 
@@ -86,10 +89,12 @@ curl -X POST -H "Authorization: key=YOUR_SERVER_KEY" \
 ### Common Issues
 
 1. **"No Firebase App '[DEFAULT]' has been created"**
+
    - Make sure `google-services.json` is in the correct location
    - Rebuild the app after adding the file
 
 2. **Notifications not showing**
+
    - Check if permissions are granted
    - Verify FCM token is generated
    - Check Firebase Console for delivery status
@@ -110,4 +115,4 @@ curl -X POST -H "Authorization: key=YOUR_SERVER_KEY" \
 - Keep your Firebase Server Key secure
 - Use Firebase Admin SDK on your backend
 - Implement proper token management
-- Consider implementing topic-based notifications for better scalability 
+- Consider implementing topic-based notifications for better scalability

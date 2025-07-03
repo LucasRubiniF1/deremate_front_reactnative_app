@@ -240,7 +240,9 @@ export default function VerificationScreen({ route }) {
       </Text>
 
       {errorVisible && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
-      {resendSuccess && <TagMessage message={"Código Reenviado Exitósamente 🎉"} color={"rgb(34, 197, 94)"} />}
+      {resendSuccess && (
+        <TagMessage message={'Código Reenviado Exitósamente 🎉'} color={'rgb(34, 197, 94)'} />
+      )}
 
       <View style={styles.inputContainer}>
         {code.map((digit, index) => (
@@ -325,7 +327,6 @@ export default function VerificationScreen({ route }) {
         visible={resendSuccess}
       /> */}
 
-
       {/* <SimpleSnackbar
         mode="danger"
         text={errorMessage}
@@ -333,8 +334,6 @@ export default function VerificationScreen({ route }) {
         setVisible={setErrorVisible}
         visible={errorVisible}
       /> */}
-
-      
     </View>
   );
 }

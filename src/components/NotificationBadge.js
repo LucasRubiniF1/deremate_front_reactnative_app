@@ -31,11 +31,9 @@ const NotificationBadge = ({ count, size = 20 }) => {
 
   return (
     <View style={styles.badge}>
-      <Text style={styles.text}>
-        {count > 99 ? '99+' : count.toString()}
-      </Text>
+      <Text style={styles.text}>{count > 99 ? '99+' : count.toString()}</Text>
     </View>
   );
 };
 
-export default NotificationBadge; 
+export default NotificationBadge;
