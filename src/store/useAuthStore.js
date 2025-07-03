@@ -9,6 +9,7 @@ import {
   resetPassword,
 } from '../service/auth.service';
 import { info } from '../service/user.service';
+import apiMessages from '../utils/constants';
 
 const useAuthStore = create((set, get) => ({
   user: null,
@@ -35,7 +36,7 @@ const useAuthStore = create((set, get) => ({
       console.error('Login failed', error);
 
       console.warn(error?.response.data);
-      if (error?.response?.data?.message === 'The email has not been verified.') {
+      if (error?.response?.data?.message === apiMessages.EMAIL_NOT_VERIFIED) {
         set({ error: null, loading: false });
         return 'EMAIL_NOT_VERIFIED';
       } else {
