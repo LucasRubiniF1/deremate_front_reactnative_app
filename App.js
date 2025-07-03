@@ -7,14 +7,17 @@ import { useColorScheme, Alert } from 'react-native';
 import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
 import { flushPendingActions, navigationRef } from './src/navigator/RootNavigation';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import messaging from '@react-native-firebase/messaging';
+
+import { getApp } from '@react-native-firebase/app';
+import { getMessaging, onMessage } from '@react-native-firebase/messaging';
+
+const messaging = getMessaging(getApp());
 
 const CustomColors = {
   warning: '#FFB300',
   onWarning: '#000000',
   warningContainer: '#FFF8E1',
   onWarningContainer: '#664A00',
-
   success: '#388E3C',
   onSuccess: '#FFFFFF',
   successContainer: '#E8F5E9',
@@ -25,17 +28,16 @@ export default function App() {
   const colorScheme = useColorScheme();
   const { theme } = useMaterial3Theme({ fallbackSourceColor: '#3a86ff' });
 
-  const paperTheme = useMemo(
-    () =>
-      colorScheme === 'dark'
-        ? { ...MD3DarkTheme, colors: { ...theme.dark, ...CustomColors } }
-        : { ...MD3LightTheme, colors: { ...theme.light, ...CustomColors } },
-    [colorScheme, theme]
-  );
+  const paperTheme = useMemo(() => {
+    return colorScheme === 'dark'
+      ? { ...MD3DarkTheme, colors: { ...theme.dark, ...CustomColors } }
+      : { ...MD3LightTheme, colors: { ...theme.light, ...CustomColors } };
+  }, [colorScheme, theme]);
 
   useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('¡Nueva Notificación!', JSON.stringify(remoteMessage.notification?.body));
+    // ✅ Escucha notificaciones en primer plano
+    const unsubscribe = onMessage(messaging, async remoteMessage => {
+      Alert.alert('¡Nueva Notificación!', remoteMessage.notification?.body || 'Sin contenido');
     });
 
     return unsubscribe;
@@ -47,9 +49,7 @@ export default function App() {
         <SafeAreaProvider>
           <NavigationContainer
             ref={navigationRef}
-            onReady={() => {
-              flushPendingActions();
-            }}
+            onReady={() => flushPendingActions()}
           >
             <RootStack />
           </NavigationContainer>
@@ -58,7 +58,3 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
-
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('Notificación recibida en segundo plano:', remoteMessage);
-});
