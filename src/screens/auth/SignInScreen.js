@@ -67,6 +67,8 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [visible, setVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => setShowPassword(prev => !prev);
 
   // Cleanup function
   const cleanupErrors = () => {
@@ -178,9 +180,16 @@ export default function SignInScreen() {
           label="Contraseña"
           value={password}
           onChangeText={handlePasswordChange}
-          secureTextEntry
+          secureTextEntry={!showPassword}
           style={styles.input}
           mode="outlined"
+          right={
+            <TextInput.Icon
+              icon={showPassword ? 'eye-off' : 'eye'}
+              onPress={toggleShowPassword}
+              forceTextInputFocus={false}
+            />
+          }
         />
 
         <SimpleButton label="Ingresar" accent mode="contained" onPress={handleLogin} />
