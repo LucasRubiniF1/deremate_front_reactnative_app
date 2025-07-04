@@ -9,9 +9,14 @@ import { flushPendingActions, navigationRef } from './src/navigator/RootNavigati
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { getApp } from '@react-native-firebase/app';
-import { getMessaging, onMessage } from '@react-native-firebase/messaging';
+import {
+  getMessaging,
+  onMessage,
+  getInitialNotification,
+  onNotificationOpenedApp,
+} from '@react-native-firebase/messaging';
 
-import NotificationModal from './src/components/NotificationModal'; // ✅ import del modal
+import NotificationModal from './src/components/NotificationModal';
 
 const messaging = getMessaging(getApp());
 
@@ -36,12 +41,11 @@ export default function App() {
       : { ...MD3LightTheme, colors: { ...theme.light, ...CustomColors } };
   }, [colorScheme, theme]);
 
-
   const [showNotification, setShowNotification] = useState(false);
   const [notificationData, setNotificationData] = useState({ title: '', body: '' });
 
   useEffect(() => {
-    const unsubscribe = onMessage(messaging, async remoteMessage => {
+    const unsubscribeForeground = onMessage(messaging, async remoteMessage => {
       setNotificationData({
         title: remoteMessage.notification?.title || '¡Nueva Notificación!',
         body: remoteMessage.notification?.body || 'Sin contenido',
@@ -49,13 +53,34 @@ export default function App() {
       setShowNotification(true);
     });
 
-    return unsubscribe;
+    const unsubscribeOpened = onNotificationOpenedApp(remoteMessage => {
+      if (remoteMessage) {
+        setNotificationData({
+          title: remoteMessage.notification?.title || '¡Notificación!',
+          body: remoteMessage.notification?.body || 'Sin contenido',
+        });
+        setShowNotification(true);
+      }
+    });
+
+    getInitialNotification().then(remoteMessage => {
+      if (remoteMessage) {
+        setNotificationData({
+          title: remoteMessage.notification?.title || '¡Notificación!',
+          body: remoteMessage.notification?.body || 'Sin contenido',
+        });
+        setShowNotification(true);
+      }
+    });
+
+    return () => {
+      unsubscribeForeground();
+    };
   }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={paperTheme}>
-        {/* ✅ Modal notificación */}
         <NotificationModal
           visible={showNotification}
           onClose={() => setShowNotification(false)}
