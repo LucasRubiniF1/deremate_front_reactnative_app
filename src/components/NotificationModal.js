@@ -7,12 +7,19 @@ const NotificationModal = ({ visible, onClose, title, body }) => {
     const theme = useTheme();
 
     return (
-        <Modal visible={visible} transparent animationType="fade">
+        <Modal
+            visible={visible}
+            transparent
+            animationType="fade"
+            onRequestClose={onClose} // ✅ Para Android
+        >
             <View style={styles.overlay}>
-                <View style={styles.modalContainer}>
+                <View style={[styles.modalContainer, { backgroundColor: theme.colors.background }]}>
                     <MaterialIcons name="notifications-active" size={40} color={theme.colors.primary} />
                     <Text style={styles.title}>{title || '¡Nueva Notificación!'}</Text>
-                    <Text style={styles.body}>{body === 'string' ? 'Tienes una nueva notificación' : body}</Text>
+                    <Text style={styles.body}>
+                        {typeof body === 'string' && body.trim() !== '' ? body : 'Tienes una nueva notificación'}
+                    </Text>
                     <Button mode="contained" onPress={onClose} style={styles.button}>
                         OK
                     </Button>
@@ -30,7 +37,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        backgroundColor: 'white',
         padding: 24,
         borderRadius: 16,
         alignItems: 'center',

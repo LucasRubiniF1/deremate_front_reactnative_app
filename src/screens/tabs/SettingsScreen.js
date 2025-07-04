@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -22,7 +22,7 @@ import AuthorizedRoute from '../../components/AuthorizedRoute';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from '../../hooks/useRouter';
 import { useTheme } from 'react-native-paper';
-import { useNotifications } from '../../hooks/useNotifications'; // ✅ importado
+import { useNotifications } from '../../hooks/useNotifications';
 
 const getStyles = theme => StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 16, backgroundColor: theme.colors.background },
@@ -91,23 +91,27 @@ export default function SettingsScreen() {
   const theme = useTheme();
   const styles = getStyles(theme);
 
-  const { enableNotifications, disableNotifications } = useNotifications(); // ✅ hook
+  const { enableNotifications, disableNotifications } = useNotifications();
 
   const handleDarkModeChange = value => setDarkMode(value);
 
   const handleNotificationsChange = async value => {
-    setNotifications(value);
-
     if (value) {
-      await enableNotifications(
-        () => showDialog('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.'),
-        (err) => showDialog('Error', err.message)
-      );
+      const ok = await enableNotifications();
+      if (ok) {
+        setNotifications(true);
+        showDialog('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.');
+      } else {
+        showDialog('Error', 'No se pudieron activar las notificaciones.');
+      }
     } else {
-      await disableNotifications(
-        () => showDialog('Notificaciones Desactivadas', 'Ya no recibirás notificaciones.'),
-        (err) => showDialog('Error', err.message)
-      );
+      const ok = await disableNotifications();
+      if (ok) {
+        setNotifications(false);
+        showDialog('Notificaciones Desactivadas', 'Ya no recibirás notificaciones.');
+      } else {
+        showDialog('Error', 'No se pudieron desactivar las notificaciones.');
+      }
     }
   };
 
