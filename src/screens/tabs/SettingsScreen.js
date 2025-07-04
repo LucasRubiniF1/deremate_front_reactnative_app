@@ -3,8 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   View,
-  Platform,
-  PermissionsAndroid,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -24,51 +22,7 @@ import AuthorizedRoute from '../../components/AuthorizedRoute';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from '../../hooks/useRouter';
 import { useTheme } from 'react-native-paper';
-
-import { getApp } from '@react-native-firebase/app';
-import {
-  getMessaging,
-  getToken,
-  requestPermission,
-  AuthorizationStatus,
-  deleteToken, // ✅ agregado
-} from '@react-native-firebase/messaging';
-
-import { saveFirebaseDeviceToken } from '../../service/firebase.service';
-
-const messaging = getMessaging(getApp());
-
-const requestUserPermission = async () => {
-  if (Platform.OS === 'ios') {
-    const authStatus = await requestPermission(messaging);
-    return (
-      authStatus === AuthorizationStatus.AUTHORIZED ||
-      authStatus === AuthorizationStatus.PROVISIONAL
-    );
-  } else if (Platform.OS === 'android') {
-    try {
-      const result = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-      );
-      return result === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (error) {
-      console.error('Fallo al solicitar permiso en Android', error);
-      return false;
-    }
-  }
-  return false;
-};
-
-// ✅ nueva función para borrar el token FCM local
-const disableNotifications = async () => {
-  try {
-    await deleteToken(messaging);
-    console.log('FCM token eliminado localmente');
-    // 🔁 opcional: avisá al backend si querés
-  } catch (err) {
-    console.warn('Error al eliminar el token FCM:', err);
-  }
-};
+import { useNotifications } from '../../hooks/useNotifications'; // ✅ importado
 
 const getStyles = theme => StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 16, backgroundColor: theme.colors.background },
@@ -137,12 +91,7 @@ export default function SettingsScreen() {
   const theme = useTheme();
   const styles = getStyles(theme);
 
-  useEffect(() => {
-    console.log('[SettingsScreen] Component mounted');
-    return () => {
-      console.log('[SettingsScreen] Component unmounting');
-    };
-  }, []);
+  const { enableNotifications, disableNotifications } = useNotifications(); // ✅ hook
 
   const handleDarkModeChange = value => setDarkMode(value);
 
@@ -150,22 +99,15 @@ export default function SettingsScreen() {
     setNotifications(value);
 
     if (value) {
-      const enabled = await requestUserPermission();
-      if (enabled) {
-        try {
-          const fcmToken = await getToken(messaging);
-          await saveFirebaseDeviceToken(fcmToken);
-          showDialog('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.');
-        } catch (error) {
-          console.error('Error obteniendo el FCM token:', error);
-          showDialog('Error', 'No se pudieron activar las notificaciones.');
-        }
-      } else {
-        showDialog('Permiso Denegado', 'No has concedido el permiso para recibir notificaciones.');
-      }
+      await enableNotifications(
+        () => showDialog('¡Notificaciones Activadas!', 'Ya estás listo para recibir notificaciones.'),
+        (err) => showDialog('Error', err.message)
+      );
     } else {
-      await disableNotifications(); // ✅ limpiamos el token local
-      showDialog('Notificaciones Desactivadas', 'Ya no recibirás notificaciones.');
+      await disableNotifications(
+        () => showDialog('Notificaciones Desactivadas', 'Ya no recibirás notificaciones.'),
+        (err) => showDialog('Error', err.message)
+      );
     }
   };
 

@@ -35,7 +35,6 @@ export default function App() {
   }, [colorScheme, theme]);
 
   useEffect(() => {
-    // ✅ Escucha notificaciones en primer plano
     const unsubscribe = onMessage(messaging, async remoteMessage => {
       Alert.alert('¡Nueva Notificación!', remoteMessage.notification?.body || 'Sin contenido');
     });
