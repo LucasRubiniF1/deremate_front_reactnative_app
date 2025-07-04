@@ -1,15 +1,17 @@
-import { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStack from './src/navigator/RootStack';
-import { useColorScheme, Alert } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
 import { flushPendingActions, navigationRef } from './src/navigator/RootNavigation';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { getApp } from '@react-native-firebase/app';
 import { getMessaging, onMessage } from '@react-native-firebase/messaging';
+
+import NotificationModal from './src/components/NotificationModal'; // ✅ import del modal
 
 const messaging = getMessaging(getApp());
 
@@ -34,9 +36,17 @@ export default function App() {
       : { ...MD3LightTheme, colors: { ...theme.light, ...CustomColors } };
   }, [colorScheme, theme]);
 
+
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationData, setNotificationData] = useState({ title: '', body: '' });
+
   useEffect(() => {
     const unsubscribe = onMessage(messaging, async remoteMessage => {
-      Alert.alert('¡Nueva Notificación!', remoteMessage.notification?.body || 'Sin contenido');
+      setNotificationData({
+        title: remoteMessage.notification?.title || '¡Nueva Notificación!',
+        body: remoteMessage.notification?.body || 'Sin contenido',
+      });
+      setShowNotification(true);
     });
 
     return unsubscribe;
@@ -45,6 +55,14 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={paperTheme}>
+        {/* ✅ Modal notificación */}
+        <NotificationModal
+          visible={showNotification}
+          onClose={() => setShowNotification(false)}
+          title={notificationData.title}
+          body={notificationData.body}
+        />
+
         <SafeAreaProvider>
           <NavigationContainer
             ref={navigationRef}
