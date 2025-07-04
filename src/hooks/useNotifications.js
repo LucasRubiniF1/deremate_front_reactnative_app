@@ -16,52 +16,71 @@ import {
 const messaging = getMessaging(getApp());
 
 const requestUserPermission = async () => {
-    if (Platform.OS === 'ios') {
-        const authStatus = await requestPermission(messaging);
-        return (
-            authStatus === AuthorizationStatus.AUTHORIZED ||
-            authStatus === AuthorizationStatus.PROVISIONAL
-        );
-    } else if (Platform.OS === 'android') {
-        try {
+    try {
+        if (Platform.OS === 'ios') {
+            const authStatus = await requestPermission(messaging);
+            return (
+                authStatus === AuthorizationStatus.AUTHORIZED ||
+                authStatus === AuthorizationStatus.PROVISIONAL
+            );
+        }
+
+        if (Platform.OS === 'android') {
             const result = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
             );
             return result === PermissionsAndroid.RESULTS.GRANTED;
-        } catch (error) {
-            console.error('Fallo al solicitar permiso en Android', error);
-            return false;
         }
+
+        console.warn('[Permiso] Plataforma no soportada');
+        return false;
+    } catch (error) {
+        console.error('[Permiso] Error solicitando permisos:', error);
+        return false;
     }
-    return false;
 };
 
 export const useNotifications = () => {
     const enableNotifications = async (onSuccess, onError) => {
         try {
             const granted = await requestUserPermission();
-            if (!granted) throw new Error('Permiso denegado');
+            if (!granted) throw new Error('Permiso de notificaciones denegado');
 
             const token = await getToken(messaging);
+            if (!token) throw new Error('Token de dispositivo vacío o inválido');
+
             await saveFirebaseDeviceToken(token);
+            console.log('[Notificaciones] Token guardado:', token);
 
             if (onSuccess) onSuccess();
+            return true;
         } catch (err) {
-            console.error('Error en enableNotifications:', err);
+            console.error('[Notificaciones] Error al habilitar:', err);
             if (onError) onError(err);
+            return false;
         }
     };
 
     const disableNotifications = async (onSuccess, onError) => {
         try {
             const token = await getToken(messaging);
-            await deleteToken(messaging);
+            if (!token) throw new Error('Token de dispositivo vacío o inválido');
+
+            try {
+                await deleteToken(messaging);
+            } catch (deleteErr) {
+                console.warn('[Notificaciones] Token ya eliminado o error:', deleteErr.message);
+            }
+
             await deleteFirebaseTokenOnServer(token);
+            console.log('[Notificaciones] Token desvinculado del backend');
 
             if (onSuccess) onSuccess();
+            return true;
         } catch (err) {
-            console.error('Error en disableNotifications:', err);
+            console.error('[Notificaciones] Error al deshabilitar:', err);
             if (onError) onError(err);
+            return false;
         }
     };
 
