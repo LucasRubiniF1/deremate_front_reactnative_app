@@ -11,11 +11,11 @@ const NotificationModal = ({ visible, onClose, title, body }) => {
             visible={visible}
             transparent
             animationType="fade"
-            onRequestClose={onClose} // ✅ Para Android
+            onRequestClose={onClose}
         >
             <View style={styles.overlay}>
                 <View style={[styles.modalContainer, { backgroundColor: theme.colors.background }]}>
-                    <MaterialIcons name="notifications-active" size={40} color={theme.colors.primary} />
+                    <MaterialIcons name="inventory" size={40} color={theme.colors.primary} />
                     <Text style={styles.title}>{title || '¡Nueva Notificación!'}</Text>
                     <Text style={styles.body}>
                         {typeof body === 'string' && body.trim() !== '' ? body : 'Tienes una nueva notificación'}

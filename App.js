@@ -8,17 +8,8 @@ import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
 import { flushPendingActions, navigationRef } from './src/navigator/RootNavigation';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { getApp } from '@react-native-firebase/app';
-import {
-  getMessaging,
-  onMessage,
-  getInitialNotification,
-  onNotificationOpenedApp,
-} from '@react-native-firebase/messaging';
-
+import messaging from '@react-native-firebase/messaging';
 import NotificationModal from './src/components/NotificationModal';
-
-const messaging = getMessaging(getApp());
 
 const CustomColors = {
   warning: '#FFB300',
@@ -45,7 +36,7 @@ export default function App() {
   const [notificationData, setNotificationData] = useState({ title: '', body: '' });
 
   useEffect(() => {
-    const unsubscribeForeground = onMessage(messaging, async remoteMessage => {
+    const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
       setNotificationData({
         title: remoteMessage.notification?.title || '¡Nueva Notificación!',
         body: remoteMessage.notification?.body || 'Sin contenido',
@@ -53,7 +44,7 @@ export default function App() {
       setShowNotification(true);
     });
 
-    const unsubscribeOpened = onNotificationOpenedApp(remoteMessage => {
+    const unsubscribeOpened = messaging().onNotificationOpenedApp(remoteMessage => {
       if (remoteMessage) {
         setNotificationData({
           title: remoteMessage.notification?.title || '¡Notificación!',
@@ -63,18 +54,21 @@ export default function App() {
       }
     });
 
-    getInitialNotification().then(remoteMessage => {
-      if (remoteMessage) {
-        setNotificationData({
-          title: remoteMessage.notification?.title || '¡Notificación!',
-          body: remoteMessage.notification?.body || 'Sin contenido',
-        });
-        setShowNotification(true);
-      }
-    });
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          setNotificationData({
+            title: remoteMessage.notification?.title || '¡Notificación!',
+            body: remoteMessage.notification?.body || 'Sin contenido',
+          });
+          setShowNotification(true);
+        }
+      });
 
     return () => {
       unsubscribeForeground();
+      unsubscribeOpened();
     };
   }, []);
 
@@ -87,7 +81,6 @@ export default function App() {
           title={notificationData.title}
           body={notificationData.body}
         />
-
         <SafeAreaProvider>
           <NavigationContainer
             ref={navigationRef}
