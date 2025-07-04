@@ -8,10 +8,7 @@ import AuthorizedRoute from '../../components/AuthorizedRoute';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { info } from '../../service/user.service';
-
-// ✅ Import para eliminar el token FCM
-import { getMessaging, deleteToken } from '@react-native-firebase/messaging';
-import { getApp } from '@react-native-firebase/app';
+import { useNotifications } from '../../hooks/useNotifications'; // ✅
 
 const formatDate = date => {
   if (!date) return 'No disponible';
@@ -74,14 +71,14 @@ export default function ProfileScreen() {
   const router = useRouter();
   const theme = useTheme();
   const styles = getStyles(theme);
+  const { disableNotifications } = useNotifications(); // ✅
 
   const handleLogout = async () => {
     try {
-      // ✅ Eliminar token FCM localmente
-      const messaging = getMessaging(getApp());
-      await deleteToken(messaging);
-      console.log('[ProfileScreen] FCM token eliminado');
-
+      await disableNotifications(
+        () => console.log('[ProfileScreen] FCM token eliminado'),
+        (err) => console.warn('[ProfileScreen] No se pudo eliminar el token FCM:', err.message)
+      );
       await logout();
       router.replace('Auth');
     } catch (error) {
@@ -107,7 +104,6 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     fetchUserInfo();
-    return () => { };
   }, []);
 
   const initials = `${userInfo?.firstname?.[0] ?? ''}${userInfo?.lastname?.[0] ?? ''}`.toUpperCase();
