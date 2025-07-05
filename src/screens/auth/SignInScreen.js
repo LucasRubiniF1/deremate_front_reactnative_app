@@ -174,6 +174,8 @@ export default function SignInScreen() {
           onChangeText={handleEmailChange}
           style={styles.input}
           mode="outlined"
+          autoCapitalize="none"
+          autoCorrect={false}
         />
 
         <TextInput
@@ -183,6 +185,8 @@ export default function SignInScreen() {
           secureTextEntry={!showPassword}
           style={styles.input}
           mode="outlined"
+          autoCapitalize="none"
+          autoCorrect={false}
           right={
             <TextInput.Icon
               icon={showPassword ? 'eye-off' : 'eye'}
