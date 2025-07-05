@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "deremate_front_reactnative_app",
+    "name": "DeRemate Logistica",
     "slug": "deremate_front_reactnative_app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/derematelogistica.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -26,7 +26,7 @@
       "googleServicesFile": "./google-services.json"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/deremateNotification.png"
     },
     "plugins": [
       "expo-secure-store",
@@ -34,7 +34,7 @@
       "@react-native-firebase/messaging"
     ],
     "notification": {
-      "icon": "./assets/notification-icon.png",
+      "icon": "./assets/deremateNotification.png",
       "color": "#3a86ff",
       "iosDisplayInForeground": true,
       "androidMode": "default",
