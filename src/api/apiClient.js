@@ -43,17 +43,26 @@ UnauthorizedService.interceptors.response.use(
     return response;
   },
   error => {
-    console.error('[API Client] Response error:', {
-      message: error.message,
-      code: error.code,
-      config: {
-        url: error.config?.url,
-        method: error.config?.method,
-        baseURL: error.config?.baseURL,
-        data: error.config?.data,
-      },
-    });
-    return Promise.reject(error);
+
+    const serverPayload = {
+      message: error.response?.data?.message || error.message,
+      code: error.response?.status || error.code,
+      data: error.response?.data,
+      url: error.config?.url,
+    };
+
+    // console.error('[API Client] Response error:', {
+    //   message: error.message,
+    //   code: error.code,
+    //   config: {
+    //     url: error.config?.url,
+    //     method: error.config?.method,
+    //     baseURL: error.config?.baseURL,
+    //     data: error.config?.data,
+    //   },
+    // });
+    
+    return Promise.reject(serverPayload);
   }
 );
 
