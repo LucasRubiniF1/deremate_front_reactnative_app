@@ -1,4 +1,5 @@
 import { Platform, PermissionsAndroid } from 'react-native';
+import { useState } from 'react';
 import { getApp } from '@react-native-firebase/app';
 import {
     getMessaging,
@@ -87,5 +88,47 @@ export const useNotifications = () => {
     return {
         enableNotifications,
         disableNotifications,
+    };
+};
+
+// Global notification state management
+export const useNotificationState = () => {
+    const [notificationState, setNotificationState] = useState({
+        show: false,
+        title: '',
+        body: '',
+        data: {},
+        timestamp: null
+    });
+
+    const showNotification = (notificationData) => {
+        setNotificationState({
+            show: true,
+            ...notificationData
+        });
+    };
+
+    const hideNotification = () => {
+        setNotificationState(prev => ({
+            ...prev,
+            show: false
+        }));
+    };
+
+    const clearNotification = () => {
+        setNotificationState({
+            show: false,
+            title: '',
+            body: '',
+            data: {},
+            timestamp: null
+        });
+    };
+
+    return {
+        notificationState,
+        showNotification,
+        hideNotification,
+        clearNotification
     };
 };

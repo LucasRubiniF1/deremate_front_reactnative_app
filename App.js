@@ -33,23 +33,39 @@ export default function App() {
   }, [colorScheme, theme]);
 
   const [showNotification, setShowNotification] = useState(false);
-  const [notificationData, setNotificationData] = useState({ title: '', body: '' });
+  const [notificationData, setNotificationData] = useState({ 
+    title: '', 
+    body: '', 
+    data: {},
+    timestamp: null 
+  });
+
+  const formatNotificationData = (remoteMessage) => {
+    const notification = remoteMessage.notification || {};
+    const data = remoteMessage.data || {};
+    
+    // Use the original notification title and body as they come from backend
+    return {
+      title: notification.title || '¡Nueva Notificación!',
+      body: notification.body || 'Sin contenido',
+      data: data,
+      timestamp: data.timestamp || new Date().toISOString()
+    };
+  };
 
   useEffect(() => {
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
-      setNotificationData({
-        title: remoteMessage.notification?.title || '¡Nueva Notificación!',
-        body: remoteMessage.notification?.body || 'Sin contenido',
-      });
+      console.log('[App] Foreground message received:', remoteMessage);
+      const formattedData = formatNotificationData(remoteMessage);
+      setNotificationData(formattedData);
       setShowNotification(true);
     });
 
     const unsubscribeOpened = messaging().onNotificationOpenedApp(remoteMessage => {
       if (remoteMessage) {
-        setNotificationData({
-          title: remoteMessage.notification?.title || '¡Notificación!',
-          body: remoteMessage.notification?.body || 'Sin contenido',
-        });
+        console.log('[App] Notification opened app:', remoteMessage);
+        const formattedData = formatNotificationData(remoteMessage);
+        setNotificationData(formattedData);
         setShowNotification(true);
       }
     });
@@ -58,10 +74,9 @@ export default function App() {
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage) {
-          setNotificationData({
-            title: remoteMessage.notification?.title || '¡Notificación!',
-            body: remoteMessage.notification?.body || 'Sin contenido',
-          });
+          console.log('[App] Initial notification:', remoteMessage);
+          const formattedData = formatNotificationData(remoteMessage);
+          setNotificationData(formattedData);
           setShowNotification(true);
         }
       });
@@ -80,6 +95,7 @@ export default function App() {
           onClose={() => setShowNotification(false)}
           title={notificationData.title}
           body={notificationData.body}
+          timestamp={notificationData.timestamp}
         />
         <SafeAreaProvider>
           <NavigationContainer
