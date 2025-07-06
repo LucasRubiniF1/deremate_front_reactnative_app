@@ -66,7 +66,7 @@ export default function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [visible, setVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => setShowPassword(prev => !prev);
 
@@ -74,7 +74,8 @@ export default function SignInScreen() {
   const cleanupErrors = () => {
     console.log('[SignInScreen] Cleaning up errors');
     setVisible(false);
-    setErrorMessage('');
+    setErrorMessage(null);
+    useAuthStore.setState({ error: null });
   };
 
   // Reset state when component mounts
@@ -166,7 +167,7 @@ export default function SignInScreen() {
           Iniciar sesión
         </Text>
 
-        {errorMessage && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
+        {visible && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
 
         <TextInput
           label="Correo"
