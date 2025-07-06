@@ -25,20 +25,22 @@ const useAuthStore = create((set, get) => ({
     try {
       const response = await login({ email, password });
       
-      const { token } = response.data;
-
+      const { token } = response.data.data;
+      
       await saveToken(token);
 
       const infoResponse = await info();
       set({ user: infoResponse, isAuthenticated: true, loading: false, error: false });
     } catch (error) {
-      if (error?.code === 401) {
+      console.log(error);
+      
+      if (error?.message === 'The email has not been verified.') {
         set({ error: null, loading: false });
         return 'EMAIL_NOT_VERIFIED';
-      } else if (error?.code === 404) {
+      } else if (error?.message === 'Invalid credentials.') {
         set({ error: 'Usuario y/o Contraseña Incorrectos', loading: false });
       } else {
-        set({ error: 'Login failed', loading: false });
+        set({ error: 'Ocurrió un error.', loading: false });
       }
     }
   },
