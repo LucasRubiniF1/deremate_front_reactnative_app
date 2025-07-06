@@ -24,7 +24,7 @@ const useAuthStore = create((set, get) => ({
 
     try {
       const response = await login({ email, password });
-
+      
       const { token } = response.data;
 
       await saveToken(token);
@@ -32,12 +32,11 @@ const useAuthStore = create((set, get) => ({
       const infoResponse = await info();
       set({ user: infoResponse, isAuthenticated: true, loading: false, error: false });
     } catch (error) {
-      console.error('Login failed', error);
-
-      console.warn(error?.response.data);
-      if (error?.response?.data?.message === 'The email has not been verified.') {
+      if (error?.code === 401) {
         set({ error: null, loading: false });
         return 'EMAIL_NOT_VERIFIED';
+      } else if (error?.code === 404) {
+        set({ error: 'Usuario y/o Contraseña Incorrectos', loading: false });
       } else {
         set({ error: 'Login failed', loading: false });
       }
@@ -52,7 +51,12 @@ const useAuthStore = create((set, get) => ({
 
       set({ loading: false, error: false, isUserCreated: true });
     } catch (error) {
-      set({ error: 'Error al crear la cuenta', loading: false, isUserCreated: false });
+      console.log(error);
+      if (error?.code === 409) {
+        set({ error: 'El mail ya se encuentra en uso', loading: false });
+      } else {
+        set({ error: 'Error al crear la cuenta', loading: false, isUserCreated: false });
+      }
     }
   },
 
@@ -70,7 +74,7 @@ const useAuthStore = create((set, get) => ({
 
       await get().login(email, password);
     } catch (error) {
-      console.error('[AuthStore] Email verification failed:', error);
+      // console.error('[AuthStore] Email verification failed:', error);
 
       let errorMessage = 'INCORRECT_CODE';
       if (error?.response?.data?.message) {
