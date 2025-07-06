@@ -95,6 +95,7 @@ export default function SignUpScreen() {
     if (error) {
       setServerErr(error);
       setShowErr(true);
+      useAuthStore.setState({ error: null });
     }
   }, [error]);
 

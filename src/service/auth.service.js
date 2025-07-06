@@ -4,7 +4,7 @@ const URL = '/v1/auth';
 
 export const login = async data => {
   const response = await UnauthorizedService.post(`${URL}/login`, data);
-  return response.data;
+  return response;
 };
 
 export const signup = async data => {
