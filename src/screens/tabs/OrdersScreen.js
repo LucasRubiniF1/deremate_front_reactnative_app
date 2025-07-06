@@ -7,6 +7,7 @@ import DeliveryCard from '../../components/DeliveryCard';
 import { getDeliveriesByUser } from '../../service/delivery.service';
 import { useTheme } from 'react-native-paper';
 import { SimpleSnackbar } from '../../components/SimpleSnackbar';
+import { useNotificationClose, useSpecificNotificationClose } from '../../hooks/useNotificationClose';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -39,6 +40,28 @@ export default function OrdersScreen() {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarMode, setSnackbarMode] = useState('success');
+
+  // Example: Trigger effect when any notification is closed
+  useNotificationClose(() => {
+    console.log('[OrdersScreen] Notification was closed - refreshing deliveries...');
+    fetchDeliveries(); // Refresh deliveries when notification is closed
+  });
+
+  // Example: Trigger effect when a delivery-specific notification is closed
+  useSpecificNotificationClose('delivery', (notificationData) => {
+    console.log('[OrdersScreen] Delivery notification closed:', notificationData);
+    // Handle delivery-specific logic
+    if (notificationData?.data?.action === 'refresh_deliveries') {
+      fetchDeliveries();
+    }
+  });
+
+  // Example: Trigger effect when a status change notification is closed
+  useSpecificNotificationClose('status', (notificationData) => {
+    console.log('[OrdersScreen] Status change notification closed:', notificationData);
+    // Refresh deliveries when delivery status changes
+    fetchDeliveries();
+  });
 
   const fetchDeliveries = async () => {
     console.log('[OrdersScreen] Fetching deliveries...');

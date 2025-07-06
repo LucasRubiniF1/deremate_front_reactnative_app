@@ -9,6 +9,7 @@ import PackageDetailDialog from '../../components/PackageDetailDialog';
 import NotificationBadge from '../../components/NotificationBadge';
 import { useTheme } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNotificationClose } from '../../hooks/useNotificationClose';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -101,6 +102,21 @@ const HomeScreen = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [newPackageCount, setNewPackageCount] = useState(0);
+
+  // Example: Trigger effect when any notification is closed
+  useNotificationClose(() => {
+    console.log('[HomeScreen] Notification was closed - refreshing packages...');
+    refetch(); // Refresh packages when notification is closed
+  }, [refetch]);
+
+  // Example: Trigger effect when a specific notification type is closed
+  useNotificationClose((notificationData) => {
+    console.log('[HomeScreen] Package notification closed:', notificationData);
+    // You can add specific logic here based on the notification data
+    if (notificationData?.data?.action === 'refresh_packages') {
+      refetch();
+    }
+  }, [refetch], { includeData: true });
 
   useEffect(() => {
     console.log('[HomeScreen] Initial packages loaded:', packages?.length || 0, 'items');

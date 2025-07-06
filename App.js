@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, createContext, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,6 +10,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import messaging from '@react-native-firebase/messaging';
 import NotificationModal from './src/components/NotificationModal';
+
+// Create notification context
+const NotificationContext = createContext();
+
+export const useNotificationContext = () => {
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error('useNotificationContext must be used within a NotificationProvider');
+  }
+  return context;
+};
 
 const CustomColors = {
   warning: '#FFB300',
@@ -53,6 +64,12 @@ export default function App() {
     };
   };
 
+  const handleNotificationClose = () => {
+    setShowNotification(false);
+    // You can add any global logic here that should happen when any notification is closed
+    console.log('[App] Notification closed with data:', notificationData);
+  };
+
   useEffect(() => {
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
       console.log('[App] Foreground message received:', remoteMessage);
@@ -87,24 +104,33 @@ export default function App() {
     };
   }, []);
 
+  const notificationContextValue = {
+    notificationData,
+    showNotification,
+    onNotificationClose: handleNotificationClose,
+    hasActiveNotification: showNotification
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={paperTheme}>
-        <NotificationModal
-          visible={showNotification}
-          onClose={() => setShowNotification(false)}
-          title={notificationData.title}
-          body={notificationData.body}
-          timestamp={notificationData.timestamp}
-        />
-        <SafeAreaProvider>
-          <NavigationContainer
-            ref={navigationRef}
-            onReady={() => flushPendingActions()}
-          >
-            <RootStack />
-          </NavigationContainer>
-        </SafeAreaProvider>
+        <NotificationContext.Provider value={notificationContextValue}>
+          <NotificationModal
+            visible={showNotification}
+            onClose={handleNotificationClose}
+            title={notificationData.title}
+            body={notificationData.body}
+            timestamp={notificationData.timestamp}
+          />
+          <SafeAreaProvider>
+            <NavigationContainer
+              ref={navigationRef}
+              onReady={() => flushPendingActions()}
+            >
+              <RootStack />
+            </NavigationContainer>
+          </SafeAreaProvider>
+        </NotificationContext.Provider>
       </PaperProvider>
     </GestureHandlerRootView>
   );
