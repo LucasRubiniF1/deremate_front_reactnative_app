@@ -159,31 +159,24 @@ export default function SettingsScreen() {
           <Divider style={styles.divider} />
 
           <List.Section>
-            <List.Subheader style={styles.subheader}>Cuenta</List.Subheader>
 
-            <TextInput
-              label="Correo electrónico"
-              mode="outlined"
-              value={email}
-              onChangeText={handleEmailChange}
-              style={styles.input}
-            />
-
-            <View style={styles.checkboxContainer}>
-              <Checkbox status={newsletter ? 'checked' : 'unchecked'} onPress={handleNewsletterChange} />
-              <Text style={styles.checkboxLabel}>Suscribirme al newsletter</Text>
-            </View>
-
-            <Button icon="lock-reset" mode="contained" style={styles.button} onPress={handlePasswordChange}>
+            <Button
+              icon="lock-reset"
+              mode="contained"
+              style={styles.button}
+              onPress={handlePasswordChange}
+              disabled
+            >
               Cambiar contraseña
             </Button>
+
           </List.Section>
 
           <Divider style={styles.divider} />
 
           <View style={styles.footer}>
             <Icon name="information-outline" size={16} color={theme.colors.onSurfaceVariant} />
-            <Text style={styles.footerText}> Versión 1.5.0 - Actualización 09/06/2025</Text>
+            <Text style={styles.footerText}> Versión 3.0.0 - Actualización 07/07/2025</Text>
           </View>
         </ScrollView>
 
