@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
 import { SimpleButton } from '../../components/SimpleButton';
@@ -124,8 +124,12 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <View style={styles.externalContainer}>
-      <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.externalContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+    >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <Text variant="titleLarge" style={styles.title}>
           Recuperar contraseña
         </Text>
@@ -161,7 +165,7 @@ export default function ForgotPasswordScreen() {
           onPress={handleBackToSignIn}
           disabled={loading}
         />
-      </View>
+      </ScrollView>
       <SimpleSnackbar
         mode="danger"
         text={errorMessage}
@@ -169,6 +173,6 @@ export default function ForgotPasswordScreen() {
         setVisible={setVisible}
         visible={visible}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }

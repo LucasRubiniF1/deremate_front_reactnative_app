@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Text, TextInput, View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { Text, TextInput, View, StyleSheet, Alert, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from '../../hooks/useRouter';
 import useAuthStore from '../../store/useAuthStore';
 import { SimpleButton } from '../../components/SimpleButton';
@@ -234,106 +234,112 @@ export default function VerificationScreen({ route }) {
   const styles = getStyles(theme);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
-        {mode === 'email' ? 'Verificá tu correo' : 'Restablecer contraseña'}
-      </Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+    >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>
+          {mode === 'email' ? 'Verificá tu correo' : 'Restablecer contraseña'}
+        </Text>
 
-      {errorVisible && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
-      {resendSuccess && (
-        <TagMessage message={'Código Reenviado Exitósamente 🎉'} color={'rgb(34, 197, 94)'} />
-      )}
+        {errorVisible && <TagMessage message={errorMessage} color={'rgb(248, 113, 113)'} />}
+        {resendSuccess && (
+          <TagMessage message={'Código Reenviado Exitósamente 🎉'} color={'rgb(34, 197, 94)'} />
+        )}
 
-      <View style={styles.inputContainer}>
-        {code.map((digit, index) => (
-          <TextInput
-            key={index}
-            ref={ref => (inputsRef.current[index] = ref)}
-            style={[styles.input, { borderColor: getBorderColor() }]}
-            keyboardType="numeric"
-            maxLength={1}
-            value={digit}
-            onChangeText={text => handleChange(text, index)}
-          />
-        ))}
-      </View>
-
-      {mode === 'password' && (
-        <View style={styles.passwordContainer}>
-          <View style={styles.passwordInputContainer}>
+        <View style={styles.inputContainer}>
+          {code.map((digit, index) => (
             <TextInput
-              style={styles.passwordInput}
-              placeholder="Nueva contraseña"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
+              key={index}
+              ref={ref => (inputsRef.current[index] = ref)}
+              style={[styles.input, { borderColor: getBorderColor() }]}
+              keyboardType="numeric"
+              maxLength={1}
+              value={digit}
+              onChangeText={text => handleChange(text, index)}
             />
-            <IconButton
-              icon={showPassword ? 'eye-off' : 'eye'}
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.eyeIcon}
-            />
-          </View>
-          <View style={styles.passwordInputContainer}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Confirmar contraseña"
-              secureTextEntry={!showConfirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-            <IconButton
-              icon={showConfirmPassword ? 'eye-off' : 'eye'}
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              style={styles.eyeIcon}
-            />
-          </View>
+          ))}
         </View>
-      )}
 
-      <SimpleButton
-        label="Confirmar"
-        accent
-        mode="contained"
-        onPress={handleSubmit}
-        style={styles.submitButton}
-      />
+        {mode === 'password' && (
+          <View style={styles.passwordContainer}>
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Nueva contraseña"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <IconButton
+                icon={showPassword ? 'eye-off' : 'eye'}
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              />
+            </View>
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Confirmar contraseña"
+                secureTextEntry={!showConfirmPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+              <IconButton
+                icon={showConfirmPassword ? 'eye-off' : 'eye'}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={styles.eyeIcon}
+              />
+            </View>
+          </View>
+        )}
 
-      {mode === 'email' && (
         <SimpleButton
-          label="Reenviar código"
+          label="Confirmar"
           accent
           mode="contained"
-          onPress={handleResendCode}
-          style={styles.resendButton}
+          onPress={handleSubmit}
+          style={styles.submitButton}
         />
-      )}
 
-      {mode === 'password' && (
-        <SimpleButton
-          label="Volver al inicio de sesión"
-          accent
-          mode="contained"
-          onPress={() => router.replace('SignIn')}
-          style={styles.returnButton}
-        />
-      )}
+        {mode === 'email' && (
+          <SimpleButton
+            label="Reenviar código"
+            accent
+            mode="contained"
+            onPress={handleResendCode}
+            style={styles.resendButton}
+          />
+        )}
 
-      {/* <SimpleSnackbar
-        mode="info"
-        text="Código reenviado exitosamente"
-        closeLabel="OK"
-        setVisible={setResendSuccess}
-        visible={resendSuccess}
-      /> */}
+        {mode === 'password' && (
+          <SimpleButton
+            label="Volver al inicio de sesión"
+            accent
+            mode="contained"
+            onPress={() => router.replace('SignIn')}
+            style={styles.returnButton}
+          />
+        )}
 
-      {/* <SimpleSnackbar
-        mode="danger"
-        text={errorMessage}
-        closeLabel="OK"
-        setVisible={setErrorVisible}
-        visible={errorVisible}
-      /> */}
-    </View>
+        {/* <SimpleSnackbar
+          mode="info"
+          text="Código reenviado exitosamente"
+          closeLabel="OK"
+          setVisible={setResendSuccess}
+          visible={resendSuccess}
+        /> */}
+
+        {/* <SimpleSnackbar
+          mode="danger"
+          text={errorMessage}
+          closeLabel="OK"
+          setVisible={setErrorVisible}
+          visible={errorVisible}
+        /> */}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

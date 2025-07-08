@@ -3,7 +3,7 @@ import useAuthStore from '../../store/useAuthStore';
 import { useRouter } from '../../hooks/useRouter';
 import { Text, HelperText } from 'react-native-paper';
 import { TextInput } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SimpleButton } from '../../components/SimpleButton';
 import { SimpleSnackbar } from '../../components/SimpleSnackbar';
 import { useTheme } from 'react-native-paper';
@@ -161,8 +161,12 @@ export default function SignInScreen() {
   };
 
   return (
-    <View style={styles.externalContainer}>
-      <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.externalContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+    >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <Text variant="titleLarge" style={styles.title}>
           Iniciar sesión
         </Text>
@@ -207,7 +211,7 @@ export default function SignInScreen() {
           mode="contained"
           onPress={handleForgotPassword}
         />
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

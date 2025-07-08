@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet, RefreshControl } from 'react-native';
+import { View, FlatList, ActivityIndicator, StyleSheet, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, TextInput, Card } from 'react-native-paper';
 import { useWarehousePackages } from '../../hooks/useWarehousePackages';
@@ -198,67 +198,73 @@ const HomeScreen = () => {
   return (
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
-        <View style={{ flex: 1 }}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
-            <NotificationBadge count={newPackageCount} />
-          </View>
-
-          <View style={styles.tagsContainer}>
-            <View style={styles.tag}>
-              <Text style={styles.tagText}>🏛️ Sector: {sector || 'Todos'}</Text>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+        >
+          <View style={{ flex: 1 }}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Buscar Paquetes Disponibles</Text>
+              <NotificationBadge count={newPackageCount} />
             </View>
-            <View style={styles.tag}>
-              <Text style={styles.tagText}>📚 Estante: {shelf || 'Todos'}</Text>
+
+            <View style={styles.tagsContainer}>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>🏛️ Sector: {sector || 'Todos'}</Text>
+              </View>
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>📚 Estante: {shelf || 'Todos'}</Text>
+              </View>
             </View>
+
+            <TextInput
+              mode="outlined"
+              label="Buscar por código de paquete"
+              value={code}
+              onChangeText={handleCodeChange}
+              style={styles.input}
+            />
+            <TextInput
+              mode="outlined"
+              label="Buscar por sector"
+              value={sector}
+              onChangeText={handleSectorChange}
+              style={styles.input}
+            />
+            <TextInput
+              mode="outlined"
+              label="Buscar por estante"
+              value={shelf}
+              onChangeText={handleShelfChange}
+              style={styles.input}
+            />
+
+            {renderFiltersSummary()}
+
+            <Text style={styles.subtitle}>Paquetes en Depósito</Text>
+
+            <FlatList
+              data={packages}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({ item }) => (
+                <PackageCard
+                  pkg={item}
+                  onPress={() => setSelectedPackage(item)}
+                />
+              )}
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+              contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
+              ListEmptyComponent={renderEmptyComponent}
+            />
+
+            <PackageDetailDialog
+              visible={!!selectedPackage}
+              onDismiss={() => setSelectedPackage(null)}
+              pkg={selectedPackage}
+            />
           </View>
-
-          <TextInput
-            mode="outlined"
-            label="Buscar por código de paquete"
-            value={code}
-            onChangeText={handleCodeChange}
-            style={styles.input}
-          />
-          <TextInput
-            mode="outlined"
-            label="Buscar por sector"
-            value={sector}
-            onChangeText={handleSectorChange}
-            style={styles.input}
-          />
-          <TextInput
-            mode="outlined"
-            label="Buscar por estante"
-            value={shelf}
-            onChangeText={handleShelfChange}
-            style={styles.input}
-          />
-
-          {renderFiltersSummary()}
-
-          <Text style={styles.subtitle}>Paquetes en Depósito</Text>
-
-          <FlatList
-            data={packages}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => (
-              <PackageCard
-                pkg={item}
-                onPress={() => setSelectedPackage(item)}
-              />
-            )}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
-            ListEmptyComponent={renderEmptyComponent}
-          />
-
-          <PackageDetailDialog
-            visible={!!selectedPackage}
-            onDismiss={() => setSelectedPackage(null)}
-            pkg={selectedPackage}
-          />
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </AuthorizedRoute>
   );
