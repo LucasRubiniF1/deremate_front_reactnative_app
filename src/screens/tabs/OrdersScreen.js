@@ -41,25 +41,25 @@ export default function OrdersScreen() {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarMode, setSnackbarMode] = useState('success');
 
-  // Example: Trigger effect when any notification is closed
+  
   useNotificationClose(() => {
     console.log('[OrdersScreen] Notification was closed - refreshing deliveries...');
-    fetchDeliveries(); // Refresh deliveries when notification is closed
+    fetchDeliveries(); 
   });
 
-  // Example: Trigger effect when a delivery-specific notification is closed
+  
   useSpecificNotificationClose('delivery', (notificationData) => {
     console.log('[OrdersScreen] Delivery notification closed:', notificationData);
-    // Handle delivery-specific logic
+ 
     if (notificationData?.data?.action === 'refresh_deliveries') {
       fetchDeliveries();
     }
   });
 
-  // Example: Trigger effect when a status change notification is closed
+  
   useSpecificNotificationClose('status', (notificationData) => {
     console.log('[OrdersScreen] Status change notification closed:', notificationData);
-    // Refresh deliveries when delivery status changes
+    
     fetchDeliveries();
   });
 
