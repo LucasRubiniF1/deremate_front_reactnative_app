@@ -143,7 +143,7 @@ const HomeScreen = () => {
   };
 
   const handleSectorChange = text => {
-    if (/^[A-Za-z\s]*$/.test(text)) {
+    if (/^[A-Za-z]*$/.test(text)) {
       setSector(text);
     }
   };
