@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, FlatList, ActivityIndicator, StyleSheet, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, TextInput, Card } from 'react-native-paper';
@@ -10,6 +10,7 @@ import NotificationBadge from '../../components/NotificationBadge';
 import { useTheme } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNotificationClose } from '../../hooks/useNotificationClose';
+import { useFocusEffect } from '@react-navigation/native';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -92,7 +93,6 @@ const getStyles = theme =>
   });
 
 const HomeScreen = () => {
-  console.log('[HomeScreen] Component mounted');
   const { packages, loading, code, setCode, sector, setSector, shelf, setShelf, refetch } =
     useWarehousePackages();
 
@@ -103,62 +103,59 @@ const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [newPackageCount, setNewPackageCount] = useState(0);
 
-  // Example: Trigger effect when any notification is closed
+  // Refetch cuando se entra a esta pantalla
+  useFocusEffect(
+    useCallback(() => {
+      console.log('[HomeScreen] useFocusEffect - refetch triggered');
+      refetch();
+    }, [refetch])
+  );
+
   useNotificationClose(() => {
     console.log('[HomeScreen] Notification was closed - refreshing packages...');
-    refetch(); // Refresh packages when notification is closed
+    refetch();
   }, [refetch]);
 
-  // Example: Trigger effect when a specific notification type is closed
   useNotificationClose((notificationData) => {
-    console.log('[HomeScreen] Package notification closed:', notificationData);
-    // You can add specific logic here based on the notification data
     if (notificationData?.data?.action === 'refresh_packages') {
       refetch();
     }
   }, [refetch], { includeData: true });
 
   useEffect(() => {
-    console.log('[HomeScreen] Initial packages loaded:', packages?.length || 0, 'items');
+    console.log('[HomeScreen] Initial packages loaded:', packages?.length || 0);
     return () => {
       console.log('[HomeScreen] Component unmounting');
     };
   }, [packages]);
 
   const onRefresh = async () => {
-    console.log('[HomeScreen] Manual refresh triggered');
     setRefreshing(true);
     await refetch();
-    console.log('[HomeScreen] Refresh completed');
     setRefreshing(false);
-    // Clear new package count after refresh
     setNewPackageCount(0);
   };
 
   const handleCodeChange = text => {
     if (/^\d*$/.test(text)) {
-      console.log('[HomeScreen] Code filter changed:', text);
       setCode(text);
     }
   };
 
   const handleSectorChange = text => {
-    if (/^[\w\s]*$/.test(text)) {
-      console.log('[HomeScreen] Sector filter changed:', text);
+    if (/^[A-Za-z]*$/.test(text)) {
       setSector(text);
     }
   };
 
   const handleShelfChange = text => {
     if (/^\d*$/.test(text)) {
-      console.log('[HomeScreen] Shelf filter changed:', text);
       setShelf(text);
     }
   };
 
   const renderFiltersSummary = () => {
     if (!code && !sector && !shelf) return null;
-    console.log('[HomeScreen] Rendering filters summary:', { code, sector, shelf });
     return (
       <Card style={styles.filterSummary}>
         <Text style={styles.filterText}>🔍 Buscando:</Text>
@@ -171,37 +168,24 @@ const HomeScreen = () => {
 
   const renderEmptyComponent = () => {
     const hasFilters = code || sector || shelf;
-    console.log('[HomeScreen] Rendering empty state, has filters:', hasFilters);
-    if (hasFilters) {
-      return (
-        <View style={styles.emptyContainer}>
-          <MaterialIcons
-            name="search-off"
-            size={48}
-            color={theme.colors.onSurfaceVariant}
-            style={styles.emptyIcon}
-          />
-          <Text style={styles.emptyText}>
-            No se encontraron paquetes con los filtros seleccionados
-          </Text>
-        </View>
-      );
-    }
     return (
       <View style={styles.emptyContainer}>
         <MaterialIcons
-          name="inventory"
+          name={hasFilters ? "search-off" : "inventory"}
           size={48}
           color={theme.colors.onSurfaceVariant}
           style={styles.emptyIcon}
         />
-        <Text style={styles.emptyText}>No hay paquetes disponibles en el depósito</Text>
+        <Text style={styles.emptyText}>
+          {hasFilters
+            ? "No se encontraron paquetes con los filtros seleccionados"
+            : "No hay paquetes disponibles en el depósito"}
+        </Text>
       </View>
     );
   };
 
   if (loading && !refreshing) {
-    console.log('[HomeScreen] Rendering loading state');
     return (
       <AuthorizedRoute>
         <SafeAreaView style={styles.container}>
@@ -211,7 +195,6 @@ const HomeScreen = () => {
     );
   }
 
-  console.log('[HomeScreen] Rendering main content, packages:', packages?.length || 0);
   return (
     <AuthorizedRoute>
       <SafeAreaView style={styles.container}>
@@ -239,14 +222,14 @@ const HomeScreen = () => {
           />
           <TextInput
             mode="outlined"
-            label="Seleccionar sector"
+            label="Buscar por sector"
             value={sector}
             onChangeText={handleSectorChange}
             style={styles.input}
           />
           <TextInput
             mode="outlined"
-            label="Seleccionar estante"
+            label="Buscar por estante"
             value={shelf}
             onChangeText={handleShelfChange}
             style={styles.input}
@@ -262,10 +245,7 @@ const HomeScreen = () => {
             renderItem={({ item }) => (
               <PackageCard
                 pkg={item}
-                onPress={() => {
-                  console.log('[HomeScreen] Package selected:', item.id);
-                  setSelectedPackage(item);
-                }}
+                onPress={() => setSelectedPackage(item)}
               />
             )}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -275,10 +255,7 @@ const HomeScreen = () => {
 
           <PackageDetailDialog
             visible={!!selectedPackage}
-            onDismiss={() => {
-              console.log('[HomeScreen] Package detail dialog dismissed');
-              setSelectedPackage(null);
-            }}
+            onDismiss={() => setSelectedPackage(null)}
             pkg={selectedPackage}
           />
         </View>
