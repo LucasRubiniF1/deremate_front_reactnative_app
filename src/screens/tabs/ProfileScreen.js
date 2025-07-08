@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Text, Avatar, Button, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { info } from '../../service/user.service';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useFocusEffect } from '@react-navigation/native'; // ✅
 
 const formatDate = date => {
   if (!date) return 'No disponible';
@@ -90,7 +91,6 @@ export default function ProfileScreen() {
   };
 
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [userInfo, setUserInfo] = useState(user);
 
   const fetchUserInfo = async () => {
@@ -101,13 +101,16 @@ export default function ProfileScreen() {
       console.error('[ProfileScreen] Error fetching user info:', error);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      fetchUserInfo();
+    }, [])
+  );
 
   const initials = `${userInfo?.firstname?.[0] ?? ''}${userInfo?.lastname?.[0] ?? ''}`.toUpperCase();
   const fullName = `${userInfo?.firstname ?? ''} ${userInfo?.lastname ?? ''}`.trim();
