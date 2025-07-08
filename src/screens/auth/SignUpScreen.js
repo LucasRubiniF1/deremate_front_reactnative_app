@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Text, TextInput, HelperText, useTheme, Banner } from 'react-native-paper';
 import { SimpleButton } from '../../components/SimpleButton';
 import { useRouter } from '../../hooks/useRouter';
@@ -145,8 +145,12 @@ export default function SignUpScreen() {
   };
 
   return (
-    <View style={styles.externalContainer}>
-      <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.externalContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 24}
+    >
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <Text variant="titleLarge" style={styles.title}>
           Crear cuenta
         </Text>
@@ -281,7 +285,7 @@ export default function SignUpScreen() {
           onPress={() => router.replace('SignIn')}
           disabled={loading}
         />
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
